@@ -1,0 +1,253 @@
+/*
+ * Copyright [duowan.com]
+ * Web Site: http://www.duowan.com
+ * Since 2005 - 2013
+ */
+
+package com.google.code.rapid.queue.metastore.model;
+
+import javax.validation.constraints.Max;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.sun.istack.internal.NotNull;
+
+
+/**
+ * tableName: rq_queue [Queue] 
+ * 
+ * @author badqiu email:badqiu(a)gmail.com
+ * @version 1.0
+ * @since 1.0
+ */
+public class Queue  implements java.io.Serializable{
+	private static final long serialVersionUID = 5454155825314635342L;
+	
+	//date formats
+	public static final String FORMAT_CREATED_TIME = "yyyy-MM-dd HH:mm:ss";
+	public static final String FORMAT_LAST_UPDATED_TIME = "yyyy-MM-dd HH:mm:ss";
+	
+	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
+	//columns START
+    /**
+     * 队列名称       db_column: queue_name 
+     */ 	
+	@Length(max=50)
+	private java.lang.String queueName;
+	
+    /**
+     * 虚拟host       db_column: vhost_name 
+     */ 	
+	@Length(max=50)
+	private java.lang.String vhostName;
+	
+    /**
+     * 备注       db_column: remarks 
+     */ 	
+	@Length(max=200)
+	private java.lang.String remarks;
+	
+    /**
+     * 是否持久队列       db_column: durable 
+     */ 	
+	@NotNull @Max(127)
+	private Integer durable;
+	
+    /**
+     * 是否自动删除       db_column: auto_delete 
+     */ 	
+	@NotNull @Max(127)
+	private Integer autoDelete;
+	
+    /**
+     * 自动删除的时过期时长，单位毫秒       db_column: auto_delete_expires 
+     */ 	
+	
+	private java.lang.Long autoDeleteExpires;
+	
+    /**
+     * 是否互斥，即该队列只能有一个客户端连接       db_column: exclusive 
+     */ 	
+	@NotNull @Max(127)
+	private Integer exclusive;
+	
+    /**
+     * 队列当前大小       db_column: size 
+     */ 	
+	@NotNull 
+	private java.lang.Integer size;
+	
+    /**
+     * 队列最大大小       db_column: max_size 
+     */ 	
+	@NotNull 
+	private java.lang.Integer maxSize;
+	
+    /**
+     * time to live in queue,发送至这个队列的数据多久过期       db_column: ttl 
+     */ 	
+	
+	private java.lang.Long ttl;
+	
+    /**
+     * 创建时间       db_column: created_time 
+     */ 	
+	@NotNull 
+	private java.util.Date createdTime;
+	
+    /**
+     * 创建人       db_column: operator 
+     */ 	
+	@NotBlank @Length(max=50)
+	private java.lang.String operator;
+	
+    /**
+     * 最后更新时间       db_column: last_updated_time 
+     */ 	
+	@NotNull 
+	private java.util.Date lastUpdatedTime;
+	
+	//columns END
+
+	public Queue(){
+	}
+
+	public Queue(
+		java.lang.String queueName,
+		java.lang.String vhostName
+	){
+		this.queueName = queueName;
+		this.vhostName = vhostName;
+	}
+
+	public java.lang.String getQueueName() {
+		return this.queueName;
+	}
+	
+	public void setQueueName(java.lang.String value) {
+		this.queueName = value;
+	}
+	
+	public java.lang.String getVhostName() {
+		return this.vhostName;
+	}
+	
+	public void setVhostName(java.lang.String value) {
+		this.vhostName = value;
+	}
+	
+	public java.lang.String getRemarks() {
+		return this.remarks;
+	}
+	
+	public void setRemarks(java.lang.String value) {
+		this.remarks = value;
+	}
+	
+	public Integer getDurable() {
+		return this.durable;
+	}
+	
+	public void setDurable(Integer value) {
+		this.durable = value;
+	}
+	
+	public Integer getAutoDelete() {
+		return this.autoDelete;
+	}
+	
+	public void setAutoDelete(Integer value) {
+		this.autoDelete = value;
+	}
+	
+	public java.lang.Long getAutoDeleteExpires() {
+		return this.autoDeleteExpires;
+	}
+	
+	public void setAutoDeleteExpires(java.lang.Long value) {
+		this.autoDeleteExpires = value;
+	}
+	
+	public Integer getExclusive() {
+		return this.exclusive;
+	}
+	
+	public void setExclusive(Integer value) {
+		this.exclusive = value;
+	}
+	
+	public java.lang.Integer getSize() {
+		return this.size;
+	}
+	
+	public void setSize(java.lang.Integer value) {
+		this.size = value;
+	}
+	
+	public java.lang.Integer getMaxSize() {
+		return this.maxSize;
+	}
+	
+	public void setMaxSize(java.lang.Integer value) {
+		this.maxSize = value;
+	}
+	
+	public java.lang.Long getTtl() {
+		return this.ttl;
+	}
+	
+	public void setTtl(java.lang.Long value) {
+		this.ttl = value;
+	}
+	
+	public java.util.Date getCreatedTime() {
+		return this.createdTime;
+	}
+	
+	public void setCreatedTime(java.util.Date value) {
+		this.createdTime = value;
+	}
+	
+	public java.lang.String getOperator() {
+		return this.operator;
+	}
+	
+	public void setOperator(java.lang.String value) {
+		this.operator = value;
+	}
+	
+	public java.util.Date getLastUpdatedTime() {
+		return this.lastUpdatedTime;
+	}
+	
+	public void setLastUpdatedTime(java.util.Date value) {
+		this.lastUpdatedTime = value;
+	}
+	
+
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(getQueueName())
+			.append(getVhostName())
+			.toHashCode();
+	}
+	
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj instanceof Queue == false) return false;
+		Queue other = (Queue)obj;
+		return new EqualsBuilder()
+			.append(getQueueName(),other.getQueueName())
+			.append(getVhostName(),other.getVhostName())
+			.isEquals();
+	}
+}
+

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- DBUnit flatXml DataFile -->
+<dataset>
+
+
+	  <rq_exchange 
+			exchange_name='ExchangeName622' 
+			vhost_name='VhostName244' 
+			remarks='Remarks417' 
+			durable='747' 
+			auto_delete='503' 
+			type='Type763' 
+			size='374' 
+			max_size='514' 
+			created_time='2013-05-06 09:55:49.725' 
+			operator='Operator919' 
+			last_updated_time='2013-05-06 09:55:49.725' 
+	  />	
+  
+</dataset>

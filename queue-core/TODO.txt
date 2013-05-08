@@ -1,0 +1,25 @@
+1. 增加文件损坏的容错性
+# 2. 将 queue-core, queue-exchange, queue-server(考虑使用thrift),queue-web-admin 分离
+3. 通过  jdbc 实现对 queue,exchange等 的配置
+4. 增加多线性的性能测试
+5. 增加 显示queue status
+6. 增加支持vhost功能
+7. 增加支持ack功能
+8. 支持Qos控制,channel.basic_qos(prefetch_count=1)
+9. 支持网络压缩传输,(gzip,compress,snappy)
+10. 支持数据压缩存储,(gzip,compress,snappy)
+11. 支持批量数据传输(发送及接收)
+12. 支持队列的优先级(priority)功能
+13. 支持queue的exclusive订阅
+14. 支持除topic外的direct,fauout的exchange类型
+15. 内存的queue支持大小,maxSize
+16. 提供boolean offer()阻塞 void push()非阻塞，以应用在队列满的情况下，等待数据消费完再发送数据(该功能有疑问,阻塞会带来很大问题?)
+17. 需要等待队列被消费完才能删除数据
+18. 队列需要提供方法，用于truncate所有数据
+# 19. 支持半持久模式，超过指定容量则进入持久存储
+
+权限
+1. 增加用户权限功能
+2. 用户身份验证功能
+3. 增加基于IP的访问认证
+

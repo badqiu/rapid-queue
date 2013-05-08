@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+/*
+ * Copyright [duowan.com]
+ * Web Site: http://www.duowan.com
+ * Since 2005 - 2013
+ */
+
+<!-- 
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byName" default-lazy-init="false">
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <!-- Transaction manager for a single JDBC DataSource -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <!-- jdbc数据库分页方言,提供类似hibernate的数据库分页查询,其它方言:OracleDialect,SQLServerDialect,SybaseDialect,DB2Dialect,PostgreSQLDialect,MySQLDialect,DerbyDialect,HSQLDialect -->
+    <bean id="dialect" class="com.duowan.common.jdbc.dialect.MySQLDialect"/>
+        
+	<bean id="daoParent" abstract="true">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<bean id="bindingDao" class="com.google.code.rapid.queue.metastore.dao.impl.BindingDaoImpl" parent="daoParent" />
+	<bean id="exchangeDao" class="com.google.code.rapid.queue.metastore.dao.impl.ExchangeDaoImpl" parent="daoParent" />
+	<bean id="queueDao" class="com.google.code.rapid.queue.metastore.dao.impl.QueueDaoImpl" parent="daoParent" />
+	<bean id="vhostDao" class="com.google.code.rapid.queue.metastore.dao.impl.VhostDaoImpl" parent="daoParent" />
+	<bean id="userDao" class="com.google.code.rapid.queue.metastore.dao.impl.UserDaoImpl" parent="daoParent" />
+	
+</beans>
