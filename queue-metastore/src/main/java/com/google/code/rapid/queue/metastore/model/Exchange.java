@@ -54,13 +54,13 @@ public class Exchange  implements java.io.Serializable{
      * 是否持久性交换机       db_column: durable 
      */ 	
 	@NotNull @Max(127)
-	private Integer durable;
+	private Boolean durable;
 	
     /**
      * 是否自动删除       db_column: auto_delete 
      */ 	
 	@NotNull @Max(127)
-	private Integer autoDelete;
+	private Boolean autoDelete;
 	
     /**
      * 类型: topic,fanout,direct       db_column: type 
@@ -135,19 +135,19 @@ public class Exchange  implements java.io.Serializable{
 		this.remarks = value;
 	}
 	
-	public Integer getDurable() {
+	public Boolean getDurable() {
 		return this.durable;
 	}
 	
-	public void setDurable(Integer value) {
+	public void setDurable(Boolean value) {
 		this.durable = value;
 	}
 	
-	public Integer getAutoDelete() {
+	public Boolean getAutoDelete() {
 		return this.autoDelete;
 	}
 	
-	public void setAutoDelete(Integer value) {
+	public void setAutoDelete(Boolean value) {
 		this.autoDelete = value;
 	}
 	

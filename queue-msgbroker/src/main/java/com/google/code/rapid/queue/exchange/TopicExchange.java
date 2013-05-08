@@ -3,6 +3,7 @@ package com.google.code.rapid.queue.exchange;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,11 +22,12 @@ public class TopicExchange {
 
 	private boolean durable;
 	private boolean autoDelete;  //auto delete exchange by timeout
+	private int maxSize;
 	private String exchangeName; //exchange名称
-	private String remarkds; // 备注
+	private String remarks; // 备注
 	private List<String> routerKeyList;	//exchange routerKey for exchange <=> exchange msg transfer
 	
-	private Queue<Message> exchangeQueue; //内部exchange的一个队列
+	private BlockingQueue<Message> exchangeQueue; //内部exchange的一个队列
 	
 	private List<TopicQueue> bindQueueList;
 	private List<TopicExchange> bindExchangeList;
@@ -35,6 +37,7 @@ public class TopicExchange {
 	public void offer(Message msg) {
 		exchangeQueue.offer(msg);
 	}
+	
 	
 	public void startComsumeThread() {
 		executor.execute(new Runnable() {
@@ -47,6 +50,16 @@ public class TopicExchange {
 		});
 	}
 	
+	public Queue<Message> getExchangeQueue() {
+		return exchangeQueue;
+	}
+
+
+	public void setExchangeQueue(BlockingQueue<Message> exchangeQueue) {
+		this.exchangeQueue = exchangeQueue;
+	}
+
+
 	private void exchangeComsume() {
 		Message msg = exchangeQueue.poll();
 		if(msg != null) {
@@ -103,12 +116,12 @@ public class TopicExchange {
 		this.exchangeName = exchangeName;
 	}
 
-	public String getRemarkds() {
-		return remarkds;
+	public String getRemarks() {
+		return remarks;
 	}
 
-	public void setRemarkds(String remarkds) {
-		this.remarkds = remarkds;
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 	
 	public void bindQueue(TopicQueue queue) {
@@ -137,6 +150,16 @@ public class TopicExchange {
 		
 		bindExchangeList.add(exchange);
 	}
+	
+	public void clearAllBind() {
+		bindExchangeList.clear();
+		bindQueueList.clear();
+	}
+	
+	public void setMaxSize(int maxSize) {
+		this.maxSize = maxSize;
+	}
+
 
 	@Override
 	public int hashCode() {

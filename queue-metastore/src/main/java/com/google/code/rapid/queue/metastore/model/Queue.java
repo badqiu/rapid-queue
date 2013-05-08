@@ -55,13 +55,13 @@ public class Queue  implements java.io.Serializable{
      * 是否持久队列       db_column: durable 
      */ 	
 	@NotNull @Max(127)
-	private Integer durable;
+	private Boolean durable;
 	
     /**
      * 是否自动删除       db_column: auto_delete 
      */ 	
 	@NotNull @Max(127)
-	private Integer autoDelete;
+	private Boolean autoDelete;
 	
     /**
      * 自动删除的时过期时长，单位毫秒       db_column: auto_delete_expires 
@@ -73,7 +73,7 @@ public class Queue  implements java.io.Serializable{
      * 是否互斥，即该队列只能有一个客户端连接       db_column: exclusive 
      */ 	
 	@NotNull @Max(127)
-	private Integer exclusive;
+	private Boolean exclusive;
 	
     /**
      * 队列当前大小       db_column: size 
@@ -148,19 +148,19 @@ public class Queue  implements java.io.Serializable{
 		this.remarks = value;
 	}
 	
-	public Integer getDurable() {
+	public Boolean getDurable() {
 		return this.durable;
 	}
 	
-	public void setDurable(Integer value) {
+	public void setDurable(Boolean value) {
 		this.durable = value;
 	}
 	
-	public Integer getAutoDelete() {
+	public Boolean getAutoDelete() {
 		return this.autoDelete;
 	}
 	
-	public void setAutoDelete(Integer value) {
+	public void setAutoDelete(Boolean value) {
 		this.autoDelete = value;
 	}
 	
@@ -172,11 +172,11 @@ public class Queue  implements java.io.Serializable{
 		this.autoDeleteExpires = value;
 	}
 	
-	public Integer getExclusive() {
+	public Boolean getExclusive() {
 		return this.exclusive;
 	}
 	
-	public void setExclusive(Integer value) {
+	public void setExclusive(Boolean value) {
 		this.exclusive = value;
 	}
 	

@@ -8,10 +8,16 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.code.rapid.queue.exchange.TopicExchange;
+import com.google.code.rapid.queue.metastore.model.Exchange;
 
 public class MessageBroker {
+	// Map<exchangeName,TopicExchange>
 	private Map<String,TopicExchange> exchangeMap = null;
+	
+	// Map<queueName,TopicExchange>
 	private Map<String,TopicQueue> queueMap = null;
+	
+	private MessageBrokerManager manager = new MessageBrokerManager();
 	
 	/**
 	 * 发送消息
@@ -84,6 +90,10 @@ public class MessageBroker {
 		return result;
 	}
 	
+	public MessageBrokerManager getManager() {
+		return manager;
+	}
+
 	private TopicExchange lookupExchange(String exchangeName) {
 		TopicExchange exchange = exchangeMap.get(exchangeName);
 		if(exchange == null) {
@@ -100,38 +110,45 @@ public class MessageBroker {
 		return queue;
 	}
 	
-	public void queueAdd(TopicQueue queue) {
-		queueMap.put(queue.getQueueName(),queue);
-	}
+	public class MessageBrokerManager {
 	
-	public void queueDelete(String queueName) {
-		queueUnbindAllExchange(queueName);
-		TopicQueue queue = queueMap.remove(queueName);
-	}
-
-	public void queueUnbindAllExchange(String queueName) {
-		for(String exchangeName : exchangeMap.keySet()) {
-			queueUnbind(exchangeName, queueName);
+		public void queueAdd(TopicQueue queue) {
+			if(queueMap.containsKey(queue.getQueueName())) throw new IllegalArgumentException("already contain queue:"+queue.getQueueName());
+			
+			queueMap.put(queue.getQueueName(),queue);
+		}
+		
+		public void queueDelete(String queueName) {
+			queueUnbindAllExchange(queueName);
+			TopicQueue queue = queueMap.remove(queueName);
+			queue.truncate();
+		}
+	
+		public void queueUnbindAllExchange(String queueName) {
+			for(String exchangeName : exchangeMap.keySet()) {
+				queueUnbind(exchangeName, queueName);
+			}
+		}
+		
+		public void queueBind(String exchangeName,String queueName) {
+			TopicExchange exchange = lookupExchange(exchangeName);
+			TopicQueue queue = lookupQueue(queueName);
+			exchange.bindQueue(queue);
+		}
+	
+		public void queueUnbind(String exchangeName,String queueName) {
+			TopicExchange exchange = lookupExchange(exchangeName);
+			exchange.unbindQueue(queueName);
+		}
+		
+		public void exchangeAdd(TopicExchange exchange) {
+			if(exchangeMap.containsKey(exchange.getExchangeName())) throw new IllegalArgumentException("already contain exchange:"+exchange.getExchangeName());
+			
+			exchangeMap.put(exchange.getExchangeName(),exchange);
+		}
+		
+		public void exchangeDelete(String exchangeName) {
+			exchangeMap.remove(exchangeName);
 		}
 	}
-	
-	public void queueBind(String exchangeName,String queueName) {
-		TopicExchange exchange = lookupExchange(exchangeName);
-		TopicQueue queue = lookupQueue(queueName);
-		exchange.bindQueue(queue);
-	}
-
-	public void queueUnbind(String exchangeName,String queueName) {
-		TopicExchange exchange = lookupExchange(exchangeName);
-		exchange.unbindQueue(queueName);
-	}
-	
-	public void exchangeAdd(TopicExchange exchange) {
-		exchangeMap.put(exchange.getExchangeName(),exchange);
-	}
-	
-	public void exchangeDelete(String exchangeName) {
-		
-	}
-
 }

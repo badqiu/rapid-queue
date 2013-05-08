@@ -1,8 +1,8 @@
 package com.google.code.rapid.queue;
 
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
-import com.google.code.rapid.queue.DurableQueue;
 import com.google.code.rapid.queue.util.RouterKeyUtil;
 
 /**
@@ -17,13 +17,14 @@ import com.google.code.rapid.queue.util.RouterKeyUtil;
 public class TopicQueue {
 	
 	private List<String> routerKeyList;
-	private DurableBlockingQueue queue;
+	private BlockingQueue<byte[]> queue;
 	
 	private String queueName;
 	private String remarks; // 备注
 	
 	private boolean durable;
 	private boolean autoDelete; //auto delete queue by timeout
+	private int maxSize;
 	
 	public List<String> getRouterKeyList() {
 		return routerKeyList;
@@ -37,10 +38,14 @@ public class TopicQueue {
 		return RouterKeyUtil.matchRouterKey(routerKeyList, routerKeyValue);
 	}
 
-	public DurableBlockingQueue getQueue() {
+	public BlockingQueue<byte[]> getQueue() {
 		return queue;
 	}
 
+	public void setQueue(BlockingQueue<byte[]> queue) {
+		this.queue = queue;
+	}
+	
 	public String getQueueName() {
 		return queueName;
 	}
@@ -73,6 +78,17 @@ public class TopicQueue {
 		this.autoDelete = autoDelete;
 	}
 
+	public int getMaxSize() {
+		return maxSize;
+	}
+
+	public void setMaxSize(int maxSize) {
+		this.maxSize = maxSize;
+	}
+
+	public void truncate() {
+		throw new UnsupportedOperationException(); //FIXME truncate()
+	}
 	
 	@Override
 	public int hashCode() {
