@@ -46,12 +46,13 @@ public class QueueDataFactory {
 	
 	public static Queue newQueue() {
 		Queue obj = new Queue();
-		
+		obj.setVhostName("1");
+		obj.setQueueName("1");
 	  	obj.setRemarks(new java.lang.String("1"));
 	  	obj.setDurableType(new java.lang.String("1"));
-	  	obj.setAutoDelete(new Integer("1"));
+	  	obj.setAutoDelete(true);
 	  	obj.setAutoDeleteExpires(new java.lang.Long("1"));
-	  	obj.setExclusive(new Integer("1"));
+	  	obj.setExclusive(true);
 	  	obj.setSize(new java.lang.Integer("1"));
 	  	obj.setMemorySize(new java.lang.Integer("1"));
 	  	obj.setMaxSize(new java.lang.Integer("1"));

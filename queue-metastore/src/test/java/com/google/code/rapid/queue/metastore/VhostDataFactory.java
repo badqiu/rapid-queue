@@ -32,7 +32,7 @@ public class VhostDataFactory {
 	
 	public static Vhost newVhost() {
 		Vhost obj = new Vhost();
-		
+		obj.setVhostName("1");
 	  	obj.setRemarks(new java.lang.String("1"));
 	  	obj.setHost(new java.lang.String("1"));
 		return obj;

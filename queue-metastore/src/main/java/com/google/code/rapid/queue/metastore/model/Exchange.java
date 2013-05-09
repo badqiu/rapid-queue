@@ -59,7 +59,7 @@ public class Exchange  implements java.io.Serializable{
     /**
      * 是否自动删除       db_column: auto_delete 
      */ 	
-	@NotNull @Max(127)
+	@NotNull
 	private Boolean autoDelete;
 	
     /**

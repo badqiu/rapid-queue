@@ -46,9 +46,11 @@ public class ExchangeDataFactory {
 	public static Exchange newExchange() {
 		Exchange obj = new Exchange();
 		
+		obj.setExchangeName("1");
+		obj.setVhostName("1");
 	  	obj.setRemarks(new java.lang.String("1"));
 	  	obj.setDurableType(new java.lang.String("1"));
-	  	obj.setAutoDelete(new Integer("1"));
+	  	obj.setAutoDelete(true);
 	  	obj.setAutoDeleteExpires(new java.lang.Long("1"));
 	  	obj.setType(new java.lang.String("1"));
 	  	obj.setSize(new java.lang.Integer("1"));

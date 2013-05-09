@@ -34,10 +34,10 @@ public class UserDataFactory {
 	
 	public static User newUser() {
 		User obj = new User();
-		
+		obj.setUsername("1");
 	  	obj.setPassword(new java.lang.String("1"));
 	  	obj.setRemarks(new java.lang.String("1"));
-	  	obj.setEmail(new java.lang.String("1"));
+	  	obj.setEmail("badqiu@gmail.com");
 	  	obj.setMobile(new java.lang.String("1"));
 		return obj;
 	}

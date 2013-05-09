@@ -11,7 +11,6 @@ import com.google.code.rapid.queue.metastore.query.BindingQuery;
 
 
 /**
- * 用于生成Binding相关数据对象的默认值
  * 
  * @author badqiu email:badqiu(a)gmail.com
  * @version 1.0
@@ -32,6 +31,9 @@ public class BindingDataFactory {
 	
 	public static Binding newBinding() {
 		Binding obj = new Binding();
+		obj.setExchangeName("1");
+		obj.setQueueName("1");
+		obj.setVhostName("1");
 		
 	  	obj.setRouterKey(new java.lang.String("1"));
 	  	obj.setRemarks(new java.lang.String("1"));

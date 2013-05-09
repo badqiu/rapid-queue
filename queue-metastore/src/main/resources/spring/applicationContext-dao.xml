@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-/*
- * Copyright [duowan.com]
- * Web Site: http://www.duowan.com
- * Since 2005 - 2013
- */
-
 <!-- 
  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -22,7 +16,7 @@
     </bean>
     
     <!-- jdbc数据库分页方言,提供类似hibernate的数据库分页查询,其它方言:OracleDialect,SQLServerDialect,SybaseDialect,DB2Dialect,PostgreSQLDialect,MySQLDialect,DerbyDialect,HSQLDialect -->
-    <bean id="dialect" class="com.duowan.common.jdbc.dialect.MySQLDialect"/>
+    <bean id="dialect" class="cn.org.rapid_framework.jdbc.dialect.MySQLDialect"/>
         
 	<bean id="daoParent" abstract="true">
 		<property name="dataSource" ref="dataSource"></property>

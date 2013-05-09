@@ -59,7 +59,7 @@ public class Queue  implements java.io.Serializable{
     /**
      * 是否自动删除       db_column: auto_delete 
      */ 	
-	@NotNull @Max(127)
+	@NotNull
 	private Boolean autoDelete;
 	
     /**
@@ -71,7 +71,7 @@ public class Queue  implements java.io.Serializable{
     /**
      * 是否互斥，即该队列只能有一个客户端连接       db_column: exclusive 
      */ 	
-	@NotNull @Max(127)
+	@NotNull
 	private Boolean exclusive;
 	
     /**
