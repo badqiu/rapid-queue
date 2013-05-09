@@ -1,5 +1,7 @@
 package com.google.code.rapid.queue;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import org.junit.Assert;
@@ -17,14 +19,26 @@ public class MessageBrokerTest extends Assert{
 	String queueName = "q";
 	
 	@Test
-	public void test_send() throws Exception {
+	public void test_send_and_receive() throws Exception {
 		bind("user.*");
+		Thread.sleep(500);
 		
-		mb.send(new Message(exchangeName,"user.badqiu",body));
-		assertEquals(body,mb.receive(queueName, 1).getBody());
-		
-		mb.send(new Message(exchangeName,"errorqueue.badqiu",body));
-		assertEquals(null,mb.receive(queueName, 1).getBody());
+		for(int i = 0; i < 1000; i++) {
+			try {
+				mb.send(new Message(exchangeName,"user.badqiu",body));
+				assertEquals(body,mb.receive(queueName, 1).getBody());
+				
+				mb.sendBatch(Arrays.asList(new Message(exchangeName,"user.badqiu",body)));
+				List<Message> receiveBatch = mb.receiveBatch(queueName, 1,100);
+				assertEquals(1,receiveBatch.size());
+				assertEquals(body,receiveBatch.get(0).getBody());
+				
+				mb.send(new Message(exchangeName,"errorqueue.badqiu",body));
+				assertEquals(null,mb.receive(queueName, 1).getBody());
+			}catch(Error e) {
+				throw new RuntimeException("i="+i+" "+e);
+			}
+		}
 	}
 
 	private void bind(String routerKey) throws Exception {

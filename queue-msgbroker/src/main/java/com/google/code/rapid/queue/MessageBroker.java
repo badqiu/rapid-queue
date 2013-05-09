@@ -74,7 +74,9 @@ public class MessageBroker {
 			
 			try {
 				byte[] body = queue.getQueue().poll(nextWaittime,TimeUnit.MILLISECONDS);
-				result.add(new Message(body));
+				if(body != null) {
+					result.add(new Message(body));
+				}
 			} catch (InterruptedException e) {
 				break;
 			}
