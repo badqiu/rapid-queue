@@ -40,7 +40,31 @@ public class MessageBrokerTest extends Assert{
 			}
 		}
 	}
+	
+	@Test
+	public void test_unbind() throws Exception {
+		bind("user.*");
+		Thread.sleep(500);
+		
+		mb.send(new Message(exchangeName,"user.badqiu",body));
+		assertEquals(body,mb.receive(queueName, 1).getBody());
+		
+		mb.getManager().queueUnbind(exchangeName, queueName, "user.badqiu");
+		assertEquals(null,mb.receive(queueName, 1).getBody());
+	}
 
+	@Test(expected=UnsupportedOperationException.class)
+	public void test_delete() throws Exception {
+		bind("user.*");
+		Thread.sleep(500);
+		
+		mb.send(new Message(exchangeName,"user.badqiu",body));
+		assertEquals(body,mb.receive(queueName, 1).getBody());
+		
+		mb.getManager().queueDelete(queueName);
+		assertEquals(null,mb.receive(queueName, 1).getBody());
+	}
+	
 	private void bind(String routerKey) throws Exception {
 		TopicExchange exchange = new TopicExchange();
 		exchange.setExchangeName(exchangeName);
