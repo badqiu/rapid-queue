@@ -35,11 +35,11 @@
 	
 	<tr>	
 		<td class="tdLabel">
-			<span class="required">*</span>是否持久队列:
+			<span class="required">*</span>持久模式:memory,durable,haft_durable:
 		</td>		
 		<td>
-		<form:input path="durable" id="durable" cssClass="required validate-integer max-value-2147483647" maxlength="3" />
-		<font color='red'><form:errors path="durable"/></font>
+		<form:input path="durableType" id="durableType" cssClass="required " maxlength="30" />
+		<font color='red'><form:errors path="durableType"/></font>
 		</td>
 	</tr>	
 	
@@ -80,6 +80,16 @@
 		<td>
 		<form:input path="size" id="size" cssClass="required validate-integer max-value-2147483647" maxlength="10" />
 		<font color='red'><form:errors path="size"/></font>
+		</td>
+	</tr>	
+	
+	<tr>	
+		<td class="tdLabel">
+			当使用半持久模式,放在内存中的元素大小:
+		</td>		
+		<td>
+		<form:input path="memorySize" id="memorySize" cssClass="validate-integer max-value-2147483647" maxlength="10" />
+		<font color='red'><form:errors path="memorySize"/></font>
 		</td>
 	</tr>	
 	

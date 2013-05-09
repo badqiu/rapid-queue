@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.dao.impl;
 
+import java.util.List;
+
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,7 +31,7 @@ public class ExchangeDaoImpl extends BaseSpringJdbcDao implements ExchangeDao{
 	
 	private RowMapper<Exchange> entityRowMapper = new BeanPropertyRowMapper<Exchange>(getEntityClass());
 	
-	static final private String COLUMNS = "exchange_name,vhost_name,remarks,durable,auto_delete,type,size,max_size,created_time,operator,last_updated_time";
+	static final private String COLUMNS = "exchange_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,type,size,memory_size,max_size,created_time,operator,last_updated_time";
 	static final private String SELECT_FROM = "select " + COLUMNS + " from rq_exchange";
 	
 	@Override
@@ -48,21 +50,21 @@ public class ExchangeDaoImpl extends BaseSpringJdbcDao implements ExchangeDao{
 	
 	public void insert(Exchange entity) {
 		String sql = "insert into rq_exchange " 
-			 + " (exchange_name,vhost_name,remarks,durable,auto_delete,type,size,max_size,created_time,operator,last_updated_time) " 
+			 + " (exchange_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,type,size,memory_size,max_size,created_time,operator,last_updated_time) " 
 			 + " values "
-			 + " (:exchangeName,:vhostName,:remarks,:durable,:autoDelete,:type,:size,:maxSize,:createdTime,:operator,:lastUpdatedTime)";
-		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
+			 + " (:exchangeName,:vhostName,:remarks,:durableType,:autoDelete,:autoDeleteExpires,:type,:size,:memorySize,:maxSize,:createdTime,:operator,:lastUpdatedTime)";
+//		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
 		
 		//其它主键生成策略
 		//insertWithOracleSequence(entity,"sequenceName",sql); //oracle sequence: 
 		//insertWithDB2Sequence(entity,"sequenceName",sql); //db2 sequence:
 		//insertWithUUID(entity,sql); //uuid
-		//insertWithAssigned(entity,sql) //手工分配
+		insertWithAssigned(entity,sql); //手工分配
 	}
 	
 	public int update(Exchange entity) {
 		String sql = "update rq_exchange set "
-					+ " remarks=:remarks,durable=:durable,auto_delete=:autoDelete,type=:type,size=:size,max_size=:maxSize,created_time=:createdTime,operator=:operator,last_updated_time=:lastUpdatedTime "
+					+ " remarks=:remarks,durable_type=:durableType,auto_delete=:autoDelete,auto_delete_expires=:autoDeleteExpires,type=:type,size=:size,memory_size=:memorySize,max_size=:maxSize,created_time=:createdTime,operator=:operator,last_updated_time=:lastUpdatedTime "
 					+ " where  exchange_name = :exchangeName and vhost_name = :vhostName ";
 		return getNamedParameterJdbcTemplate().update(sql, new BeanPropertySqlParameterSource(entity));
 	}
@@ -90,17 +92,23 @@ public class ExchangeDaoImpl extends BaseSpringJdbcDao implements ExchangeDao{
 		if(isNotEmpty(query.getRemarks())) {
             sql.append(" and remarks = :remarks ");
         }
-		if(isNotEmpty(query.getDurable())) {
-            sql.append(" and durable = :durable ");
+		if(isNotEmpty(query.getDurableType())) {
+            sql.append(" and durable_type = :durableType ");
         }
 		if(isNotEmpty(query.getAutoDelete())) {
             sql.append(" and auto_delete = :autoDelete ");
+        }
+		if(isNotEmpty(query.getAutoDeleteExpires())) {
+            sql.append(" and auto_delete_expires = :autoDeleteExpires ");
         }
 		if(isNotEmpty(query.getType())) {
             sql.append(" and type = :type ");
         }
 		if(isNotEmpty(query.getSize())) {
             sql.append(" and size = :size ");
+        }
+		if(isNotEmpty(query.getMemorySize())) {
+            sql.append(" and memory_size = :memorySize ");
         }
 		if(isNotEmpty(query.getMaxSize())) {
             sql.append(" and max_size = :maxSize ");
@@ -125,4 +133,10 @@ public class ExchangeDaoImpl extends BaseSpringJdbcDao implements ExchangeDao{
 		
 		return pageQuery(sql.toString(),query,getEntityRowMapper());				
 	}
+
+	@Override
+	public List<Exchange> findByVhostName(String vhostName) {
+		return getSimpleJdbcTemplate().query(SELECT_FROM+" where vhost_name = ?", getEntityRowMapper(), vhostName);
+	}
+	
 }

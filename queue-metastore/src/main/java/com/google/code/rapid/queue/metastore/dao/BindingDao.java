@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.dao;
 
+import java.util.List;
+
 import cn.org.rapid_framework.page.Page;
 
 import com.google.code.rapid.queue.metastore.model.Binding;
@@ -29,6 +31,9 @@ public interface BindingDao {
 	
 	public Binding getById(String queueName, String exchangeName, String vhostName);
 
-	public Page<Binding> findPage(BindingQuery query);	
+	public Page<Binding> findPage(BindingQuery query);
+
+	public List<Binding> findBindingByVhostName(String vhostName,
+			String exchangeName);	
 	
 }

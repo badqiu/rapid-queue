@@ -19,6 +19,10 @@ public class RouterKeyUtil {
 	}
 	
 	public static boolean matchRouterKey(List<String> routerKeyList,String routerKeyValue) {
+		if(routerKeyList == null || routerKeyList.isEmpty()) {
+			return false;
+		}
+		
 		for(String routerKey : routerKeyList) {
 			return RouterKeyUtil.matchRouterKey(routerKey, routerKeyValue);
 		}

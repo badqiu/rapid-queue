@@ -1,5 +1,6 @@
 package com.google.code.rapid.queue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
@@ -16,15 +17,16 @@ import com.google.code.rapid.queue.util.RouterKeyUtil;
  */
 public class TopicQueue {
 	
-	private List<String> routerKeyList;
+	private List<String> routerKeyList = new ArrayList<String>();
 	private BlockingQueue<byte[]> queue;
 	
 	private String queueName;
 	private String remarks; // 备注
 	
-	private boolean durable;
+	private DurableTypeEnum durableType;
 	private boolean autoDelete; //auto delete queue by timeout
 	private int maxSize;
+	private int memorySize;
 	
 	public List<String> getRouterKeyList() {
 		return routerKeyList;
@@ -62,12 +64,12 @@ public class TopicQueue {
 		this.remarks = remarks;
 	}
 
-	public boolean isDurable() {
-		return durable;
+	public DurableTypeEnum getDurableType() {
+		return durableType;
 	}
 
-	public void setDurable(boolean durable) {
-		this.durable = durable;
+	public void setDurableType(DurableTypeEnum durableType) {
+		this.durableType = durableType;
 	}
 
 	public boolean isAutoDelete() {
@@ -85,9 +87,21 @@ public class TopicQueue {
 	public void setMaxSize(int maxSize) {
 		this.maxSize = maxSize;
 	}
+	
+	public int getMemorySize() {
+		return memorySize;
+	}
+
+	public void setMemorySize(int memorySize) {
+		this.memorySize = memorySize;
+	}
 
 	public void truncate() {
 		throw new UnsupportedOperationException(); //FIXME truncate()
+	}
+	
+	public void delete() {
+		throw new UnsupportedOperationException(); //FIXME delete()
 	}
 	
 	@Override

@@ -8,6 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.google.code.rapid.queue.exchange.TopicExchange;
+import com.google.code.rapid.queue.metastore.model.Binding;
 import com.google.code.rapid.queue.metastore.model.Exchange;
 import com.google.code.rapid.queue.metastore.model.Queue;
 import com.google.code.rapid.queue.metastore.model.Vhost;
@@ -64,11 +65,12 @@ public class MessageBrokerBuilder {
 				TopicExchange topicExchange = newTopicExchange(exchange);
 				mb.getManager().exchangeAdd(topicExchange);
 				
-				List<Queue> queueList = bindingService.findQueueByVhostName(vhost.getVhostName(),exchange.getExchangeName());
-				for(Queue queue : queueList) {
+				List<Binding> bindingList = bindingService.findBindingByVhostName(vhost.getVhostName(),exchange.getExchangeName());
+				for(Binding binding : bindingList) {
+					Queue queue = queueService.getById(binding.getQueueName(), binding.getExchangeName());
 					TopicQueue q = newTopicQueue(queue);
 					mb.getManager().queueAdd(q);
-					mb.getManager().queueBind(exchange.getExchangeName(), q.getQueueName());
+					mb.getManager().queueBind(exchange.getExchangeName(), q.getQueueName(),binding.getRouterKey());
 				}
 			}
 			
@@ -81,8 +83,8 @@ public class MessageBrokerBuilder {
 		r.setQueueName(queue.getQueueName());
 		r.setRemarks(queue.getRemarks());
 		r.setAutoDelete(queue.getAutoDelete());
-		r.setDurable(queue.getDurable());
-		r.setQueue(newBlockQueue(queue.getDurable(),queue.getMaxSize(),"queue/"+queue.getQueueName()));
+		r.setDurableType(DurableTypeEnum.valueOf(queue.getDurableType()));
+		r.setQueue(newBlockQueue(r.getDurableType(),queue.getMemorySize(),queue.getMaxSize(),"queue/"+queue.getQueueName()));
 		r.setMaxSize(queue.getMaxSize());
 		return r;
 	}
@@ -92,23 +94,32 @@ public class MessageBrokerBuilder {
 		r.setExchangeName(exchange.getExchangeName());
 		r.setRemarks(exchange.getRemarks());
 		r.setAutoDelete(exchange.getAutoDelete());
-		r.setDurable(exchange.getDurable());
-		r.setExchangeQueue(newBlockQueue(exchange.getDurable(),exchange.getMaxSize(),"exchange/"+exchange.getExchangeName()));
+		r.setDurableType(DurableTypeEnum.valueOf(exchange.getDurableType()));
+		r.setExchangeQueue(newBlockQueue(r.getDurableType(),exchange.getMemorySize(),exchange.getMaxSize(),"exchange/"+exchange.getExchangeName()));
 		r.setMaxSize(exchange.getMaxSize());
 		return r;
 	}
 
-	private BlockingQueue newBlockQueue(boolean durable,int maxSize,String subPath) {
+	private BlockingQueue newBlockQueue(DurableTypeEnum durableType,int memorySize,int maxSize,String subPath) {
 		if(dataDir == null) throw new IllegalArgumentException("dataDir must be not null");
+		if(durableType == null) throw new IllegalArgumentException("durableType must be not null");
+		if(subPath == null) throw new IllegalArgumentException("subPath must be not null");
 		
-		if(durable) {
-			return new DurableBlockingQueue(new File(dataDir,subPath).getAbsolutePath());
-		}else {
+		if(durableType == DurableTypeEnum.MEMORY) {
 			if(maxSize > 0) {
 				return new LinkedBlockingQueue(maxSize);
 			}else {
 				return new LinkedBlockingQueue();
 			}
+		}else if(durableType == DurableTypeEnum.DURABLE) {
+			return new DurableBlockingQueue(new File(dataDir,subPath).getAbsolutePath());
+		}else if(durableType == DurableTypeEnum.HALF_DURABLE) {
+			if(memorySize <= 0) {
+				throw new IllegalArgumentException("memorySize > 0 must be true on HALF_DURABLE,current:"+memorySize);
+			}
+			return new HalfDurableBlockingQueue(memorySize,new DurableBlockingQueue(new File(dataDir,subPath).getAbsolutePath()));
+		}else {
+			throw new IllegalArgumentException("unknow durableType:"+durableType);
 		}
 	}
 }

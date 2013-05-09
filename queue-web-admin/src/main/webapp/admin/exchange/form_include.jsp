@@ -35,11 +35,11 @@
 	
 	<tr>	
 		<td class="tdLabel">
-			<span class="required">*</span>是否持久性交换机:
+			<span class="required">*</span>持久模式:memory,durable,haft_durable:
 		</td>		
 		<td>
-		<form:input path="durable" id="durable" cssClass="required validate-integer max-value-2147483647" maxlength="3" />
-		<font color='red'><form:errors path="durable"/></font>
+		<form:input path="durableType" id="durableType" cssClass="required " maxlength="30" />
+		<font color='red'><form:errors path="durableType"/></font>
 		</td>
 	</tr>	
 	
@@ -50,6 +50,16 @@
 		<td>
 		<form:input path="autoDelete" id="autoDelete" cssClass="required validate-integer max-value-2147483647" maxlength="3" />
 		<font color='red'><form:errors path="autoDelete"/></font>
+		</td>
+	</tr>	
+	
+	<tr>	
+		<td class="tdLabel">
+			自动删除的时过期时长，单位毫秒:
+		</td>		
+		<td>
+		<form:input path="autoDeleteExpires" id="autoDeleteExpires" cssClass="validate-integer " maxlength="19" />
+		<font color='red'><form:errors path="autoDeleteExpires"/></font>
 		</td>
 	</tr>	
 	
@@ -70,6 +80,16 @@
 		<td>
 		<form:input path="size" id="size" cssClass="validate-integer max-value-2147483647" maxlength="10" />
 		<font color='red'><form:errors path="size"/></font>
+		</td>
+	</tr>	
+	
+	<tr>	
+		<td class="tdLabel">
+			当使用半持久模式,放在内存中的元素大小:
+		</td>		
+		<td>
+		<form:input path="memorySize" id="memorySize" cssClass="validate-integer max-value-2147483647" maxlength="10" />
+		<font color='red'><form:errors path="memorySize"/></font>
 		</td>
 	</tr>	
 	

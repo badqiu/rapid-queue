@@ -28,14 +28,18 @@ public class ExchangeQuery extends PageQuery implements Serializable {
 	private java.lang.String vhostName;
 	/** 备注 */
 	private java.lang.String remarks;
-	/** 是否持久性交换机 */
-	private Integer durable;
+	/** 持久模式:memory,durable,haft_durable */
+	private java.lang.String durableType;
 	/** 是否自动删除 */
 	private Integer autoDelete;
+	/** 自动删除的时过期时长，单位毫秒 */
+	private java.lang.Long autoDeleteExpires;
 	/** 类型: topic,fanout,direct */
 	private java.lang.String type;
 	/** 当前交换机大小 */
 	private java.lang.Integer size;
+	/** 当使用半持久模式,放在内存中的元素大小 */
+	private java.lang.Integer memorySize;
 	/** 交换机的大小 */
 	private java.lang.Integer maxSize;
 	/** 创建时间 */
@@ -71,12 +75,12 @@ public class ExchangeQuery extends PageQuery implements Serializable {
 		this.remarks = value;
 	}
 	
-	public Integer getDurable() {
-		return this.durable;
+	public java.lang.String getDurableType() {
+		return this.durableType;
 	}
 	
-	public void setDurable(Integer value) {
-		this.durable = value;
+	public void setDurableType(java.lang.String value) {
+		this.durableType = value;
 	}
 	
 	public Integer getAutoDelete() {
@@ -85,6 +89,14 @@ public class ExchangeQuery extends PageQuery implements Serializable {
 	
 	public void setAutoDelete(Integer value) {
 		this.autoDelete = value;
+	}
+	
+	public java.lang.Long getAutoDeleteExpires() {
+		return this.autoDeleteExpires;
+	}
+	
+	public void setAutoDeleteExpires(java.lang.Long value) {
+		this.autoDeleteExpires = value;
 	}
 	
 	public java.lang.String getType() {
@@ -101,6 +113,14 @@ public class ExchangeQuery extends PageQuery implements Serializable {
 	
 	public void setSize(java.lang.Integer value) {
 		this.size = value;
+	}
+	
+	public java.lang.Integer getMemorySize() {
+		return this.memorySize;
+	}
+	
+	public void setMemorySize(java.lang.Integer value) {
+		this.memorySize = value;
 	}
 	
 	public java.lang.Integer getMaxSize() {

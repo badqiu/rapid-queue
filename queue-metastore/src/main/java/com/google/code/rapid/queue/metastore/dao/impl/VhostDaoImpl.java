@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.dao.impl;
 
+import java.util.List;
+
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -51,13 +53,13 @@ public class VhostDaoImpl extends BaseSpringJdbcDao implements VhostDao{
 			 + " (vhost_name,remarks,host) " 
 			 + " values "
 			 + " (:vhostName,:remarks,:host)";
-		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
+//		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
 		
 		//其它主键生成策略
 		//insertWithOracleSequence(entity,"sequenceName",sql); //oracle sequence: 
 		//insertWithDB2Sequence(entity,"sequenceName",sql); //db2 sequence:
 		//insertWithUUID(entity,sql); //uuid
-		//insertWithAssigned(entity,sql) //手工分配
+		insertWithAssigned(entity,sql); //手工分配
 	}
 	
 	public int update(Vhost entity) {
@@ -95,4 +97,10 @@ public class VhostDaoImpl extends BaseSpringJdbcDao implements VhostDao{
 		
 		return pageQuery(sql.toString(),query,getEntityRowMapper());				
 	}
+
+	@Override
+	public List<Vhost> findAll() {
+		return getSimpleJdbcTemplate().query(SELECT_FROM, getEntityRowMapper());
+	}
+	
 }

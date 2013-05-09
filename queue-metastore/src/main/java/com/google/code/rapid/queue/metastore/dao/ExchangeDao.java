@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.dao;
 
+import java.util.List;
+
 import cn.org.rapid_framework.page.Page;
 
 import com.google.code.rapid.queue.metastore.model.Exchange;
@@ -30,6 +32,8 @@ public interface ExchangeDao {
 	public Exchange getById(String exchangeName, String vhostName);
 	
 
-	public Page<Exchange> findPage(ExchangeQuery query);	
+	public Page<Exchange> findPage(ExchangeQuery query);
+
+	public List<Exchange> findByVhostName(String vhostName);	
 	
 }

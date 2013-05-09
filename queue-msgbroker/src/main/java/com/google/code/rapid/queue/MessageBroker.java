@@ -126,19 +126,21 @@ public class MessageBroker {
 	
 		public void queueUnbindAllExchange(String queueName) {
 			for(String exchangeName : exchangeMap.keySet()) {
-				queueUnbind(exchangeName, queueName);
+				TopicExchange exchange = lookupExchange(exchangeName);
+				exchange.unbindQueue(queueName);
 			}
 		}
 		
-		public void queueBind(String exchangeName,String queueName) {
+		public void queueBind(String exchangeName,String queueName,String routerKey) {
 			TopicExchange exchange = lookupExchange(exchangeName);
 			TopicQueue queue = lookupQueue(queueName);
+			queue.getRouterKeyList().add(routerKey);
 			exchange.bindQueue(queue);
 		}
 	
-		public void queueUnbind(String exchangeName,String queueName) {
+		public void queueUnbind(String exchangeName,String queueName,String routerKey) {
 			TopicExchange exchange = lookupExchange(exchangeName);
-			exchange.unbindQueue(queueName);
+			exchange.unbindQueue(queueName,routerKey);
 		}
 		
 		public void exchangeAdd(TopicExchange exchange) {

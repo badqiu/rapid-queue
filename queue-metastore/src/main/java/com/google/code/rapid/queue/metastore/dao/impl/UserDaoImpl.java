@@ -51,13 +51,13 @@ public class UserDaoImpl extends BaseSpringJdbcDao implements UserDao{
 			 + " (username,password,remarks,email,mobile) " 
 			 + " values "
 			 + " (:username,:password,:remarks,:email,:mobile)";
-		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
+//		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
 		
 		//其它主键生成策略
 		//insertWithOracleSequence(entity,"sequenceName",sql); //oracle sequence: 
 		//insertWithDB2Sequence(entity,"sequenceName",sql); //db2 sequence:
 		//insertWithUUID(entity,sql); //uuid
-		//insertWithAssigned(entity,sql) //手工分配
+		insertWithAssigned(entity,sql); //手工分配
 	}
 	
 	public int update(User entity) {

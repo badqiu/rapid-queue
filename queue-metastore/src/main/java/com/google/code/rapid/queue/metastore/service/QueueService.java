@@ -49,5 +49,4 @@ public interface QueueService {
 	 **/      
 	public Page<Queue> findPage(QueueQuery query);
 	
-	public List<Queue> findByVhostName(String vhostName);
 }

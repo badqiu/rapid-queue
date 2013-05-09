@@ -28,8 +28,8 @@ public class QueueQuery extends PageQuery implements Serializable {
 	private java.lang.String vhostName;
 	/** 备注 */
 	private java.lang.String remarks;
-	/** 是否持久队列 */
-	private Integer durable;
+	/** 持久模式:memory,durable,haft_durable */
+	private java.lang.String durableType;
 	/** 是否自动删除 */
 	private Integer autoDelete;
 	/** 自动删除的时过期时长，单位毫秒 */
@@ -38,6 +38,8 @@ public class QueueQuery extends PageQuery implements Serializable {
 	private Integer exclusive;
 	/** 队列当前大小 */
 	private java.lang.Integer size;
+	/** 当使用半持久模式,放在内存中的元素大小 */
+	private java.lang.Integer memorySize;
 	/** 队列最大大小 */
 	private java.lang.Integer maxSize;
 	/** time to live in queue,发送至这个队列的数据多久过期 */
@@ -75,12 +77,12 @@ public class QueueQuery extends PageQuery implements Serializable {
 		this.remarks = value;
 	}
 	
-	public Integer getDurable() {
-		return this.durable;
+	public java.lang.String getDurableType() {
+		return this.durableType;
 	}
 	
-	public void setDurable(Integer value) {
-		this.durable = value;
+	public void setDurableType(java.lang.String value) {
+		this.durableType = value;
 	}
 	
 	public Integer getAutoDelete() {
@@ -113,6 +115,14 @@ public class QueueQuery extends PageQuery implements Serializable {
 	
 	public void setSize(java.lang.Integer value) {
 		this.size = value;
+	}
+	
+	public java.lang.Integer getMemorySize() {
+		return this.memorySize;
+	}
+	
+	public void setMemorySize(java.lang.Integer value) {
+		this.memorySize = value;
 	}
 	
 	public java.lang.Integer getMaxSize() {

@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Message {
-	private String messageId = UUID.randomUUID().toString().replace("-", ""); // 消息ID
+	private String messageId ; // 消息ID
 	private Integer priority = 0; // 优先级
 	private String contentType = "byte"; // json,xml,text,
 	private String encoding = "UTF-8"; // UTF-8

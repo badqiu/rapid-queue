@@ -12,6 +12,10 @@ public class Message {
 
 	private Map<String, Object> messageProperties = null; // 消息附加属性
 	private boolean persistent = true;
+
+	private String sourceIp;	//发送消息的来源IP
+	private String sourceApp;   //发送消息的来源App
+	private String sourceUser;  //发送消息的来源User
 	
 	private String exchange; // exchange
 	private String routerKey; // 路由key

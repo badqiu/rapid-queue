@@ -39,19 +39,19 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	private Lock writeLock = lock.writeLock();
 
-	public DurableQueue(String path) {
+	public DurableQueue(String dir) {
 		try {
-			fsQueue = new FileQueue(path);
+			fsQueue = new FileQueue(dir);
 		} catch (Exception e) {
-			throw new RuntimeException("create durable queue error,path:"+path,e);
+			throw new RuntimeException("create durable queue error,path:"+dir,e);
 		}
 	}
 
-	public DurableQueue(String path, int logsize) {
+	public DurableQueue(String dir, int logsize) {
 		try {
-			fsQueue = new FileQueue(path, logsize);
+			fsQueue = new FileQueue(dir, logsize);
 		} catch (Exception e) {
-			throw new RuntimeException("create durable queue error,path:"+path,e);
+			throw new RuntimeException("create durable queue error,path:"+dir,e);
 		}
 	}
 

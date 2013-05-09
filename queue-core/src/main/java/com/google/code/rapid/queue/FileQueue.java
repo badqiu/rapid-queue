@@ -58,8 +58,8 @@ public class FileQueue {
 	
 	private boolean closed = false;
 
-	public FileQueue(String path) throws Exception {
-		this(path, DEFAULT_FILE_LIMIT_LENGTH);
+	public FileQueue(String dir) throws Exception {
+		this(dir, DEFAULT_FILE_LIMIT_LENGTH);
 	}
 
 	/**

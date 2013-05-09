@@ -28,12 +28,16 @@
 				<td><c:out value='${exchange.remarks}'/></td>
 			</tr>
 			<tr>	
-				<td class="tdLabel">是否持久性交换机</td>	
-				<td><c:out value='${exchange.durable}'/></td>
+				<td class="tdLabel">持久模式:memory,durable,haft_durable</td>	
+				<td><c:out value='${exchange.durableType}'/></td>
 			</tr>
 			<tr>	
 				<td class="tdLabel">是否自动删除</td>	
 				<td><c:out value='${exchange.autoDelete}'/></td>
+			</tr>
+			<tr>	
+				<td class="tdLabel">自动删除的时过期时长，单位毫秒</td>	
+				<td><c:out value='${exchange.autoDeleteExpires}'/></td>
 			</tr>
 			<tr>	
 				<td class="tdLabel">类型: topic,fanout,direct</td>	
@@ -42,6 +46,10 @@
 			<tr>	
 				<td class="tdLabel">当前交换机大小</td>	
 				<td><c:out value='${exchange.size}'/></td>
+			</tr>
+			<tr>	
+				<td class="tdLabel">当使用半持久模式,放在内存中的元素大小</td>	
+				<td><c:out value='${exchange.memorySize}'/></td>
 			</tr>
 			<tr>	
 				<td class="tdLabel">交换机的大小</td>	

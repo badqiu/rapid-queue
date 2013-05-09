@@ -28,7 +28,7 @@
 		<property name="locations">
 			<list>
 				<!-- 服务器环境 -->
-				<value>file:/data/app/fpcms/config/${DWENV}/app.properties</value>
+				<value>file:/data/app/rapid-queue/config/${DWENV}/app.properties</value>
 				<!-- 开发环境 -->
 				<value>classpath*:app.properties</value>
 			</list>

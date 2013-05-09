@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.code.rapid.queue.DurableTypeEnum;
 import com.google.code.rapid.queue.Message;
 import com.google.code.rapid.queue.TopicQueue;
 import com.google.code.rapid.queue.util.RouterKeyUtil;
@@ -20,9 +21,10 @@ import com.google.code.rapid.queue.util.RouterKeyUtil;
  */
 public class TopicExchange {
 
-	private boolean durable;
+	private DurableTypeEnum durableType;
 	private boolean autoDelete;  //auto delete exchange by timeout
 	private int maxSize;
+	private int memorySize;
 	private String exchangeName; //exchange名称
 	private String remarks; // 备注
 	private List<String> routerKeyList;	//exchange routerKey for exchange <=> exchange msg transfer
@@ -92,12 +94,12 @@ public class TopicExchange {
 		}
 	}
 
-	public boolean isDurable() {
-		return durable;
+	public DurableTypeEnum getDurableType() {
+		return durableType;
 	}
 
-	public void setDurable(boolean durable) {
-		this.durable = durable;
+	public void setDurableType(DurableTypeEnum durableType) {
+		this.durableType = durableType;
 	}
 
 	public boolean isAutoDelete() {
@@ -124,6 +126,16 @@ public class TopicExchange {
 		this.remarks = remarks;
 	}
 	
+	public int getMemorySize() {
+		return memorySize;
+	}
+
+
+	public void setMemorySize(int memorySize) {
+		this.memorySize = memorySize;
+	}
+
+
 	public void bindQueue(TopicQueue queue) {
 		if(bindQueueList.contains(queue)) {
 			throw new IllegalArgumentException("already bind queue:"+queue.getQueueName()+" on exchange:"+exchangeName);
@@ -139,6 +151,20 @@ public class TopicExchange {
 			TopicQueue q = it.next();
 			if(q.getQueueName().equals(queueName)) {
 				it.remove();
+			}
+		}
+	}
+	
+	public void unbindQueue(String queueName,String routerKey) {
+		if(StringUtils.isBlank(queueName)) throw new IllegalArgumentException("queueName must be not empty");
+		
+		for(ListIterator<TopicQueue> it = bindQueueList.listIterator(); it.hasNext(); ) {
+			TopicQueue q = it.next();
+			if(q.getQueueName().equals(queueName)) {
+				q.getRouterKeyList().remove(routerKey);
+				if(q.getRouterKeyList().isEmpty()) {
+					it.remove();
+				}
 			}
 		}
 	}

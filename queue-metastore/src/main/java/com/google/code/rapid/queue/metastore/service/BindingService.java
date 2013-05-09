@@ -11,7 +11,6 @@ import java.util.List;
 import cn.org.rapid_framework.page.Page;
 
 import com.google.code.rapid.queue.metastore.model.Binding;
-import com.google.code.rapid.queue.metastore.model.Queue;
 import com.google.code.rapid.queue.metastore.query.BindingQuery;
 
 
@@ -49,7 +48,7 @@ public interface BindingService {
 	 **/      
 	public Page<Binding> findPage(BindingQuery query);
 
-	public List<Queue> findQueueByVhostName(String vhostName,String exchangeName);
+	public List<Binding> findBindingByVhostName(String vhostName,String exchangeName);
 	
     
 }

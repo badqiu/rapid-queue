@@ -28,8 +28,8 @@
 				<td><c:out value='${queue.remarks}'/></td>
 			</tr>
 			<tr>	
-				<td class="tdLabel">是否持久队列</td>	
-				<td><c:out value='${queue.durable}'/></td>
+				<td class="tdLabel">持久模式:memory,durable,haft_durable</td>	
+				<td><c:out value='${queue.durableType}'/></td>
 			</tr>
 			<tr>	
 				<td class="tdLabel">是否自动删除</td>	
@@ -46,6 +46,10 @@
 			<tr>	
 				<td class="tdLabel">队列当前大小</td>	
 				<td><c:out value='${queue.size}'/></td>
+			</tr>
+			<tr>	
+				<td class="tdLabel">当使用半持久模式,放在内存中的元素大小</td>	
+				<td><c:out value='${queue.memorySize}'/></td>
 			</tr>
 			<tr>	
 				<td class="tdLabel">队列最大大小</td>	

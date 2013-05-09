@@ -7,14 +7,13 @@
 package com.google.code.rapid.queue.metastore.model;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-
-import com.sun.istack.internal.NotNull;
 
 
 /**
@@ -52,10 +51,10 @@ public class Queue  implements java.io.Serializable{
 	private java.lang.String remarks;
 	
     /**
-     * 是否持久队列       db_column: durable 
+     * 持久模式:memory,durable,haft_durable       db_column: durable_type 
      */ 	
-	@NotNull @Max(127)
-	private Boolean durable;
+	@NotBlank @Length(max=30)
+	private java.lang.String durableType;
 	
     /**
      * 是否自动删除       db_column: auto_delete 
@@ -80,6 +79,12 @@ public class Queue  implements java.io.Serializable{
      */ 	
 	@NotNull 
 	private java.lang.Integer size;
+	
+    /**
+     * 当使用半持久模式,放在内存中的元素大小       db_column: memory_size 
+     */ 	
+	
+	private java.lang.Integer memorySize;
 	
     /**
      * 队列最大大小       db_column: max_size 
@@ -148,12 +153,12 @@ public class Queue  implements java.io.Serializable{
 		this.remarks = value;
 	}
 	
-	public Boolean getDurable() {
-		return this.durable;
+	public java.lang.String getDurableType() {
+		return this.durableType;
 	}
 	
-	public void setDurable(Boolean value) {
-		this.durable = value;
+	public void setDurableType(java.lang.String value) {
+		this.durableType = value;
 	}
 	
 	public Boolean getAutoDelete() {
@@ -186,6 +191,14 @@ public class Queue  implements java.io.Serializable{
 	
 	public void setSize(java.lang.Integer value) {
 		this.size = value;
+	}
+	
+	public java.lang.Integer getMemorySize() {
+		return this.memorySize;
+	}
+	
+	public void setMemorySize(java.lang.Integer value) {
+		this.memorySize = value;
 	}
 	
 	public java.lang.Integer getMaxSize() {

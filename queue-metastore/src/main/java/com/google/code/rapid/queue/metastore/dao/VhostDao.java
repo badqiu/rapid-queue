@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.dao;
 
+import java.util.List;
+
 import cn.org.rapid_framework.page.Page;
 
 import com.google.code.rapid.queue.metastore.model.Vhost;
@@ -29,6 +31,8 @@ public interface VhostDao {
 	
 	public Vhost getById(String vhostName);
 
-	public Page<Vhost> findPage(VhostQuery query);	
+	public Page<Vhost> findPage(VhostQuery query);
+
+	public List<Vhost> findAll();	
 	
 }

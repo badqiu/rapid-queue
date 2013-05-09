@@ -28,11 +28,12 @@ public class QueueDataFactory {
 		query.setPageSize(10);
 		
 	  	query.setRemarks(new String("1"));
-	  	query.setDurable(new Integer("1"));
+	  	query.setDurableType(new String("1"));
 	  	query.setAutoDelete(new Integer("1"));
 	  	query.setAutoDeleteExpires(new Long("1"));
 	  	query.setExclusive(new Integer("1"));
 	  	query.setSize(new Integer("1"));
+	  	query.setMemorySize(new Integer("1"));
 	  	query.setMaxSize(new Integer("1"));
 	  	query.setTtl(new Long("1"));
 		query.setCreatedTimeBegin(new Date(System.currentTimeMillis()));
@@ -47,11 +48,12 @@ public class QueueDataFactory {
 		Queue obj = new Queue();
 		
 	  	obj.setRemarks(new java.lang.String("1"));
-	  	obj.setDurable(new Integer("1"));
+	  	obj.setDurableType(new java.lang.String("1"));
 	  	obj.setAutoDelete(new Integer("1"));
 	  	obj.setAutoDeleteExpires(new java.lang.Long("1"));
 	  	obj.setExclusive(new Integer("1"));
 	  	obj.setSize(new java.lang.Integer("1"));
+	  	obj.setMemorySize(new java.lang.Integer("1"));
 	  	obj.setMaxSize(new java.lang.Integer("1"));
 	  	obj.setTtl(new java.lang.Long("1"));
 	  	obj.setCreatedTime(new java.util.Date(System.currentTimeMillis()));

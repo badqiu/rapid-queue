@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.service.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -116,4 +118,5 @@ public class QueueServiceImpl implements QueueService {
         	//复杂的属性的检查一般需要分开写几个方法，如 checkProperty1(v),checkProperty2(v)
         }
     }
+
 }

@@ -6,6 +6,7 @@
 
 package com.google.code.rapid.queue.metastore.dao.impl;
 
+import java.util.List;
 
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -52,13 +53,13 @@ public class BindingDaoImpl extends BaseSpringJdbcDao implements BindingDao{
 			 + " (queue_name,exchange_name,vhost_name,router_key,remarks) " 
 			 + " values "
 			 + " (:queueName,:exchangeName,:vhostName,:routerKey,:remarks)";
-		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
+//		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
 		
 		//其它主键生成策略
 		//insertWithOracleSequence(entity,"sequenceName",sql); //oracle sequence: 
 		//insertWithDB2Sequence(entity,"sequenceName",sql); //db2 sequence:
 		//insertWithUUID(entity,sql); //uuid
-		//insertWithAssigned(entity,sql) //手工分配
+		insertWithAssigned(entity,sql); //手工分配
 	}
 	
 	public int update(Binding entity) {
@@ -102,4 +103,11 @@ public class BindingDaoImpl extends BaseSpringJdbcDao implements BindingDao{
 		
 		return pageQuery(sql.toString(),query,getEntityRowMapper());				
 	}
+
+	@Override
+	public List<Binding> findBindingByVhostName(String vhostName,
+			String exchangeName) {
+		return getSimpleJdbcTemplate().query(SELECT_FROM+" where vhost_name = ? and exchange_name = ?", getEntityRowMapper(), vhostName,exchangeName);
+	}
+	
 }
