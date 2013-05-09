@@ -1,5 +1,10 @@
 package com.google.code.rapid.queue;
-
+/**
+ * 持久模式
+ * 
+ * @author badqiu
+ *
+ */
 public enum DurableTypeEnum {
 	MEMORY("内存模式"),
 	DURABLE("持久模式"),

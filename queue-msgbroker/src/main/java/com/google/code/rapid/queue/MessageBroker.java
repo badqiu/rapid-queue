@@ -1,6 +1,7 @@
 package com.google.code.rapid.queue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -8,14 +9,13 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.code.rapid.queue.exchange.TopicExchange;
-import com.google.code.rapid.queue.metastore.model.Exchange;
 
 public class MessageBroker {
 	// Map<exchangeName,TopicExchange>
-	private Map<String,TopicExchange> exchangeMap = null;
+	private Map<String,TopicExchange> exchangeMap = new HashMap<String,TopicExchange>();
 	
 	// Map<queueName,TopicExchange>
-	private Map<String,TopicQueue> queueMap = null;
+	private Map<String,TopicQueue> queueMap = new HashMap<String,TopicQueue>();
 	
 	private MessageBrokerManager manager = new MessageBrokerManager();
 	
@@ -24,9 +24,9 @@ public class MessageBroker {
 	 * @param msg
 	 */
 	public void send(Message msg) {
-		if(StringUtils.isEmpty(msg.getExchange())) throw new IllegalArgumentException("'exchange' must be not empty");
-		if(StringUtils.isEmpty(msg.getRouterKey())) throw new IllegalArgumentException("'routerKey' must be not empty");
-		if(msg.getBody() == null) throw new IllegalArgumentException("'body' must be not null");
+		if(StringUtils.isEmpty(msg.getExchange())) throw new IllegalArgumentException("'msg.exchange' must be not empty");
+		if(StringUtils.isEmpty(msg.getRouterKey())) throw new IllegalArgumentException("'msg.routerKey' must be not empty");
+		if(msg.getBody() == null) throw new IllegalArgumentException("'msg.body' must be not null");
 		
 		TopicExchange exchange = lookupExchange(msg.getExchange());
 		exchange.offer(msg);
@@ -113,8 +113,8 @@ public class MessageBroker {
 	public class MessageBrokerManager {
 	
 		public void queueAdd(TopicQueue queue) {
+			if(StringUtils.isBlank(queue.getQueueName())) throw new IllegalArgumentException("queueName must be not blank");
 			if(queueMap.containsKey(queue.getQueueName())) throw new IllegalArgumentException("already contain queue:"+queue.getQueueName());
-			
 			queueMap.put(queue.getQueueName(),queue);
 		}
 		
@@ -144,6 +144,7 @@ public class MessageBroker {
 		}
 		
 		public void exchangeAdd(TopicExchange exchange) {
+			if(StringUtils.isBlank(exchange.getExchangeName())) throw new IllegalArgumentException("exchangeName must be not blank");
 			if(exchangeMap.containsKey(exchange.getExchangeName())) throw new IllegalArgumentException("already contain exchange:"+exchange.getExchangeName());
 			
 			exchangeMap.put(exchange.getExchangeName(),exchange);

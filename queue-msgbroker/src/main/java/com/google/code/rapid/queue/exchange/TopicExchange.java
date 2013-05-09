@@ -1,5 +1,6 @@
 package com.google.code.rapid.queue.exchange;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Queue;
@@ -8,6 +9,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 import com.google.code.rapid.queue.DurableTypeEnum;
 import com.google.code.rapid.queue.Message;
@@ -19,8 +24,9 @@ import com.google.code.rapid.queue.util.RouterKeyUtil;
  * @author badqiu
  *
  */
-public class TopicExchange {
-
+public class TopicExchange implements InitializingBean{
+	private static Logger logger = LoggerFactory.getLogger(TopicExchange.class);
+	
 	private DurableTypeEnum durableType;
 	private boolean autoDelete;  //auto delete exchange by timeout
 	private int maxSize;
@@ -31,8 +37,8 @@ public class TopicExchange {
 	
 	private BlockingQueue<Message> exchangeQueue; //内部exchange的一个队列
 	
-	private List<TopicQueue> bindQueueList;
-	private List<TopicExchange> bindExchangeList;
+	private List<TopicQueue> bindQueueList = new ArrayList<TopicQueue>();
+	private List<TopicExchange> bindExchangeList = new ArrayList<TopicExchange>();
 	
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	
@@ -45,6 +51,7 @@ public class TopicExchange {
 		executor.execute(new Runnable() {
 			@Override
 			public void run() {
+				logger.info("started comsumeThread for exchange:"+exchangeName);
 				while(true) {
 					exchangeComsume();
 				}
@@ -211,6 +218,15 @@ public class TopicExchange {
 		} else if (!exchangeName.equals(other.exchangeName))
 			return false;
 		return true;
+	}
+
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Assert.hasText(exchangeName,"exchangeName must be not blank");
+		Assert.notNull(exchangeQueue,"exchangeQueue must be not null");
+		
+		startComsumeThread();
 	}
 	
 }

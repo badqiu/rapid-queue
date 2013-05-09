@@ -28,6 +28,13 @@ public class Message {
 		super();
 		this.body = body;
 	}
+	
+	public Message(String exchange, String routerKey, byte[] body) {
+		super();
+		this.exchange = exchange;
+		this.routerKey = routerKey;
+		this.body = body;
+	}
 
 	public String getRouterKey() {
 		return routerKey;
