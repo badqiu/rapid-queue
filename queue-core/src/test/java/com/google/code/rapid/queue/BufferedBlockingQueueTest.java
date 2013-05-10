@@ -6,10 +6,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class HalfDurableQueueTest extends Assert{
+public class BufferedBlockingQueueTest extends Assert{
 
-	DurableQueue persistence = new DurableQueue("test_db/half_durable_queue");
-	HalfDurableQueue<byte[]> q = new HalfDurableQueue<byte[]>(100,persistence);
+	DurableBlockingQueue persistence = new DurableBlockingQueue("test_db/half_durable_block_queue");
+	BufferedBlockingQueue<byte[]> q = new BufferedBlockingQueue<byte[]>(100,persistence);
 	
 	@Before
 	public void setUp() {
@@ -30,8 +30,8 @@ public class HalfDurableQueueTest extends Assert{
 			System.out.println("offered="+Arrays.toString(offet));
 		}
 		
-		assertEquals(q.memory.size(),100);
-		assertEquals(q.persistence.size(),27);
+		assertEquals(q.buffer.size(),100);
+		assertEquals(q.target.size(),27);
 		
 		
 		for(int i = 0; i < 127; i++) {
@@ -40,5 +40,4 @@ public class HalfDurableQueueTest extends Assert{
 			assertEquals("error on i="+i+" on bytes="+Arrays.toString(b),v,i);
 		}
 	}
-	
 }

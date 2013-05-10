@@ -117,7 +117,7 @@ public class MessageBrokerBuilder {
 			if(memorySize <= 0) {
 				throw new IllegalArgumentException("memorySize > 0 must be true on HALF_DURABLE,current:"+memorySize);
 			}
-			return new HalfDurableBlockingQueue(memorySize,new DurableBlockingQueue(new File(dataDir,subPath).getAbsolutePath()));
+			return new BufferedBlockingQueue(memorySize,new DurableBlockingQueue(new File(dataDir,subPath).getAbsolutePath()));
 		}else {
 			throw new IllegalArgumentException("unknow durableType:"+durableType);
 		}
