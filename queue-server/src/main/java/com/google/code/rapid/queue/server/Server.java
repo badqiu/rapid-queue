@@ -27,7 +27,7 @@ public class Server {
 			args.processor(process);
 			args.protocolFactory(portFactory);
 
-			TServer server = new TThreadPoolServer(args);
+			TServer server = new TThreadPoolServer(args); // 有多种server可选择
 			server.serve();
 			System.out.println("started server on port:"+port);
 		} catch (TTransportException e) {
