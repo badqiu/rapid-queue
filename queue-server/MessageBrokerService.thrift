@@ -26,7 +26,7 @@ struct Message {
 	4: MessageProperties messageProperties, // 消息附加属性
 }
 
-service MessageBrokerServer {
+service MessageBrokerService {
 	/**
 	 * 发送消息
 	 * @param msg

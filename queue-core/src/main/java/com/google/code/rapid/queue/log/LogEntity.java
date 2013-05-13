@@ -208,7 +208,22 @@ public class LogEntity {
 		log.info("putLogEntryEndPosition() "+this);
 	}
 
+	public byte[] readAndMove2Next() throws FileEOFException {
+		DataBlock block = readBlock();
+		if(block == null) {
+			return null;
+		}
+		
+		int nextReaderPosition = block.readerPosition + (block.length + 4);
+		this.db.putReaderPosition(nextReaderPosition);
+		return block.data;
+	}
+
 	public byte[] read() throws FileEOFException {
+		return readBlock().data;
+	}
+	
+	public DataBlock readBlock() throws FileEOFException {
 		assertOpen();
 		
 		int readerPosition = this.db.getReaderPosition();
@@ -221,27 +236,41 @@ public class LogEntity {
 			return null;
 		}
 		
-		try {
-			if(readerIndex == db.getWriterIndex()) {
-				// readerPosition must be less than writerPosition
-				if (readerPosition >= this.db.getWriterPosition()) {
-					return null;
-				}
+		if(readerIndex == db.getWriterIndex()) {
+			// readerPosition must be less than writerPosition
+			if (readerPosition >= this.db.getWriterPosition()) {
+				return null;
 			}
-			
+		}
+
+		try {
 			//length
 			mappedByteBuffer.position(readerPosition);
 			int length = mappedByteBuffer.getInt();
 			
 			//data[]
 			byte[] b = new byte[length];
-			int nextReaderPosition = readerPosition + (length + 4);
 			mappedByteBuffer.get(b);
-			this.db.putReaderPosition(nextReaderPosition);
-			return b;
+			return new DataBlock(readerIndex,readerPosition,length,b);
 		}catch(Throwable e) {
 			throw new RuntimeException("error read, current LogEntity:"+this+" LogIndex:"+db,e);
 		}
+	}
+	
+	private class DataBlock {
+		int readerIndex;
+		int readerPosition;
+		int length;
+		byte[] data;
+		public DataBlock(int readerIndex, int readerPosition, int length,
+				byte[] data) {
+			super();
+			this.readerIndex = readerIndex;
+			this.readerPosition = readerPosition;
+			this.length = length;
+			this.data = data;
+		}
+		
 	}
 
 	private void assertOpen() {

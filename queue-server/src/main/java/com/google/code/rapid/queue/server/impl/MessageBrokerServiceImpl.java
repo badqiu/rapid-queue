@@ -5,9 +5,9 @@ import java.util.List;
 import org.apache.thrift.TException;
 
 import com.google.code.rapid.queue.server.thrift.Message;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerServer.Iface;
+import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Iface;
 
-public class MessageBrokerServerImpl implements Iface{
+public class MessageBrokerServiceImpl implements Iface{
 
 	@Override
 	public void send(Message msg) throws TException {

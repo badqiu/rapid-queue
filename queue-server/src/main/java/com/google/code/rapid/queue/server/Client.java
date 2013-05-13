@@ -8,7 +8,7 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
 import com.google.code.rapid.queue.server.thrift.Message;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerServer;
+import com.google.code.rapid.queue.server.thrift.MessageBrokerService;
 
 public class Client {
 
@@ -19,7 +19,7 @@ public class Client {
              TProtocol protocol = new TBinaryProtocol(transport);
              transport.open();
              
-             MessageBrokerServer.Client client = new MessageBrokerServer.Client(protocol);
+             MessageBrokerService.Client client = new MessageBrokerService.Client(protocol);
              client.send(new Message());
              
          } catch (TTransportException e) {

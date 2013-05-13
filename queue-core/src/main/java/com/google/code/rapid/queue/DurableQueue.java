@@ -81,14 +81,19 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 
 	@Override
 	public byte[] peek() {
-		throw new UnsupportedOperationException("peek Unsupported now");
+		try {
+			return fsQueue.peek();
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+			return null;
+		}
 	}
 
 	@Override
 	public byte[] poll() {
 		try {
 			writeLock.lock();
-			return fsQueue.readNextAndRemove();
+			return fsQueue.poll();
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 			return null;

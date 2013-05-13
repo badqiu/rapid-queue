@@ -1,10 +1,16 @@
 package com.google.code.rapid.queue;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-public class DurableQueueTest {
+public class DurableQueueTest extends Assert{
 	DurableQueue queue = new DurableQueue("test_db/durable_test");
+	@Before
+	public void setUp(){
+		queue.clear();
+	}
 	
 	@Test
 	public void test_close_and_restar_queue() throws Exception {
@@ -50,4 +56,25 @@ public class DurableQueueTest {
 		}
 		
 	}
+	
+	@Test
+	public void test_peek() throws Exception {
+		for(int i = 0; i < 100; i++) {
+			queue.offer(new byte[]{(byte)i});
+		}
+		
+		for(int i = 0; i < 50; i++) {
+			byte[] bytes = queue.poll();
+			int v = bytes[0];
+			assertEquals(i,v);
+		}
+		
+		for(int i = 0; i < 50; i++) {
+			byte[] bytes = queue.peek();
+			int v = bytes[0];
+			assertEquals(v,50);
+		}
+		
+	}
+	
 }
