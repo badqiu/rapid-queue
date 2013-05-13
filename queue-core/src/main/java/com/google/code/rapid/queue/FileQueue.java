@@ -218,12 +218,7 @@ public class FileQueue {
 	}
 
 	private void openReaderHandle(int index) throws IOException {
-//		if (!getWriterHandle().isClosed() && getWriterHandle().getCurrentFileNumber() == index) {
-//			readerHandle = getWriterHandle();
-//			readerHandle.incrementUseCount();
-//		} else {
-			readerHandle = createLogEntity(getLogEntityPath(index), logIndexDb,index);
-//		}
+		readerHandle = createLogEntity(getLogEntityPath(index), logIndexDb,index);
 		log.info("open LogEntity for reader:"+index+" readerHandle:"+readerHandle);
 	}
 	
