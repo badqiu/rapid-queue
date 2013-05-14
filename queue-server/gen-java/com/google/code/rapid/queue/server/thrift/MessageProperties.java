@@ -44,6 +44,7 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
   private static final org.apache.thrift.protocol.TField SOURCE_IP_FIELD_DESC = new org.apache.thrift.protocol.TField("sourceIp", org.apache.thrift.protocol.TType.STRING, (short)9);
   private static final org.apache.thrift.protocol.TField SOURCE_APP_FIELD_DESC = new org.apache.thrift.protocol.TField("sourceApp", org.apache.thrift.protocol.TType.STRING, (short)10);
   private static final org.apache.thrift.protocol.TField SOURCE_USER_FIELD_DESC = new org.apache.thrift.protocol.TField("sourceUser", org.apache.thrift.protocol.TType.STRING, (short)11);
+  private static final org.apache.thrift.protocol.TField VHOST_FIELD_DESC = new org.apache.thrift.protocol.TField("vhost", org.apache.thrift.protocol.TType.STRING, (short)12);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -62,6 +63,7 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
   public String sourceIp; // required
   public String sourceApp; // required
   public String sourceUser; // required
+  public String vhost; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -75,7 +77,8 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
     DELIVERY_MODE((short)8, "deliveryMode"),
     SOURCE_IP((short)9, "sourceIp"),
     SOURCE_APP((short)10, "sourceApp"),
-    SOURCE_USER((short)11, "sourceUser");
+    SOURCE_USER((short)11, "sourceUser"),
+    VHOST((short)12, "vhost");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -112,6 +115,8 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
           return SOURCE_APP;
         case 11: // SOURCE_USER
           return SOURCE_USER;
+        case 12: // VHOST
+          return VHOST;
         default:
           return null;
       }
@@ -183,6 +188,8 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.SOURCE_USER, new org.apache.thrift.meta_data.FieldMetaData("sourceUser", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.VHOST, new org.apache.thrift.meta_data.FieldMetaData("vhost", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(MessageProperties.class, metaDataMap);
   }
@@ -201,7 +208,8 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
     int deliveryMode,
     String sourceIp,
     String sourceApp,
-    String sourceUser)
+    String sourceUser,
+    String vhost)
   {
     this();
     this.messageId = messageId;
@@ -220,6 +228,7 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
     this.sourceIp = sourceIp;
     this.sourceApp = sourceApp;
     this.sourceUser = sourceUser;
+    this.vhost = vhost;
   }
 
   /**
@@ -250,6 +259,9 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
     if (other.isSetSourceUser()) {
       this.sourceUser = other.sourceUser;
     }
+    if (other.isSetVhost()) {
+      this.vhost = other.vhost;
+    }
   }
 
   public MessageProperties deepCopy() {
@@ -274,6 +286,7 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
     this.sourceIp = null;
     this.sourceApp = null;
     this.sourceUser = null;
+    this.vhost = null;
   }
 
   public String getMessageId() {
@@ -535,6 +548,30 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
     }
   }
 
+  public String getVhost() {
+    return this.vhost;
+  }
+
+  public MessageProperties setVhost(String vhost) {
+    this.vhost = vhost;
+    return this;
+  }
+
+  public void unsetVhost() {
+    this.vhost = null;
+  }
+
+  /** Returns true if field vhost is set (has been assigned a value) and false otherwise */
+  public boolean isSetVhost() {
+    return this.vhost != null;
+  }
+
+  public void setVhostIsSet(boolean value) {
+    if (!value) {
+      this.vhost = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case MESSAGE_ID:
@@ -625,6 +662,14 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
       }
       break;
 
+    case VHOST:
+      if (value == null) {
+        unsetVhost();
+      } else {
+        setVhost((String)value);
+      }
+      break;
+
     }
   }
 
@@ -663,6 +708,9 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
     case SOURCE_USER:
       return getSourceUser();
 
+    case VHOST:
+      return getVhost();
+
     }
     throw new IllegalStateException();
   }
@@ -696,6 +744,8 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
       return isSetSourceApp();
     case SOURCE_USER:
       return isSetSourceUser();
+    case VHOST:
+      return isSetVhost();
     }
     throw new IllegalStateException();
   }
@@ -809,6 +859,15 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
       if (!(this_present_sourceUser && that_present_sourceUser))
         return false;
       if (!this.sourceUser.equals(that.sourceUser))
+        return false;
+    }
+
+    boolean this_present_vhost = true && this.isSetVhost();
+    boolean that_present_vhost = true && that.isSetVhost();
+    if (this_present_vhost || that_present_vhost) {
+      if (!(this_present_vhost && that_present_vhost))
+        return false;
+      if (!this.vhost.equals(that.vhost))
         return false;
     }
 
@@ -938,6 +997,16 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetVhost()).compareTo(typedOther.isSetVhost());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetVhost()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.vhost, typedOther.vhost);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -1023,6 +1092,14 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
       sb.append("null");
     } else {
       sb.append(this.sourceUser);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("vhost:");
+    if (this.vhost == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.vhost);
     }
     first = false;
     sb.append(")");
@@ -1158,6 +1235,14 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 12: // VHOST
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.vhost = iprot.readString();
+              struct.setVhostIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -1218,6 +1303,11 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
         oprot.writeString(struct.sourceUser);
         oprot.writeFieldEnd();
       }
+      if (struct.vhost != null) {
+        oprot.writeFieldBegin(VHOST_FIELD_DESC);
+        oprot.writeString(struct.vhost);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -1269,7 +1359,10 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
       if (struct.isSetSourceUser()) {
         optionals.set(10);
       }
-      oprot.writeBitSet(optionals, 11);
+      if (struct.isSetVhost()) {
+        optionals.set(11);
+      }
+      oprot.writeBitSet(optionals, 12);
       if (struct.isSetMessageId()) {
         oprot.writeString(struct.messageId);
       }
@@ -1303,12 +1396,15 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
       if (struct.isSetSourceUser()) {
         oprot.writeString(struct.sourceUser);
       }
+      if (struct.isSetVhost()) {
+        oprot.writeString(struct.vhost);
+      }
     }
 
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, MessageProperties struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(11);
+      BitSet incoming = iprot.readBitSet(12);
       if (incoming.get(0)) {
         struct.messageId = iprot.readString();
         struct.setMessageIdIsSet(true);
@@ -1352,6 +1448,10 @@ public class MessageProperties implements org.apache.thrift.TBase<MessagePropert
       if (incoming.get(10)) {
         struct.sourceUser = iprot.readString();
         struct.setSourceUserIsSet(true);
+      }
+      if (incoming.get(11)) {
+        struct.vhost = iprot.readString();
+        struct.setVhostIsSet(true);
       }
     }
   }
