@@ -8,7 +8,7 @@
 8. 支持Qos控制,channel.basic_qos(prefetch_count=1)
 9. 支持网络压缩传输,(gzip,compress,snappy)
 10. 支持数据压缩存储,(gzip,compress,snappy)
-11. 支持批量数据传输(发送及接收)
+#11. 支持批量数据传输(发送及接收)
 12. 支持队列的优先级(priority)功能
 13. 支持queue的exclusive订阅
 14. 支持除topic外的direct,fauout的exchange类型

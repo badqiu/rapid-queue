@@ -213,10 +213,12 @@ public class LogEntity {
 		if(block == null) {
 			return null;
 		}
-		
-		int nextReaderPosition = block.readerPosition + (block.length + 4);
-		this.db.putReaderPosition(nextReaderPosition);
+		move2NextReadPosition(block);
 		return block.data;
+	}
+
+	public void move2NextReadPosition(DataBlock block) {
+		this.db.putReaderPosition(block.nextReaderPosition());
 	}
 
 	public byte[] read() throws FileEOFException {
@@ -270,7 +272,9 @@ public class LogEntity {
 			this.length = length;
 			this.data = data;
 		}
-		
+		public int nextReaderPosition() {
+			return readerPosition + (length + 4);
+		}
 	}
 
 	private void assertOpen() {

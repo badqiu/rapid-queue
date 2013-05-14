@@ -23,6 +23,8 @@ public class DurableBlockingQueue extends DurableQueue implements BlockingQueue<
 
 	@Override
 	public boolean add(byte[] e) {
+		if(e == null) throw new NullPointerException();
+		
 		try {
 			lock.lock();
 			boolean result = super.add(e);
@@ -35,11 +37,15 @@ public class DurableBlockingQueue extends DurableQueue implements BlockingQueue<
 	
 	@Override
 	public void put(byte[] e) throws InterruptedException {
+		if(e == null) throw new NullPointerException();
+		
 		add(e);
 	}
 
 	@Override
 	public boolean offer(byte[] e, long timeout, TimeUnit unit)throws InterruptedException {
+		if(e == null) throw new NullPointerException();
+		
 		return add(e);
 	}
 
