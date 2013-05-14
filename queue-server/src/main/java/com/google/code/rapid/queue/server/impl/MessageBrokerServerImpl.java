@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.apache.thrift.TException;
 
+import com.google.code.rapid.queue.MessageBroker;
 import com.google.code.rapid.queue.server.thrift.Message;
 import com.google.code.rapid.queue.server.thrift.MessageBrokerServer.Iface;
 
 public class MessageBrokerServerImpl implements Iface{
-
+	
+	private MessageBroker messageBroker;
+	
 	@Override
 	public void send(Message msg) throws TException {
 		System.out.println("send(msg)");

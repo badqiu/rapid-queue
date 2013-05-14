@@ -18,14 +18,13 @@ public class Server {
 		try {
 
 			TServerSocket serverTransport = new TServerSocket(port);
-
-			MessageBrokerServer.Processor process = new Processor(new MessageBrokerServerImpl());
-
-			Factory portFactory = new TBinaryProtocol.Factory(true, true);
-
 			Args args = new Args(serverTransport);
+			
+			MessageBrokerServer.Processor process = new Processor(new MessageBrokerServerImpl());
 			args.processor(process);
-			args.protocolFactory(portFactory);
+			
+			Factory protocolFactory = new TBinaryProtocol.Factory(true, true);
+			args.protocolFactory(protocolFactory);
 
 			TServer server = new TThreadPoolServer(args); // 有多种server可选择
 			server.serve();

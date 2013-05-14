@@ -12,15 +12,26 @@ import com.google.code.rapid.queue.server.thrift.MessageBrokerServer;
 
 public class Client {
 
-	public void startClient() {
+	public void startClient() throws InterruptedException {
          TTransport transport = null;
          try {
              transport = new TSocket("localhost",9088);
              TProtocol protocol = new TBinaryProtocol(transport);
              transport.open();
+             transport.close();
              
+             if(!transport.isOpen()) {
+            	 transport.open();
+             }
              MessageBrokerServer.Client client = new MessageBrokerServer.Client(protocol);
-             client.send(new Message());
+             for(int i = 0; i < 1000; i++) {
+            	 try {
+            		 Thread.sleep(500);
+	            	 client.send(new Message());
+            	 }catch(Exception e) {
+            		 e.printStackTrace();
+            	 }
+             }
              
          } catch (TTransportException e) {
              e.printStackTrace();
@@ -31,7 +42,7 @@ public class Client {
          }
      }
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		Client client = new Client();
 		client.startClient();
 	}
