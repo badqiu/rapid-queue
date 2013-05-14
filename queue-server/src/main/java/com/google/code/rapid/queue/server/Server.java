@@ -6,6 +6,7 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.TThreadPoolServer.Args;
 import org.apache.thrift.transport.TServerSocket;
+import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
 
 import com.google.code.rapid.queue.server.impl.MessageBrokerServiceImpl;
@@ -17,14 +18,14 @@ public class Server {
 	public void startServer() {
 		try {
 
-			TServerSocket serverTransport = new TServerSocket(port);
+			TServerTransport serverTransport = new TServerSocket(port);
 
-			MessageBrokerService.Processor process = new Processor(new MessageBrokerServiceImpl());
+			MessageBrokerService.Processor processor = new Processor(new MessageBrokerServiceImpl());
 
 			Factory portFactory = new TBinaryProtocol.Factory(true, true);
 
 			Args args = new Args(serverTransport);
-			args.processor(process);
+			args.processor(processor);
 			args.protocolFactory(portFactory);
 
 			TServer server = new TThreadPoolServer(args); // 有多种server可选择
