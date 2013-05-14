@@ -16,6 +16,8 @@ struct MessageProperties {
 	9: string sourceIp, // 发送消息的来源IP
 	10: string sourceApp, // 发送消息的来源App
 	11: string sourceUser, // 发送消息的来源User
+	
+	12: string vhost,
 }
 
 struct Message {
@@ -26,7 +28,7 @@ struct Message {
 	4: MessageProperties messageProperties, // 消息附加属性
 }
 
-service MessageBrokerServer {
+service MessageBrokerService {
 	/**
 	 * 发送消息
 	 * @param msg

@@ -180,16 +180,16 @@ public class FileQueue {
 	 * @return
 	 * @throws IOException
 	 */
-	public byte[] readNextAndRemove() throws IOException {
+	public byte[] poll() throws IOException {
 		assertOpen();
 		
 		byte[] b = null;
 		try {
-			b = readerHandle.read();
+			b = readerHandle.readAndMove2Next();
 		} catch (FileEOFException e) {
 			rotateNextLogReader();
 			try {
-				b = readerHandle.read();
+				b = readerHandle.readAndMove2Next();
 			} catch (FileEOFException e1) {
 				log.error("read new log file FileEOFException error occurred",e1);
 			}
@@ -198,6 +198,11 @@ public class FileQueue {
 			logIndexDb.decrementQueueSize();
 		}
 		return b;
+	}
+	
+	public byte[] peek() throws IOException {
+		assertOpen();
+		return readerHandle.read();
 	}
 
 	private void rotateNextLogReader() throws IOException {
@@ -213,12 +218,7 @@ public class FileQueue {
 	}
 
 	private void openReaderHandle(int index) throws IOException {
-//		if (!getWriterHandle().isClosed() && getWriterHandle().getCurrentFileNumber() == index) {
-//			readerHandle = getWriterHandle();
-//			readerHandle.incrementUseCount();
-//		} else {
-			readerHandle = createLogEntity(getLogEntityPath(index), logIndexDb,index);
-//		}
+		readerHandle = createLogEntity(getLogEntityPath(index), logIndexDb,index);
 		log.info("open LogEntity for reader:"+index+" readerHandle:"+readerHandle);
 	}
 	

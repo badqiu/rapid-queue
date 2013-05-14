@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byName" default-lazy-init="false">
+
+
+	<bean id="bindingService" class="com.google.code.rapid.queue.metastore.service.impl.BindingServiceImpl">
+	</bean>
+	
+	<bean id="exchangeService" class="com.google.code.rapid.queue.metastore.service.impl.ExchangeServiceImpl">
+	</bean>
+	
+	<bean id="queueService" class="com.google.code.rapid.queue.metastore.service.impl.QueueServiceImpl">
+	</bean>
+	
+	<bean id="userService" class="com.google.code.rapid.queue.metastore.service.impl.UserServiceImpl">
+	</bean>
+	
+	<bean id="vhostService" class="com.google.code.rapid.queue.metastore.service.impl.VhostServiceImpl">
+	</bean>
+	
+</beans>

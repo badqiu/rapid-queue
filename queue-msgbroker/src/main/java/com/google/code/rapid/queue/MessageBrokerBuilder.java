@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.springframework.util.Assert;
+
 import com.google.code.rapid.queue.exchange.TopicExchange;
 import com.google.code.rapid.queue.metastore.model.Binding;
 import com.google.code.rapid.queue.metastore.model.Exchange;
@@ -42,6 +44,11 @@ public class MessageBrokerBuilder {
 	}
 
 	public Map<String,MessageBroker> build() {
+		Assert.notNull(bindingService,"bindingService must be not null");
+		Assert.notNull(queueService,"queueService must be not null");
+		Assert.notNull(exchangeService,"exchangeService must be not null");
+		Assert.notNull(vhostService,"vhostService must be not null");
+		
 		return new Builder().execute();
 	}
 	

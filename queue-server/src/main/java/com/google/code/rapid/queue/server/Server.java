@@ -8,9 +8,9 @@ import org.apache.thrift.server.TThreadPoolServer.Args;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
 
-import com.google.code.rapid.queue.server.impl.MessageBrokerServerImpl;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerServer;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerServer.Processor;
+import com.google.code.rapid.queue.server.impl.MessageBrokerServiceImpl;
+import com.google.code.rapid.queue.server.thrift.MessageBrokerService;
+import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Processor;
 
 public class Server {
 	int port = 9088;
@@ -18,13 +18,14 @@ public class Server {
 		try {
 
 			TServerSocket serverTransport = new TServerSocket(port);
+
+			MessageBrokerService.Processor process = new Processor(new MessageBrokerServiceImpl());
+
+			Factory portFactory = new TBinaryProtocol.Factory(true, true);
+
 			Args args = new Args(serverTransport);
-			
-			MessageBrokerServer.Processor process = new Processor(new MessageBrokerServerImpl());
 			args.processor(process);
-			
-			Factory protocolFactory = new TBinaryProtocol.Factory(true, true);
-			args.protocolFactory(protocolFactory);
+			args.protocolFactory(portFactory);
 
 			TServer server = new TThreadPoolServer(args); // 有多种server可选择
 			server.serve();
