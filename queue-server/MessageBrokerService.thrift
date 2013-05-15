@@ -29,7 +29,8 @@ struct Message {
 }
 
 exception MessageBrokerException {
-  1: string message,
+  1: string errorCode,
+  2: string message,
 }
 
 

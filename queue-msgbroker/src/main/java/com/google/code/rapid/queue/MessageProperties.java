@@ -1,9 +1,13 @@
 package com.google.code.rapid.queue;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-public class MessageProperties {
+public class MessageProperties implements Serializable{
+	
+	private static final long serialVersionUID = -5795856037335243014L;
+
 	/** delivery mode constants */
 	public static final int DELIVERY_MODE_PERSISTENT = 1;
 

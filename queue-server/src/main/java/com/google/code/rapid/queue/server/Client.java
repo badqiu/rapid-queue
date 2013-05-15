@@ -1,5 +1,7 @@
 package com.google.code.rapid.queue.server;
 
+import java.util.Arrays;
+
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -20,8 +22,15 @@ public class Client {
              transport.open();
              
              MessageBrokerService.Client client = new MessageBrokerService.Client(protocol);
-             client.send(new Message());
+             Message msg = new Message();
+             msg.setExchange("ex_user");
+             msg.setBody(new byte[]{1});
+             msg.setRouterKey("yygame.ddt");
+			 client.send(msg);
              
+			 
+			 Message receiveMsg = client.receive("q1", 100);
+			 System.out.println("receiveMsg:"+Arrays.toString(receiveMsg.getBody()));
          } catch (TTransportException e) {
              e.printStackTrace();
          } catch (TException e) {

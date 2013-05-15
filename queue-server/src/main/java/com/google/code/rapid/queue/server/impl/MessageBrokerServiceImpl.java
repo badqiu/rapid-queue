@@ -32,7 +32,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 			mb.send(MessageConvertUtil.toMessageBrokerMessage(msg));
 		}catch(RuntimeException e) {
 			logger.error("error on send(),msg="+msg,e);
-			throw new MessageBrokerException(e.getMessage());
+			throw new MessageBrokerException(e.getClass().getSimpleName(),e.getMessage());
 		}
 	}
 
@@ -43,7 +43,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 			mb.sendBatch(MessageConvertUtil.totoMessageBrokerMessageList(msgList));
 		}catch(RuntimeException e) {
 			logger.error("error on sendBatch(),msgList="+msgList,e);
-			throw new MessageBrokerException(e.getMessage());
+			throw new MessageBrokerException(e.getClass().getSimpleName(),e.getMessage());
 		}
 	}
 
@@ -54,7 +54,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 			return MessageConvertUtil.toThriftMessage(mb.receive(queueName, timeout));
 		}catch(RuntimeException e) {
 			logger.error("error on receive(),queueName="+queueName+" timeout="+timeout,e);
-			throw new MessageBrokerException(e.getMessage());
+			throw new MessageBrokerException(e.getClass().getSimpleName(),e.getMessage());
 		}
 	}
 
@@ -66,7 +66,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 			return MessageConvertUtil.toThriftMessageList(mb.receiveBatch(queueName, timeout,batchSize));
 		}catch(RuntimeException e) {
 			logger.error("error on receiveBatch(),queueName="+queueName+" timeout="+timeout+" batchSize="+batchSize,e);
-			throw new MessageBrokerException(e.getMessage());
+			throw new MessageBrokerException(e.getClass().getSimpleName(),e.getMessage());
 		}
 	}
 	

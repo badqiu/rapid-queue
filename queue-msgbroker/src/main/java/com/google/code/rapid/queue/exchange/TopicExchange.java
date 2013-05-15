@@ -35,7 +35,7 @@ public class TopicExchange implements InitializingBean{
 	private String remarks; // 备注
 	private List<String> routerKeyList;	//exchange routerKey for exchange <=> exchange msg transfer
 	
-	private BlockingQueue<Message> exchangeQueue; //内部exchange的一个队列
+	private BlockingQueue<byte[]> exchangeQueue; //内部exchange的一个队列
 	
 	private List<TopicQueue> bindQueueList = new ArrayList<TopicQueue>();
 	private List<TopicExchange> bindExchangeList = new ArrayList<TopicExchange>();
@@ -43,7 +43,7 @@ public class TopicExchange implements InitializingBean{
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	public void offer(Message msg) {
-		exchangeQueue.offer(msg);
+		exchangeQueue.offer(Message.toBytes(msg));
 	}
 	
 	
@@ -59,18 +59,17 @@ public class TopicExchange implements InitializingBean{
 		});
 	}
 	
-	public Queue<Message> getExchangeQueue() {
+	public Queue<byte[]> getExchangeQueue() {
 		return exchangeQueue;
 	}
 
 
-	public void setExchangeQueue(BlockingQueue<Message> exchangeQueue) {
+	public void setExchangeQueue(BlockingQueue<byte[]> exchangeQueue) {
 		this.exchangeQueue = exchangeQueue;
 	}
 
-
 	private void exchangeComsume() {
-		Message msg = exchangeQueue.poll();
+		Message msg = Message.fromBytes(exchangeQueue.poll());
 		if(msg != null) {
 			router2QueueList(msg.getRouterKey(),msg.getBody());
 			router2ExchangeList(msg);

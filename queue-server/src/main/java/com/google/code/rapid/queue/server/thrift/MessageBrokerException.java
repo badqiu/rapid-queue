@@ -33,7 +33,8 @@ import org.slf4j.LoggerFactory;
 public class MessageBrokerException extends TException implements org.apache.thrift.TBase<MessageBrokerException, MessageBrokerException._Fields>, java.io.Serializable, Cloneable {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("MessageBrokerException");
 
-  private static final org.apache.thrift.protocol.TField MESSAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("message", org.apache.thrift.protocol.TType.STRING, (short)1);
+  private static final org.apache.thrift.protocol.TField ERROR_CODE_FIELD_DESC = new org.apache.thrift.protocol.TField("errorCode", org.apache.thrift.protocol.TType.STRING, (short)1);
+  private static final org.apache.thrift.protocol.TField MESSAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("message", org.apache.thrift.protocol.TType.STRING, (short)2);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -41,11 +42,13 @@ public class MessageBrokerException extends TException implements org.apache.thr
     schemes.put(TupleScheme.class, new MessageBrokerExceptionTupleSchemeFactory());
   }
 
+  public String errorCode; // required
   public String message; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    MESSAGE((short)1, "message");
+    ERROR_CODE((short)1, "errorCode"),
+    MESSAGE((short)2, "message");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -60,7 +63,9 @@ public class MessageBrokerException extends TException implements org.apache.thr
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // MESSAGE
+        case 1: // ERROR_CODE
+          return ERROR_CODE;
+        case 2: // MESSAGE
           return MESSAGE;
         default:
           return null;
@@ -105,6 +110,8 @@ public class MessageBrokerException extends TException implements org.apache.thr
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+    tmpMap.put(_Fields.ERROR_CODE, new org.apache.thrift.meta_data.FieldMetaData("errorCode", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("message", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -115,9 +122,11 @@ public class MessageBrokerException extends TException implements org.apache.thr
   }
 
   public MessageBrokerException(
+    String errorCode,
     String message)
   {
     this();
+    this.errorCode = errorCode;
     this.message = message;
   }
 
@@ -125,6 +134,9 @@ public class MessageBrokerException extends TException implements org.apache.thr
    * Performs a deep copy on <i>other</i>.
    */
   public MessageBrokerException(MessageBrokerException other) {
+    if (other.isSetErrorCode()) {
+      this.errorCode = other.errorCode;
+    }
     if (other.isSetMessage()) {
       this.message = other.message;
     }
@@ -136,7 +148,32 @@ public class MessageBrokerException extends TException implements org.apache.thr
 
   @Override
   public void clear() {
+    this.errorCode = null;
     this.message = null;
+  }
+
+  public String getErrorCode() {
+    return this.errorCode;
+  }
+
+  public MessageBrokerException setErrorCode(String errorCode) {
+    this.errorCode = errorCode;
+    return this;
+  }
+
+  public void unsetErrorCode() {
+    this.errorCode = null;
+  }
+
+  /** Returns true if field errorCode is set (has been assigned a value) and false otherwise */
+  public boolean isSetErrorCode() {
+    return this.errorCode != null;
+  }
+
+  public void setErrorCodeIsSet(boolean value) {
+    if (!value) {
+      this.errorCode = null;
+    }
   }
 
   public String getMessage() {
@@ -165,6 +202,14 @@ public class MessageBrokerException extends TException implements org.apache.thr
 
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
+    case ERROR_CODE:
+      if (value == null) {
+        unsetErrorCode();
+      } else {
+        setErrorCode((String)value);
+      }
+      break;
+
     case MESSAGE:
       if (value == null) {
         unsetMessage();
@@ -178,6 +223,9 @@ public class MessageBrokerException extends TException implements org.apache.thr
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
+    case ERROR_CODE:
+      return getErrorCode();
+
     case MESSAGE:
       return getMessage();
 
@@ -192,6 +240,8 @@ public class MessageBrokerException extends TException implements org.apache.thr
     }
 
     switch (field) {
+    case ERROR_CODE:
+      return isSetErrorCode();
     case MESSAGE:
       return isSetMessage();
     }
@@ -210,6 +260,15 @@ public class MessageBrokerException extends TException implements org.apache.thr
   public boolean equals(MessageBrokerException that) {
     if (that == null)
       return false;
+
+    boolean this_present_errorCode = true && this.isSetErrorCode();
+    boolean that_present_errorCode = true && that.isSetErrorCode();
+    if (this_present_errorCode || that_present_errorCode) {
+      if (!(this_present_errorCode && that_present_errorCode))
+        return false;
+      if (!this.errorCode.equals(that.errorCode))
+        return false;
+    }
 
     boolean this_present_message = true && this.isSetMessage();
     boolean that_present_message = true && that.isSetMessage();
@@ -236,6 +295,16 @@ public class MessageBrokerException extends TException implements org.apache.thr
     int lastComparison = 0;
     MessageBrokerException typedOther = (MessageBrokerException)other;
 
+    lastComparison = Boolean.valueOf(isSetErrorCode()).compareTo(typedOther.isSetErrorCode());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetErrorCode()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.errorCode, typedOther.errorCode);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     lastComparison = Boolean.valueOf(isSetMessage()).compareTo(typedOther.isSetMessage());
     if (lastComparison != 0) {
       return lastComparison;
@@ -266,6 +335,14 @@ public class MessageBrokerException extends TException implements org.apache.thr
     StringBuilder sb = new StringBuilder("MessageBrokerException(");
     boolean first = true;
 
+    sb.append("errorCode:");
+    if (this.errorCode == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.errorCode);
+    }
+    first = false;
+    if (!first) sb.append(", ");
     sb.append("message:");
     if (this.message == null) {
       sb.append("null");
@@ -316,7 +393,15 @@ public class MessageBrokerException extends TException implements org.apache.thr
           break;
         }
         switch (schemeField.id) {
-          case 1: // MESSAGE
+          case 1: // ERROR_CODE
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.errorCode = iprot.readString();
+              struct.setErrorCodeIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 2: // MESSAGE
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.message = iprot.readString();
               struct.setMessageIsSet(true);
@@ -339,6 +424,11 @@ public class MessageBrokerException extends TException implements org.apache.thr
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
+      if (struct.errorCode != null) {
+        oprot.writeFieldBegin(ERROR_CODE_FIELD_DESC);
+        oprot.writeString(struct.errorCode);
+        oprot.writeFieldEnd();
+      }
       if (struct.message != null) {
         oprot.writeFieldBegin(MESSAGE_FIELD_DESC);
         oprot.writeString(struct.message);
@@ -362,10 +452,16 @@ public class MessageBrokerException extends TException implements org.apache.thr
     public void write(org.apache.thrift.protocol.TProtocol prot, MessageBrokerException struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetMessage()) {
+      if (struct.isSetErrorCode()) {
         optionals.set(0);
       }
-      oprot.writeBitSet(optionals, 1);
+      if (struct.isSetMessage()) {
+        optionals.set(1);
+      }
+      oprot.writeBitSet(optionals, 2);
+      if (struct.isSetErrorCode()) {
+        oprot.writeString(struct.errorCode);
+      }
       if (struct.isSetMessage()) {
         oprot.writeString(struct.message);
       }
@@ -374,8 +470,12 @@ public class MessageBrokerException extends TException implements org.apache.thr
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, MessageBrokerException struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(1);
+      BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
+        struct.errorCode = iprot.readString();
+        struct.setErrorCodeIsSet(true);
+      }
+      if (incoming.get(1)) {
         struct.message = iprot.readString();
         struct.setMessageIsSet(true);
       }

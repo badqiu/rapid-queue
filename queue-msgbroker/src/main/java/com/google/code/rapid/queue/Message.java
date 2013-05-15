@@ -1,8 +1,17 @@
 package com.google.code.rapid.queue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-public class Message {
 
+public class Message implements Serializable{
+
+	private static final long serialVersionUID = 7156950587289464765L;
+	
 	private String exchange; // exchange
 	private String routerKey; // 路由key
 	private byte[] body; // 消息体
@@ -56,4 +65,33 @@ public class Message {
 		this.messageProperties = messageProperties;
 	}
 	
+	public byte[] toBytes() {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(this);
+			return baos.toByteArray();
+		}catch(IOException e) {
+			throw new RuntimeException("toBytes() error,message:"+this,e);
+		}
+	}
+	
+	public static byte[] toBytes(Message msg) {
+		if(msg == null) return null;
+		return msg.toBytes();
+	}
+	
+	public static Message fromBytes(byte[] bytes) {
+		if(bytes == null) return null;
+		
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+			ObjectInputStream oos = new ObjectInputStream(bais);
+			return (Message)oos.readObject();
+		}catch(IOException e) {
+			throw new RuntimeException("fromBytes() error",e);
+		}catch(ClassNotFoundException e) {
+			throw new RuntimeException("fromBytes() error",e);
+		}
+	}
 }

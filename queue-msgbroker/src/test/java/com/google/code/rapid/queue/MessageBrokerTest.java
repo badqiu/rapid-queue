@@ -68,7 +68,7 @@ public class MessageBrokerTest extends Assert{
 	private void bind(String routerKey) throws Exception {
 		TopicExchange exchange = new TopicExchange();
 		exchange.setExchangeName(exchangeName);
-		exchange.setExchangeQueue(new LinkedBlockingDeque<Message>());
+		exchange.setExchangeQueue(new LinkedBlockingDeque<byte[]>());
 		exchange.afterPropertiesSet();
 		mb.getManager().exchangeAdd(exchange);
 		

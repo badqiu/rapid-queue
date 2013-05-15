@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import com.google.code.rapid.queue.exchange.TopicExchange;
@@ -20,6 +22,8 @@ import com.google.code.rapid.queue.metastore.service.QueueService;
 import com.google.code.rapid.queue.metastore.service.VhostService;
 
 public class MessageBrokerBuilder {
+	private Logger logger = LoggerFactory.getLogger(MessageBrokerBuilder.class);
+	
 	private BindingService bindingService;
 	private QueueService queueService;
 	private ExchangeService exchangeService;
@@ -77,15 +81,19 @@ public class MessageBrokerBuilder {
 			
 			List<Exchange> exchangeList = exchangeService.findByVhostName(vhost.getVhostName());
 			for(Exchange exchange : exchangeList) {
-				TopicExchange topicExchange = newTopicExchange(exchange);
-				mb.getManager().exchangeAdd(topicExchange);
-				
-				List<Binding> bindingList = bindingService.findBindingByVhostName(vhost.getVhostName(),exchange.getExchangeName());
-				for(Binding binding : bindingList) {
-					Queue queue = queueService.getById(binding.getQueueName(), binding.getVhostName());
-					TopicQueue q = newTopicQueue(queue);
-					mb.getManager().queueAdd(q);
-					mb.getManager().queueBind(exchange.getExchangeName(), q.getQueueName(),binding.getRouterKey());
+				try {
+					TopicExchange topicExchange = newTopicExchange(exchange);
+					mb.getManager().exchangeAdd(topicExchange);
+					
+					List<Binding> bindingList = bindingService.findBindingByVhostName(vhost.getVhostName(),exchange.getExchangeName());
+					for(Binding binding : bindingList) {
+						Queue queue = queueService.getById(binding.getQueueName(), binding.getVhostName());
+						TopicQueue q = newTopicQueue(queue);
+						mb.getManager().queueAdd(q);
+						mb.getManager().queueBind(exchange.getExchangeName(), q.getQueueName(),binding.getRouterKey());
+					}
+				}catch(Exception e) {
+					logger.error("error on create exchcnage:"+exchange,e);
 				}
 			}
 			
@@ -104,7 +112,7 @@ public class MessageBrokerBuilder {
 		return r;
 	}
 	
-	private TopicExchange newTopicExchange(Exchange exchange) {
+	private TopicExchange newTopicExchange(Exchange exchange) throws Exception {
 		TopicExchange r = new TopicExchange();
 		r.setExchangeName(exchange.getExchangeName());
 		r.setRemarks(exchange.getRemarks());
@@ -112,6 +120,8 @@ public class MessageBrokerBuilder {
 		r.setDurableType(DurableTypeEnum.valueOf(exchange.getDurableType()));
 		r.setExchangeQueue(newBlockQueue(r.getDurableType(),exchange.getMemorySize(),exchange.getMaxSize(),"exchange/"+exchange.getExchangeName()));
 		r.setMaxSize(exchange.getMaxSize());
+		
+		r.afterPropertiesSet();
 		return r;
 	}
 
