@@ -21,4 +21,8 @@ public class SpringContext {
 		return getContext().getBean(beanId);
 	}
 	
+	public static <T> T getBean(Class<T> clazz) {
+		return getContext().getBean(clazz);
+	}
+	
 }

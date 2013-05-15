@@ -12,15 +12,16 @@ import org.apache.thrift.transport.TTransportException;
 import com.google.code.rapid.queue.server.impl.MessageBrokerServiceImpl;
 import com.google.code.rapid.queue.server.thrift.MessageBrokerService;
 import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Processor;
+import com.google.code.rapid.queue.server.util.SpringContext;
 
 public class Server {
 	int port = 9088;
 	public void startServer() {
 		try {
-
+			MessageBrokerService.Iface iface = SpringContext.getBean(MessageBrokerService.Iface.class);
 			TServerTransport serverTransport = new TServerSocket(port);
 
-			MessageBrokerService.Processor processor = new Processor(new MessageBrokerServiceImpl());
+			MessageBrokerService.Processor processor = new Processor(iface);
 
 			Factory portFactory = new TBinaryProtocol.Factory(true, true);
 

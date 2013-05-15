@@ -46,6 +46,8 @@ public class MessageProperties {
 	private String sourceApp; // 发送消息的来源App
 	private String sourceUser; // 发送消息的来源User
 
+	private String vhost;
+	
 	public String getMessageId() {
 		return messageId;
 	}
@@ -134,4 +136,12 @@ public class MessageProperties {
 		this.sourceUser = sourceUser;
 	}
 
+	public String getVhost() {
+		return vhost;
+	}
+
+	public void setVhost(String vhost) {
+		this.vhost = vhost;
+	}
+	
 }

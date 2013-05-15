@@ -28,25 +28,30 @@ struct Message {
 	4: MessageProperties messageProperties, // 消息附加属性
 }
 
+exception MessageBrokerException {
+  1: string message,
+}
+
+
 service MessageBrokerService {
 	/**
 	 * 发送消息
 	 * @param msg
 	 */
-	void send(1:Message msg),
+	void send(1:Message msg) throws (1:MessageBrokerException e),
 	
 	/**
 	 * 批量发送消息
 	 * @param msg
 	 */	
-	void sendBatch(1:list<Message> msg),
+	void sendBatch(1:list<Message> msgList) throws (1:MessageBrokerException e),
 	
 	/**
 	 * 接收消息
 	 * @param queue 队列名称
 	 * @param timeout 等待超时时间,单位(毫秒)
 	 */	
-	Message receive(1:string queueName,2:i32 timeout),
+	Message receive(1:string queueName,2:i32 timeout) throws (1:MessageBrokerException e),
 	
 	/**
 	 * 批量接收消息
@@ -54,6 +59,6 @@ service MessageBrokerService {
 	 * @param timeout 等待超时时间,单位(毫秒)
 	 * @param batchSize 批量接收的大小
 	 */		
-	list<Message> receiveBatch(1:string queueName,2:i32 timeout,3:i32 batchSize),
+	list<Message> receiveBatch(1:string queueName,2:i32 timeout,3:i32 batchSize) throws (1:MessageBrokerException e),
 	
 }

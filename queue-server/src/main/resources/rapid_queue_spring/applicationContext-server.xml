@@ -6,8 +6,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
     default-autowire="byName" default-lazy-init="false">
 
-	<bean id="messageBrokerBuilder" class="com.google.code.rapid.queue.MessageBrokerBuilder">
-		<property name="dataDir" value="/data/rapid-queue/"></property>
+	<bean id="messageBrokerService" class="com.google.code.rapid.queue.server.impl.MessageBrokerServiceImpl">
+		<property name="messageBrokerBuilder" ref="messageBrokerBuilder"></property>
 	</bean>
 	
 </beans>

@@ -40,15 +40,15 @@ public class MessageBrokerService {
      * 
      * @param msg
      */
-    public void send(Message msg) throws org.apache.thrift.TException;
+    public void send(Message msg) throws MessageBrokerException, org.apache.thrift.TException;
 
     /**
      * 批量发送消息
      * @param msg
      * 
-     * @param msg
+     * @param msgList
      */
-    public void sendBatch(List<Message> msg) throws org.apache.thrift.TException;
+    public void sendBatch(List<Message> msgList) throws MessageBrokerException, org.apache.thrift.TException;
 
     /**
      * 接收消息
@@ -58,7 +58,7 @@ public class MessageBrokerService {
      * @param queueName
      * @param timeout
      */
-    public Message receive(String queueName, int timeout) throws org.apache.thrift.TException;
+    public Message receive(String queueName, int timeout) throws MessageBrokerException, org.apache.thrift.TException;
 
     /**
      * 批量接收消息
@@ -70,7 +70,7 @@ public class MessageBrokerService {
      * @param timeout
      * @param batchSize
      */
-    public List<Message> receiveBatch(String queueName, int timeout, int batchSize) throws org.apache.thrift.TException;
+    public List<Message> receiveBatch(String queueName, int timeout, int batchSize) throws MessageBrokerException, org.apache.thrift.TException;
 
   }
 
@@ -78,7 +78,7 @@ public class MessageBrokerService {
 
     public void send(Message msg, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.send_call> resultHandler) throws org.apache.thrift.TException;
 
-    public void sendBatch(List<Message> msg, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.sendBatch_call> resultHandler) throws org.apache.thrift.TException;
+    public void sendBatch(List<Message> msgList, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.sendBatch_call> resultHandler) throws org.apache.thrift.TException;
 
     public void receive(String queueName, int timeout, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.receive_call> resultHandler) throws org.apache.thrift.TException;
 
@@ -106,7 +106,7 @@ public class MessageBrokerService {
       super(iprot, oprot);
     }
 
-    public void send(Message msg) throws org.apache.thrift.TException
+    public void send(Message msg) throws MessageBrokerException, org.apache.thrift.TException
     {
       send_send(msg);
       recv_send();
@@ -119,34 +119,40 @@ public class MessageBrokerService {
       sendBase("send", args);
     }
 
-    public void recv_send() throws org.apache.thrift.TException
+    public void recv_send() throws MessageBrokerException, org.apache.thrift.TException
     {
       send_result result = new send_result();
       receiveBase(result, "send");
+      if (result.e != null) {
+        throw result.e;
+      }
       return;
     }
 
-    public void sendBatch(List<Message> msg) throws org.apache.thrift.TException
+    public void sendBatch(List<Message> msgList) throws MessageBrokerException, org.apache.thrift.TException
     {
-      send_sendBatch(msg);
+      send_sendBatch(msgList);
       recv_sendBatch();
     }
 
-    public void send_sendBatch(List<Message> msg) throws org.apache.thrift.TException
+    public void send_sendBatch(List<Message> msgList) throws org.apache.thrift.TException
     {
       sendBatch_args args = new sendBatch_args();
-      args.setMsg(msg);
+      args.setMsgList(msgList);
       sendBase("sendBatch", args);
     }
 
-    public void recv_sendBatch() throws org.apache.thrift.TException
+    public void recv_sendBatch() throws MessageBrokerException, org.apache.thrift.TException
     {
       sendBatch_result result = new sendBatch_result();
       receiveBase(result, "sendBatch");
+      if (result.e != null) {
+        throw result.e;
+      }
       return;
     }
 
-    public Message receive(String queueName, int timeout) throws org.apache.thrift.TException
+    public Message receive(String queueName, int timeout) throws MessageBrokerException, org.apache.thrift.TException
     {
       send_receive(queueName, timeout);
       return recv_receive();
@@ -160,17 +166,20 @@ public class MessageBrokerService {
       sendBase("receive", args);
     }
 
-    public Message recv_receive() throws org.apache.thrift.TException
+    public Message recv_receive() throws MessageBrokerException, org.apache.thrift.TException
     {
       receive_result result = new receive_result();
       receiveBase(result, "receive");
       if (result.isSetSuccess()) {
         return result.success;
       }
+      if (result.e != null) {
+        throw result.e;
+      }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "receive failed: unknown result");
     }
 
-    public List<Message> receiveBatch(String queueName, int timeout, int batchSize) throws org.apache.thrift.TException
+    public List<Message> receiveBatch(String queueName, int timeout, int batchSize) throws MessageBrokerException, org.apache.thrift.TException
     {
       send_receiveBatch(queueName, timeout, batchSize);
       return recv_receiveBatch();
@@ -185,12 +194,15 @@ public class MessageBrokerService {
       sendBase("receiveBatch", args);
     }
 
-    public List<Message> recv_receiveBatch() throws org.apache.thrift.TException
+    public List<Message> recv_receiveBatch() throws MessageBrokerException, org.apache.thrift.TException
     {
       receiveBatch_result result = new receiveBatch_result();
       receiveBase(result, "receiveBatch");
       if (result.isSetSuccess()) {
         return result.success;
+      }
+      if (result.e != null) {
+        throw result.e;
       }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "receiveBatch failed: unknown result");
     }
@@ -235,7 +247,7 @@ public class MessageBrokerService {
         prot.writeMessageEnd();
       }
 
-      public void getResult() throws org.apache.thrift.TException {
+      public void getResult() throws MessageBrokerException, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -245,29 +257,29 @@ public class MessageBrokerService {
       }
     }
 
-    public void sendBatch(List<Message> msg, org.apache.thrift.async.AsyncMethodCallback<sendBatch_call> resultHandler) throws org.apache.thrift.TException {
+    public void sendBatch(List<Message> msgList, org.apache.thrift.async.AsyncMethodCallback<sendBatch_call> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      sendBatch_call method_call = new sendBatch_call(msg, resultHandler, this, ___protocolFactory, ___transport);
+      sendBatch_call method_call = new sendBatch_call(msgList, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
     public static class sendBatch_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private List<Message> msg;
-      public sendBatch_call(List<Message> msg, org.apache.thrift.async.AsyncMethodCallback<sendBatch_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private List<Message> msgList;
+      public sendBatch_call(List<Message> msgList, org.apache.thrift.async.AsyncMethodCallback<sendBatch_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
-        this.msg = msg;
+        this.msgList = msgList;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
         prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("sendBatch", org.apache.thrift.protocol.TMessageType.CALL, 0));
         sendBatch_args args = new sendBatch_args();
-        args.setMsg(msg);
+        args.setMsgList(msgList);
         args.write(prot);
         prot.writeMessageEnd();
       }
 
-      public void getResult() throws org.apache.thrift.TException {
+      public void getResult() throws MessageBrokerException, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -302,7 +314,7 @@ public class MessageBrokerService {
         prot.writeMessageEnd();
       }
 
-      public Message getResult() throws org.apache.thrift.TException {
+      public Message getResult() throws MessageBrokerException, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -340,7 +352,7 @@ public class MessageBrokerService {
         prot.writeMessageEnd();
       }
 
-      public List<Message> getResult() throws org.apache.thrift.TException {
+      public List<Message> getResult() throws MessageBrokerException, org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -385,7 +397,11 @@ public class MessageBrokerService {
 
       public send_result getResult(I iface, send_args args) throws org.apache.thrift.TException {
         send_result result = new send_result();
-        iface.send(args.msg);
+        try {
+          iface.send(args.msg);
+        } catch (MessageBrokerException e) {
+          result.e = e;
+        }
         return result;
       }
     }
@@ -405,7 +421,11 @@ public class MessageBrokerService {
 
       public sendBatch_result getResult(I iface, sendBatch_args args) throws org.apache.thrift.TException {
         sendBatch_result result = new sendBatch_result();
-        iface.sendBatch(args.msg);
+        try {
+          iface.sendBatch(args.msgList);
+        } catch (MessageBrokerException e) {
+          result.e = e;
+        }
         return result;
       }
     }
@@ -425,7 +445,11 @@ public class MessageBrokerService {
 
       public receive_result getResult(I iface, receive_args args) throws org.apache.thrift.TException {
         receive_result result = new receive_result();
-        result.success = iface.receive(args.queueName, args.timeout);
+        try {
+          result.success = iface.receive(args.queueName, args.timeout);
+        } catch (MessageBrokerException e) {
+          result.e = e;
+        }
         return result;
       }
     }
@@ -445,7 +469,11 @@ public class MessageBrokerService {
 
       public receiveBatch_result getResult(I iface, receiveBatch_args args) throws org.apache.thrift.TException {
         receiveBatch_result result = new receiveBatch_result();
-        result.success = iface.receiveBatch(args.queueName, args.timeout, args.batchSize);
+        try {
+          result.success = iface.receiveBatch(args.queueName, args.timeout, args.batchSize);
+        } catch (MessageBrokerException e) {
+          result.e = e;
+        }
         return result;
       }
     }
@@ -814,6 +842,7 @@ public class MessageBrokerService {
   public static class send_result implements org.apache.thrift.TBase<send_result, send_result._Fields>, java.io.Serializable, Cloneable   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("send_result");
 
+    private static final org.apache.thrift.protocol.TField E_FIELD_DESC = new org.apache.thrift.protocol.TField("e", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -821,10 +850,11 @@ public class MessageBrokerService {
       schemes.put(TupleScheme.class, new send_resultTupleSchemeFactory());
     }
 
+    public MessageBrokerException e; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-;
+      E((short)1, "e");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -839,256 +869,8 @@ public class MessageBrokerService {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(send_result.class, metaDataMap);
-    }
-
-    public send_result() {
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public send_result(send_result other) {
-    }
-
-    public send_result deepCopy() {
-      return new send_result(this);
-    }
-
-    @Override
-    public void clear() {
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof send_result)
-        return this.equals((send_result)that);
-      return false;
-    }
-
-    public boolean equals(send_result that) {
-      if (that == null)
-        return false;
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      return 0;
-    }
-
-    public int compareTo(send_result other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-      send_result typedOther = (send_result)other;
-
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-      }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("send_result(");
-      boolean first = true;
-
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class send_resultStandardSchemeFactory implements SchemeFactory {
-      public send_resultStandardScheme getScheme() {
-        return new send_resultStandardScheme();
-      }
-    }
-
-    private static class send_resultStandardScheme extends StandardScheme<send_result> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, send_result struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, send_result struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class send_resultTupleSchemeFactory implements SchemeFactory {
-      public send_resultTupleScheme getScheme() {
-        return new send_resultTupleScheme();
-      }
-    }
-
-    private static class send_resultTupleScheme extends TupleScheme<send_result> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, send_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, send_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-      }
-    }
-
-  }
-
-  public static class sendBatch_args implements org.apache.thrift.TBase<sendBatch_args, sendBatch_args._Fields>, java.io.Serializable, Cloneable   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("sendBatch_args");
-
-    private static final org.apache.thrift.protocol.TField MSG_FIELD_DESC = new org.apache.thrift.protocol.TField("msg", org.apache.thrift.protocol.TType.LIST, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new sendBatch_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new sendBatch_argsTupleSchemeFactory());
-    }
-
-    public List<Message> msg; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      MSG((short)1, "msg");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 1: // MSG
-            return MSG;
+          case 1: // E
+            return E;
           default:
             return null;
         }
@@ -1132,91 +914,71 @@ public class MessageBrokerService {
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.MSG, new org.apache.thrift.meta_data.FieldMetaData("msg", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-              new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Message.class))));
+      tmpMap.put(_Fields.E, new org.apache.thrift.meta_data.FieldMetaData("e", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(sendBatch_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(send_result.class, metaDataMap);
     }
 
-    public sendBatch_args() {
+    public send_result() {
     }
 
-    public sendBatch_args(
-      List<Message> msg)
+    public send_result(
+      MessageBrokerException e)
     {
       this();
-      this.msg = msg;
+      this.e = e;
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public sendBatch_args(sendBatch_args other) {
-      if (other.isSetMsg()) {
-        List<Message> __this__msg = new ArrayList<Message>();
-        for (Message other_element : other.msg) {
-          __this__msg.add(new Message(other_element));
-        }
-        this.msg = __this__msg;
+    public send_result(send_result other) {
+      if (other.isSetE()) {
+        this.e = new MessageBrokerException(other.e);
       }
     }
 
-    public sendBatch_args deepCopy() {
-      return new sendBatch_args(this);
+    public send_result deepCopy() {
+      return new send_result(this);
     }
 
     @Override
     public void clear() {
-      this.msg = null;
+      this.e = null;
     }
 
-    public int getMsgSize() {
-      return (this.msg == null) ? 0 : this.msg.size();
+    public MessageBrokerException getE() {
+      return this.e;
     }
 
-    public java.util.Iterator<Message> getMsgIterator() {
-      return (this.msg == null) ? null : this.msg.iterator();
-    }
-
-    public void addToMsg(Message elem) {
-      if (this.msg == null) {
-        this.msg = new ArrayList<Message>();
-      }
-      this.msg.add(elem);
-    }
-
-    public List<Message> getMsg() {
-      return this.msg;
-    }
-
-    public sendBatch_args setMsg(List<Message> msg) {
-      this.msg = msg;
+    public send_result setE(MessageBrokerException e) {
+      this.e = e;
       return this;
     }
 
-    public void unsetMsg() {
-      this.msg = null;
+    public void unsetE() {
+      this.e = null;
     }
 
-    /** Returns true if field msg is set (has been assigned a value) and false otherwise */
-    public boolean isSetMsg() {
-      return this.msg != null;
+    /** Returns true if field e is set (has been assigned a value) and false otherwise */
+    public boolean isSetE() {
+      return this.e != null;
     }
 
-    public void setMsgIsSet(boolean value) {
+    public void setEIsSet(boolean value) {
       if (!value) {
-        this.msg = null;
+        this.e = null;
       }
     }
 
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
-      case MSG:
+      case E:
         if (value == null) {
-          unsetMsg();
+          unsetE();
         } else {
-          setMsg((List<Message>)value);
+          setE((MessageBrokerException)value);
         }
         break;
 
@@ -1225,8 +987,8 @@ public class MessageBrokerService {
 
     public Object getFieldValue(_Fields field) {
       switch (field) {
-      case MSG:
-        return getMsg();
+      case E:
+        return getE();
 
       }
       throw new IllegalStateException();
@@ -1239,8 +1001,384 @@ public class MessageBrokerService {
       }
 
       switch (field) {
-      case MSG:
-        return isSetMsg();
+      case E:
+        return isSetE();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof send_result)
+        return this.equals((send_result)that);
+      return false;
+    }
+
+    public boolean equals(send_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_e = true && this.isSetE();
+      boolean that_present_e = true && that.isSetE();
+      if (this_present_e || that_present_e) {
+        if (!(this_present_e && that_present_e))
+          return false;
+        if (!this.e.equals(that.e))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(send_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      send_result typedOther = (send_result)other;
+
+      lastComparison = Boolean.valueOf(isSetE()).compareTo(typedOther.isSetE());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetE()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.e, typedOther.e);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("send_result(");
+      boolean first = true;
+
+      sb.append("e:");
+      if (this.e == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.e);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class send_resultStandardSchemeFactory implements SchemeFactory {
+      public send_resultStandardScheme getScheme() {
+        return new send_resultStandardScheme();
+      }
+    }
+
+    private static class send_resultStandardScheme extends StandardScheme<send_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, send_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // E
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.e = new MessageBrokerException();
+                struct.e.read(iprot);
+                struct.setEIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, send_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.e != null) {
+          oprot.writeFieldBegin(E_FIELD_DESC);
+          struct.e.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class send_resultTupleSchemeFactory implements SchemeFactory {
+      public send_resultTupleScheme getScheme() {
+        return new send_resultTupleScheme();
+      }
+    }
+
+    private static class send_resultTupleScheme extends TupleScheme<send_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, send_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetE()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetE()) {
+          struct.e.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, send_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.e = new MessageBrokerException();
+          struct.e.read(iprot);
+          struct.setEIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class sendBatch_args implements org.apache.thrift.TBase<sendBatch_args, sendBatch_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("sendBatch_args");
+
+    private static final org.apache.thrift.protocol.TField MSG_LIST_FIELD_DESC = new org.apache.thrift.protocol.TField("msgList", org.apache.thrift.protocol.TType.LIST, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new sendBatch_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new sendBatch_argsTupleSchemeFactory());
+    }
+
+    public List<Message> msgList; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      MSG_LIST((short)1, "msgList");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // MSG_LIST
+            return MSG_LIST;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.MSG_LIST, new org.apache.thrift.meta_data.FieldMetaData("msgList", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
+              new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Message.class))));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(sendBatch_args.class, metaDataMap);
+    }
+
+    public sendBatch_args() {
+    }
+
+    public sendBatch_args(
+      List<Message> msgList)
+    {
+      this();
+      this.msgList = msgList;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public sendBatch_args(sendBatch_args other) {
+      if (other.isSetMsgList()) {
+        List<Message> __this__msgList = new ArrayList<Message>();
+        for (Message other_element : other.msgList) {
+          __this__msgList.add(new Message(other_element));
+        }
+        this.msgList = __this__msgList;
+      }
+    }
+
+    public sendBatch_args deepCopy() {
+      return new sendBatch_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.msgList = null;
+    }
+
+    public int getMsgListSize() {
+      return (this.msgList == null) ? 0 : this.msgList.size();
+    }
+
+    public java.util.Iterator<Message> getMsgListIterator() {
+      return (this.msgList == null) ? null : this.msgList.iterator();
+    }
+
+    public void addToMsgList(Message elem) {
+      if (this.msgList == null) {
+        this.msgList = new ArrayList<Message>();
+      }
+      this.msgList.add(elem);
+    }
+
+    public List<Message> getMsgList() {
+      return this.msgList;
+    }
+
+    public sendBatch_args setMsgList(List<Message> msgList) {
+      this.msgList = msgList;
+      return this;
+    }
+
+    public void unsetMsgList() {
+      this.msgList = null;
+    }
+
+    /** Returns true if field msgList is set (has been assigned a value) and false otherwise */
+    public boolean isSetMsgList() {
+      return this.msgList != null;
+    }
+
+    public void setMsgListIsSet(boolean value) {
+      if (!value) {
+        this.msgList = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case MSG_LIST:
+        if (value == null) {
+          unsetMsgList();
+        } else {
+          setMsgList((List<Message>)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case MSG_LIST:
+        return getMsgList();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case MSG_LIST:
+        return isSetMsgList();
       }
       throw new IllegalStateException();
     }
@@ -1258,12 +1396,12 @@ public class MessageBrokerService {
       if (that == null)
         return false;
 
-      boolean this_present_msg = true && this.isSetMsg();
-      boolean that_present_msg = true && that.isSetMsg();
-      if (this_present_msg || that_present_msg) {
-        if (!(this_present_msg && that_present_msg))
+      boolean this_present_msgList = true && this.isSetMsgList();
+      boolean that_present_msgList = true && that.isSetMsgList();
+      if (this_present_msgList || that_present_msgList) {
+        if (!(this_present_msgList && that_present_msgList))
           return false;
-        if (!this.msg.equals(that.msg))
+        if (!this.msgList.equals(that.msgList))
           return false;
       }
 
@@ -1283,12 +1421,12 @@ public class MessageBrokerService {
       int lastComparison = 0;
       sendBatch_args typedOther = (sendBatch_args)other;
 
-      lastComparison = Boolean.valueOf(isSetMsg()).compareTo(typedOther.isSetMsg());
+      lastComparison = Boolean.valueOf(isSetMsgList()).compareTo(typedOther.isSetMsgList());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetMsg()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.msg, typedOther.msg);
+      if (isSetMsgList()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.msgList, typedOther.msgList);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -1313,11 +1451,11 @@ public class MessageBrokerService {
       StringBuilder sb = new StringBuilder("sendBatch_args(");
       boolean first = true;
 
-      sb.append("msg:");
-      if (this.msg == null) {
+      sb.append("msgList:");
+      if (this.msgList == null) {
         sb.append("null");
       } else {
-        sb.append(this.msg);
+        sb.append(this.msgList);
       }
       first = false;
       sb.append(")");
@@ -1363,21 +1501,21 @@ public class MessageBrokerService {
             break;
           }
           switch (schemeField.id) {
-            case 1: // MSG
+            case 1: // MSG_LIST
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
                   org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
-                  struct.msg = new ArrayList<Message>(_list0.size);
+                  struct.msgList = new ArrayList<Message>(_list0.size);
                   for (int _i1 = 0; _i1 < _list0.size; ++_i1)
                   {
                     Message _elem2; // required
                     _elem2 = new Message();
                     _elem2.read(iprot);
-                    struct.msg.add(_elem2);
+                    struct.msgList.add(_elem2);
                   }
                   iprot.readListEnd();
                 }
-                struct.setMsgIsSet(true);
+                struct.setMsgListIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -1397,11 +1535,11 @@ public class MessageBrokerService {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.msg != null) {
-          oprot.writeFieldBegin(MSG_FIELD_DESC);
+        if (struct.msgList != null) {
+          oprot.writeFieldBegin(MSG_LIST_FIELD_DESC);
           {
-            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.msg.size()));
-            for (Message _iter3 : struct.msg)
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.msgList.size()));
+            for (Message _iter3 : struct.msgList)
             {
               _iter3.write(oprot);
             }
@@ -1427,14 +1565,14 @@ public class MessageBrokerService {
       public void write(org.apache.thrift.protocol.TProtocol prot, sendBatch_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
-        if (struct.isSetMsg()) {
+        if (struct.isSetMsgList()) {
           optionals.set(0);
         }
         oprot.writeBitSet(optionals, 1);
-        if (struct.isSetMsg()) {
+        if (struct.isSetMsgList()) {
           {
-            oprot.writeI32(struct.msg.size());
-            for (Message _iter4 : struct.msg)
+            oprot.writeI32(struct.msgList.size());
+            for (Message _iter4 : struct.msgList)
             {
               _iter4.write(oprot);
             }
@@ -1449,16 +1587,16 @@ public class MessageBrokerService {
         if (incoming.get(0)) {
           {
             org.apache.thrift.protocol.TList _list5 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.msg = new ArrayList<Message>(_list5.size);
+            struct.msgList = new ArrayList<Message>(_list5.size);
             for (int _i6 = 0; _i6 < _list5.size; ++_i6)
             {
               Message _elem7; // required
               _elem7 = new Message();
               _elem7.read(iprot);
-              struct.msg.add(_elem7);
+              struct.msgList.add(_elem7);
             }
           }
-          struct.setMsgIsSet(true);
+          struct.setMsgListIsSet(true);
         }
       }
     }
@@ -1468,6 +1606,7 @@ public class MessageBrokerService {
   public static class sendBatch_result implements org.apache.thrift.TBase<sendBatch_result, sendBatch_result._Fields>, java.io.Serializable, Cloneable   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("sendBatch_result");
 
+    private static final org.apache.thrift.protocol.TField E_FIELD_DESC = new org.apache.thrift.protocol.TField("e", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -1475,10 +1614,11 @@ public class MessageBrokerService {
       schemes.put(TupleScheme.class, new sendBatch_resultTupleSchemeFactory());
     }
 
+    public MessageBrokerException e; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-;
+      E((short)1, "e");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1493,6 +1633,8 @@ public class MessageBrokerService {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
+          case 1: // E
+            return E;
           default:
             return null;
         }
@@ -1531,9 +1673,13 @@ public class MessageBrokerService {
         return _fieldName;
       }
     }
+
+    // isset id assignments
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.E, new org.apache.thrift.meta_data.FieldMetaData("e", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(sendBatch_result.class, metaDataMap);
     }
@@ -1541,10 +1687,20 @@ public class MessageBrokerService {
     public sendBatch_result() {
     }
 
+    public sendBatch_result(
+      MessageBrokerException e)
+    {
+      this();
+      this.e = e;
+    }
+
     /**
      * Performs a deep copy on <i>other</i>.
      */
     public sendBatch_result(sendBatch_result other) {
+      if (other.isSetE()) {
+        this.e = new MessageBrokerException(other.e);
+      }
     }
 
     public sendBatch_result deepCopy() {
@@ -1553,15 +1709,51 @@ public class MessageBrokerService {
 
     @Override
     public void clear() {
+      this.e = null;
+    }
+
+    public MessageBrokerException getE() {
+      return this.e;
+    }
+
+    public sendBatch_result setE(MessageBrokerException e) {
+      this.e = e;
+      return this;
+    }
+
+    public void unsetE() {
+      this.e = null;
+    }
+
+    /** Returns true if field e is set (has been assigned a value) and false otherwise */
+    public boolean isSetE() {
+      return this.e != null;
+    }
+
+    public void setEIsSet(boolean value) {
+      if (!value) {
+        this.e = null;
+      }
     }
 
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
+      case E:
+        if (value == null) {
+          unsetE();
+        } else {
+          setE((MessageBrokerException)value);
+        }
+        break;
+
       }
     }
 
     public Object getFieldValue(_Fields field) {
       switch (field) {
+      case E:
+        return getE();
+
       }
       throw new IllegalStateException();
     }
@@ -1573,6 +1765,8 @@ public class MessageBrokerService {
       }
 
       switch (field) {
+      case E:
+        return isSetE();
       }
       throw new IllegalStateException();
     }
@@ -1590,6 +1784,15 @@ public class MessageBrokerService {
       if (that == null)
         return false;
 
+      boolean this_present_e = true && this.isSetE();
+      boolean that_present_e = true && that.isSetE();
+      if (this_present_e || that_present_e) {
+        if (!(this_present_e && that_present_e))
+          return false;
+        if (!this.e.equals(that.e))
+          return false;
+      }
+
       return true;
     }
 
@@ -1606,6 +1809,16 @@ public class MessageBrokerService {
       int lastComparison = 0;
       sendBatch_result typedOther = (sendBatch_result)other;
 
+      lastComparison = Boolean.valueOf(isSetE()).compareTo(typedOther.isSetE());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetE()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.e, typedOther.e);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -1626,6 +1839,13 @@ public class MessageBrokerService {
       StringBuilder sb = new StringBuilder("sendBatch_result(");
       boolean first = true;
 
+      sb.append("e:");
+      if (this.e == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.e);
+      }
+      first = false;
       sb.append(")");
       return sb.toString();
     }
@@ -1669,6 +1889,15 @@ public class MessageBrokerService {
             break;
           }
           switch (schemeField.id) {
+            case 1: // E
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.e = new MessageBrokerException();
+                struct.e.read(iprot);
+                struct.setEIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -1684,6 +1913,11 @@ public class MessageBrokerService {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.e != null) {
+          oprot.writeFieldBegin(E_FIELD_DESC);
+          struct.e.write(oprot);
+          oprot.writeFieldEnd();
+        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
@@ -1701,11 +1935,25 @@ public class MessageBrokerService {
       @Override
       public void write(org.apache.thrift.protocol.TProtocol prot, sendBatch_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetE()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetE()) {
+          struct.e.write(oprot);
+        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, sendBatch_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.e = new MessageBrokerException();
+          struct.e.read(iprot);
+          struct.setEIsSet(true);
+        }
       }
     }
 
@@ -2167,6 +2415,7 @@ public class MessageBrokerService {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("receive_result");
 
     private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+    private static final org.apache.thrift.protocol.TField E_FIELD_DESC = new org.apache.thrift.protocol.TField("e", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -2175,10 +2424,12 @@ public class MessageBrokerService {
     }
 
     public Message success; // required
+    public MessageBrokerException e; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success");
+      SUCCESS((short)0, "success"),
+      E((short)1, "e");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2195,6 +2446,8 @@ public class MessageBrokerService {
         switch(fieldId) {
           case 0: // SUCCESS
             return SUCCESS;
+          case 1: // E
+            return E;
           default:
             return null;
         }
@@ -2240,6 +2493,8 @@ public class MessageBrokerService {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Message.class)));
+      tmpMap.put(_Fields.E, new org.apache.thrift.meta_data.FieldMetaData("e", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(receive_result.class, metaDataMap);
     }
@@ -2248,10 +2503,12 @@ public class MessageBrokerService {
     }
 
     public receive_result(
-      Message success)
+      Message success,
+      MessageBrokerException e)
     {
       this();
       this.success = success;
+      this.e = e;
     }
 
     /**
@@ -2260,6 +2517,9 @@ public class MessageBrokerService {
     public receive_result(receive_result other) {
       if (other.isSetSuccess()) {
         this.success = new Message(other.success);
+      }
+      if (other.isSetE()) {
+        this.e = new MessageBrokerException(other.e);
       }
     }
 
@@ -2270,6 +2530,7 @@ public class MessageBrokerService {
     @Override
     public void clear() {
       this.success = null;
+      this.e = null;
     }
 
     public Message getSuccess() {
@@ -2296,6 +2557,30 @@ public class MessageBrokerService {
       }
     }
 
+    public MessageBrokerException getE() {
+      return this.e;
+    }
+
+    public receive_result setE(MessageBrokerException e) {
+      this.e = e;
+      return this;
+    }
+
+    public void unsetE() {
+      this.e = null;
+    }
+
+    /** Returns true if field e is set (has been assigned a value) and false otherwise */
+    public boolean isSetE() {
+      return this.e != null;
+    }
+
+    public void setEIsSet(boolean value) {
+      if (!value) {
+        this.e = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case SUCCESS:
@@ -2306,6 +2591,14 @@ public class MessageBrokerService {
         }
         break;
 
+      case E:
+        if (value == null) {
+          unsetE();
+        } else {
+          setE((MessageBrokerException)value);
+        }
+        break;
+
       }
     }
 
@@ -2313,6 +2606,9 @@ public class MessageBrokerService {
       switch (field) {
       case SUCCESS:
         return getSuccess();
+
+      case E:
+        return getE();
 
       }
       throw new IllegalStateException();
@@ -2327,6 +2623,8 @@ public class MessageBrokerService {
       switch (field) {
       case SUCCESS:
         return isSetSuccess();
+      case E:
+        return isSetE();
       }
       throw new IllegalStateException();
     }
@@ -2350,6 +2648,15 @@ public class MessageBrokerService {
         if (!(this_present_success && that_present_success))
           return false;
         if (!this.success.equals(that.success))
+          return false;
+      }
+
+      boolean this_present_e = true && this.isSetE();
+      boolean that_present_e = true && that.isSetE();
+      if (this_present_e || that_present_e) {
+        if (!(this_present_e && that_present_e))
+          return false;
+        if (!this.e.equals(that.e))
           return false;
       }
 
@@ -2379,6 +2686,16 @@ public class MessageBrokerService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetE()).compareTo(typedOther.isSetE());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetE()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.e, typedOther.e);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -2404,6 +2721,14 @@ public class MessageBrokerService {
         sb.append("null");
       } else {
         sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("e:");
+      if (this.e == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.e);
       }
       first = false;
       sb.append(")");
@@ -2461,6 +2786,15 @@ public class MessageBrokerService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 1: // E
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.e = new MessageBrokerException();
+                struct.e.read(iprot);
+                struct.setEIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -2479,6 +2813,11 @@ public class MessageBrokerService {
         if (struct.success != null) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           struct.success.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        if (struct.e != null) {
+          oprot.writeFieldBegin(E_FIELD_DESC);
+          struct.e.write(oprot);
           oprot.writeFieldEnd();
         }
         oprot.writeFieldStop();
@@ -2502,20 +2841,31 @@ public class MessageBrokerService {
         if (struct.isSetSuccess()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetE()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
           struct.success.write(oprot);
+        }
+        if (struct.isSetE()) {
+          struct.e.write(oprot);
         }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, receive_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.success = new Message();
           struct.success.read(iprot);
           struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.e = new MessageBrokerException();
+          struct.e.read(iprot);
+          struct.setEIsSet(true);
         }
       }
     }
@@ -3072,6 +3422,7 @@ public class MessageBrokerService {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("receiveBatch_result");
 
     private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.LIST, (short)0);
+    private static final org.apache.thrift.protocol.TField E_FIELD_DESC = new org.apache.thrift.protocol.TField("e", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -3080,10 +3431,12 @@ public class MessageBrokerService {
     }
 
     public List<Message> success; // required
+    public MessageBrokerException e; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success");
+      SUCCESS((short)0, "success"),
+      E((short)1, "e");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -3100,6 +3453,8 @@ public class MessageBrokerService {
         switch(fieldId) {
           case 0: // SUCCESS
             return SUCCESS;
+          case 1: // E
+            return E;
           default:
             return null;
         }
@@ -3146,6 +3501,8 @@ public class MessageBrokerService {
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
               new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Message.class))));
+      tmpMap.put(_Fields.E, new org.apache.thrift.meta_data.FieldMetaData("e", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(receiveBatch_result.class, metaDataMap);
     }
@@ -3154,10 +3511,12 @@ public class MessageBrokerService {
     }
 
     public receiveBatch_result(
-      List<Message> success)
+      List<Message> success,
+      MessageBrokerException e)
     {
       this();
       this.success = success;
+      this.e = e;
     }
 
     /**
@@ -3171,6 +3530,9 @@ public class MessageBrokerService {
         }
         this.success = __this__success;
       }
+      if (other.isSetE()) {
+        this.e = new MessageBrokerException(other.e);
+      }
     }
 
     public receiveBatch_result deepCopy() {
@@ -3180,6 +3542,7 @@ public class MessageBrokerService {
     @Override
     public void clear() {
       this.success = null;
+      this.e = null;
     }
 
     public int getSuccessSize() {
@@ -3221,6 +3584,30 @@ public class MessageBrokerService {
       }
     }
 
+    public MessageBrokerException getE() {
+      return this.e;
+    }
+
+    public receiveBatch_result setE(MessageBrokerException e) {
+      this.e = e;
+      return this;
+    }
+
+    public void unsetE() {
+      this.e = null;
+    }
+
+    /** Returns true if field e is set (has been assigned a value) and false otherwise */
+    public boolean isSetE() {
+      return this.e != null;
+    }
+
+    public void setEIsSet(boolean value) {
+      if (!value) {
+        this.e = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case SUCCESS:
@@ -3231,6 +3618,14 @@ public class MessageBrokerService {
         }
         break;
 
+      case E:
+        if (value == null) {
+          unsetE();
+        } else {
+          setE((MessageBrokerException)value);
+        }
+        break;
+
       }
     }
 
@@ -3238,6 +3633,9 @@ public class MessageBrokerService {
       switch (field) {
       case SUCCESS:
         return getSuccess();
+
+      case E:
+        return getE();
 
       }
       throw new IllegalStateException();
@@ -3252,6 +3650,8 @@ public class MessageBrokerService {
       switch (field) {
       case SUCCESS:
         return isSetSuccess();
+      case E:
+        return isSetE();
       }
       throw new IllegalStateException();
     }
@@ -3275,6 +3675,15 @@ public class MessageBrokerService {
         if (!(this_present_success && that_present_success))
           return false;
         if (!this.success.equals(that.success))
+          return false;
+      }
+
+      boolean this_present_e = true && this.isSetE();
+      boolean that_present_e = true && that.isSetE();
+      if (this_present_e || that_present_e) {
+        if (!(this_present_e && that_present_e))
+          return false;
+        if (!this.e.equals(that.e))
           return false;
       }
 
@@ -3304,6 +3713,16 @@ public class MessageBrokerService {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetE()).compareTo(typedOther.isSetE());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetE()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.e, typedOther.e);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -3329,6 +3748,14 @@ public class MessageBrokerService {
         sb.append("null");
       } else {
         sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("e:");
+      if (this.e == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.e);
       }
       first = false;
       sb.append(")");
@@ -3393,6 +3820,15 @@ public class MessageBrokerService {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 1: // E
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.e = new MessageBrokerException();
+                struct.e.read(iprot);
+                struct.setEIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -3420,6 +3856,11 @@ public class MessageBrokerService {
           }
           oprot.writeFieldEnd();
         }
+        if (struct.e != null) {
+          oprot.writeFieldBegin(E_FIELD_DESC);
+          struct.e.write(oprot);
+          oprot.writeFieldEnd();
+        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
@@ -3441,7 +3882,10 @@ public class MessageBrokerService {
         if (struct.isSetSuccess()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetE()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
@@ -3451,12 +3895,15 @@ public class MessageBrokerService {
             }
           }
         }
+        if (struct.isSetE()) {
+          struct.e.write(oprot);
+        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, receiveBatch_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
             org.apache.thrift.protocol.TList _list13 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
@@ -3470,6 +3917,11 @@ public class MessageBrokerService {
             }
           }
           struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.e = new MessageBrokerException();
+          struct.e.read(iprot);
+          struct.setEIsSet(true);
         }
       }
     }

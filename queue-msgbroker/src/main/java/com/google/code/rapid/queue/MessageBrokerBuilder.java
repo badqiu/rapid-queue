@@ -42,12 +42,20 @@ public class MessageBrokerBuilder {
 	public void setVhostService(VhostService vhostService) {
 		this.vhostService = vhostService;
 	}
+	
+	public void setDataDir(File dataDir) {
+		this.dataDir = dataDir;
+	}
 
 	public Map<String,MessageBroker> build() {
+		Assert.notNull(dataDir,"dataDir must be not null");
 		Assert.notNull(bindingService,"bindingService must be not null");
 		Assert.notNull(queueService,"queueService must be not null");
 		Assert.notNull(exchangeService,"exchangeService must be not null");
 		Assert.notNull(vhostService,"vhostService must be not null");
+		if(!dataDir.exists()) {
+			dataDir.mkdirs();
+		}
 		
 		return new Builder().execute();
 	}
@@ -74,7 +82,7 @@ public class MessageBrokerBuilder {
 				
 				List<Binding> bindingList = bindingService.findBindingByVhostName(vhost.getVhostName(),exchange.getExchangeName());
 				for(Binding binding : bindingList) {
-					Queue queue = queueService.getById(binding.getQueueName(), binding.getExchangeName());
+					Queue queue = queueService.getById(binding.getQueueName(), binding.getVhostName());
 					TopicQueue q = newTopicQueue(queue);
 					mb.getManager().queueAdd(q);
 					mb.getManager().queueBind(exchange.getExchangeName(), q.getQueueName(),binding.getRouterKey());
