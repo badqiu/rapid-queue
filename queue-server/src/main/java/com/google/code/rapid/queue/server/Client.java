@@ -23,13 +23,13 @@ public class Client {
              
              MessageBrokerService.Client client = new MessageBrokerService.Client(protocol);
              Message msg = new Message();
-             msg.setExchange("ex_user");
+             msg.setExchange("ex_demo");
              msg.setBody(new byte[]{1});
              msg.setRouterKey("yygame.ddt");
              client.login("badqiu", "123456", "vhost");
 			 client.send(msg);
 			 
-			 Message receiveMsg = client.receive("q1", 100);
+			 Message receiveMsg = client.receive("queue_demo", 100);
 			 System.out.println("receiveMsg:"+Arrays.toString(receiveMsg.getBody()));
          } catch (TTransportException e) {
              e.printStackTrace();

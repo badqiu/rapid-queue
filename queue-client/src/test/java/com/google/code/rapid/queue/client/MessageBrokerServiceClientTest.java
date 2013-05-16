@@ -1,5 +1,6 @@
 package com.google.code.rapid.queue.client;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.TException;
 import org.junit.Test;
@@ -24,11 +25,13 @@ public class MessageBrokerServiceClientTest {
         msg.setRouterKey("yygame.ddt");
         client.open();
         
-		client.send(msg);
-		
-		
-		Message receive = client.receive("queue_demo", 1000);
-		System.out.println("receive:"+new String(receive.getBody()));
+        for(int i = 0; i < 100; i++) {
+			client.send(msg);
+			
+			Message receive = client.receive("queue_demo", 1000);
+			
+			System.out.println("receive:"+ArrayUtils.getLength(receive.getBody()));
+        }
 	}
 	
 }

@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.util.Assert;
 
 import com.google.code.rapid.queue.DurableTypeEnum;
@@ -40,7 +41,7 @@ public class TopicExchange implements InitializingBean{
 	private List<TopicQueue> bindQueueList = new ArrayList<TopicQueue>();
 	private List<TopicExchange> bindExchangeList = new ArrayList<TopicExchange>();
 	
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
+	private ExecutorService executor = Executors.newSingleThreadExecutor(new CustomizableThreadFactory("TopicExchangeComsumeThread"));
 	
 	public void offer(Message msg) {
 		exchangeQueue.offer(Message.toBytes(msg));

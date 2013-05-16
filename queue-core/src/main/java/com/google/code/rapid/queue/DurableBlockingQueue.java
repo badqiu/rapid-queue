@@ -28,7 +28,7 @@ public class DurableBlockingQueue extends DurableQueue implements BlockingQueue<
 		try {
 			lock.lock();
 			boolean result = super.add(e);
-			notEmpty.signalAll();
+			notEmpty.signal();
 			return result;
 		}finally {
 			lock.unlock();
