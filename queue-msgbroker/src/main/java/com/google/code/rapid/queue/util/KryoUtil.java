@@ -16,7 +16,7 @@ public class KryoUtil {
 	
 	private static Kryo kryo = new Kryo();
 	
-	public static byte[] toBytes(Object obj,int bufSize) {
+	public static synchronized byte[] toBytes(Object obj,int bufSize) {
 		if(obj == null) return null;
 		ByteArrayOutputStream bytesOutputStream = new ByteArrayOutputStream(bufSize);
 		Output output = new Output(bytesOutputStream);
@@ -25,7 +25,7 @@ public class KryoUtil {
 		return bytesOutputStream.toByteArray();
 	}
 	
-	public static <T> T fromBytes(byte[] bytes,Class<T> clazz) {
+	public static synchronized <T> T fromBytes(byte[] bytes,Class<T> clazz) {
 		if(bytes == null) return null;
 		return kryo.readObject(new Input(new ByteArrayInputStream(bytes)), clazz);
 	}
