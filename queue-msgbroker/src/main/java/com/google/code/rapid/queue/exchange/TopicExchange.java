@@ -53,8 +53,13 @@ public class TopicExchange implements InitializingBean{
 			public void run() {
 				logger.info("started comsumeThread for exchange:"+exchangeName);
 				while(true) {
-					exchangeComsume();
+					try {
+						exchangeComsume();
+					} catch (InterruptedException e) {
+						break;
+					}
 				}
+				logger.info("stoped comsumeThread for exchange:"+exchangeName);
 			}
 		});
 	}
@@ -68,8 +73,8 @@ public class TopicExchange implements InitializingBean{
 		this.exchangeQueue = exchangeQueue;
 	}
 
-	private void exchangeComsume() {
-		Message msg = Message.fromBytes(exchangeQueue.poll());
+	private void exchangeComsume() throws InterruptedException {
+		Message msg = Message.fromBytes(exchangeQueue.take());
 		if(msg != null) {
 			router2QueueList(msg.getRouterKey(),msg.getBody());
 			router2ExchangeList(msg);

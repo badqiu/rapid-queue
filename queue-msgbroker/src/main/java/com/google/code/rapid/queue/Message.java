@@ -1,11 +1,10 @@
 package com.google.code.rapid.queue;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
+import org.apache.commons.lang3.ArrayUtils;
+
+import com.google.code.rapid.queue.util.KryoUtil;
 
 
 public class Message implements Serializable{
@@ -66,14 +65,7 @@ public class Message implements Serializable{
 	}
 	
 	public byte[] toBytes() {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(this);
-			return baos.toByteArray();
-		}catch(IOException e) {
-			throw new RuntimeException("toBytes() error,message:"+this,e);
-		}
+		return KryoUtil.toBytes(this, body.length + 500);
 	}
 	
 	public static byte[] toBytes(Message msg) {
@@ -82,16 +74,14 @@ public class Message implements Serializable{
 	}
 	
 	public static Message fromBytes(byte[] bytes) {
-		if(bytes == null) return null;
-		
-		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-			ObjectInputStream oos = new ObjectInputStream(bais);
-			return (Message)oos.readObject();
-		}catch(IOException e) {
-			throw new RuntimeException("fromBytes() error",e);
-		}catch(ClassNotFoundException e) {
-			throw new RuntimeException("fromBytes() error",e);
-		}
+		return KryoUtil.fromBytes(bytes, Message.class);
 	}
+
+	@Override
+	public String toString() {
+		return "Message [exchange=" + exchange + ", routerKey=" + routerKey
+				+ ", body.length=" + ArrayUtils.getLength(body) + ", messageProperties="
+				+ messageProperties + "]";
+	}
+	
 }

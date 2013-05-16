@@ -147,5 +147,16 @@ public class MessageProperties implements Serializable{
 	public void setVhost(String vhost) {
 		this.vhost = vhost;
 	}
+
+	@Override
+	public String toString() {
+		return "MessageProperties [messageId=" + messageId + ", priority="
+				+ priority + ", contentType=" + contentType
+				+ ", contentEncoding=" + contentEncoding + ", contentLength="
+				+ contentLength + ", expiration=" + expiration + ", timestamp="
+				+ timestamp + ", deliveryMode=" + deliveryMode + ", sourceIp="
+				+ sourceIp + ", sourceApp=" + sourceApp + ", sourceUser="
+				+ sourceUser + ", vhost=" + vhost + "]";
+	}
 	
 }

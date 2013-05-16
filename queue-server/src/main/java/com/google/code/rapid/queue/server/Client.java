@@ -17,7 +17,7 @@ public class Client {
 	public void startClient() {
          TTransport transport = null;
          try {
-             transport = new TSocket("localhost",9088);
+             transport = new TSocket("localhost",Server.DEFAULT_PORT);
              TProtocol protocol = new TBinaryProtocol(transport);
              transport.open();
              
@@ -26,8 +26,8 @@ public class Client {
              msg.setExchange("ex_user");
              msg.setBody(new byte[]{1});
              msg.setRouterKey("yygame.ddt");
+             client.login("badqiu", "123456", "vhost");
 			 client.send(msg);
-             
 			 
 			 Message receiveMsg = client.receive("q1", 100);
 			 System.out.println("receiveMsg:"+Arrays.toString(receiveMsg.getBody()));

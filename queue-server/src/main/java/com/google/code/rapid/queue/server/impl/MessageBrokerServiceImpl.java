@@ -3,6 +3,7 @@ package com.google.code.rapid.queue.server.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +12,16 @@ import org.springframework.util.Assert;
 
 import com.google.code.rapid.queue.MessageBroker;
 import com.google.code.rapid.queue.MessageBrokerBuilder;
+import com.google.code.rapid.queue.server.ThriftContext;
 import com.google.code.rapid.queue.server.thrift.Message;
 import com.google.code.rapid.queue.server.thrift.MessageBrokerException;
 import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Iface;
 
 public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	private Logger logger = LoggerFactory.getLogger(MessageBrokerServiceImpl.class);
+	
+	private static final String LOGIN_USER_KEY = "LOGIN_USER";
+	private static final String VHOST_KEY = "VHOST";
 	
 	private MessageBrokerBuilder messageBrokerBuilder;
 	private Map<String,MessageBroker> messageBrokerMap;
@@ -28,6 +33,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	@Override
 	public void send(Message msg) throws TException {
 		try {
+			assertLogined();
 			MessageBroker mb = getRequiredMessageBroker(getVhost());
 			mb.send(MessageConvertUtil.toMessageBrokerMessage(msg));
 		}catch(RuntimeException e) {
@@ -39,6 +45,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	@Override
 	public void sendBatch(List<Message> msgList) throws TException {
 		try {
+			assertLogined();
 			MessageBroker mb = getRequiredMessageBroker(getVhost());
 			mb.sendBatch(MessageConvertUtil.totoMessageBrokerMessageList(msgList));
 		}catch(RuntimeException e) {
@@ -50,6 +57,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	@Override
 	public Message receive(String queueName, int timeout) throws TException {
 		try {
+			assertLogined();
 			MessageBroker mb = getRequiredMessageBroker(getVhost());
 			return MessageConvertUtil.toThriftMessage(mb.receive(queueName, timeout));
 		}catch(RuntimeException e) {
@@ -62,6 +70,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	public List<Message> receiveBatch(String queueName, int timeout,
 			int batchSize) throws TException {
 		try {
+			assertLogined();
 			MessageBroker mb = getRequiredMessageBroker(getVhost());
 			return MessageConvertUtil.toThriftMessageList(mb.receiveBatch(queueName, timeout,batchSize));
 		}catch(RuntimeException e) {
@@ -71,7 +80,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	}
 	
 	private String getVhost() {
-		return "vhost";
+		return (String)ThriftContext.getServerContext().get(VHOST_KEY);
 	}
 	
 	private MessageBroker getRequiredMessageBroker(String vhost) {
@@ -82,10 +91,29 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 		return mb;
 	}
 	
+	private void assertLogined() {
+		String loginUser = (String)ThriftContext.getServerContext().get(LOGIN_USER_KEY);
+		if(StringUtils.isBlank(loginUser)) {
+			throw new RuntimeException("need login,please login before execute action!");
+		}
+	}
+	
+	@Override
+	public void login(String username, String password, String vhost)
+			throws MessageBrokerException, TException {
+		ThriftContext.getServerContext().put(LOGIN_USER_KEY, username);
+		ThriftContext.getServerContext().put(VHOST_KEY, vhost);
+		logger.info("login_success by username:"+username+" vhost:"+vhost+" on clientIp:"+ThriftContext.get(ThriftContext.CLIENT_IP));
+	}
+
+	@Override
+	public void logout() throws MessageBrokerException, TException {
+		ThriftContext.getServerContext().clear();
+	}
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(messageBrokerBuilder,"messageBrokerBuilder must be not null");
 		messageBrokerMap = messageBrokerBuilder.build();
 	}
-
 }

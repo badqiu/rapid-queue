@@ -61,5 +61,16 @@ service MessageBrokerService {
 	 * @param batchSize 批量接收的大小
 	 */		
 	list<Message> receiveBatch(1:string queueName,2:i32 timeout,3:i32 batchSize) throws (1:MessageBrokerException e),
-	
+
+	/**
+	 * 登陆
+	 */
+	void login(1:string username,2:string password,3:string vhost) throws (1:MessageBrokerException e),
+
+	/**
+	 * 登出
+	 */
+	void logout() throws (1:MessageBrokerException e),	
+		
 }
+
