@@ -26,9 +26,9 @@ public class MessageBrokerServiceClientTest {
         client.open();
         
         for(int i = 0; i < 100; i++) {
-			client.send(msg);
+        	client.send(msg);
 			
-			Message receive = client.receive("queue_demo", 1000);
+			Message receive = client.receive("queue_demo", 1);
 			
 			System.out.println("receive:"+ArrayUtils.getLength(receive.getBody()));
         }

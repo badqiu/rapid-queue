@@ -222,7 +222,9 @@ public class LogEntity {
 	}
 
 	public byte[] read() throws FileEOFException {
-		return readBlock().data;
+		DataBlock block = readBlock();
+		if(block == null) return null;
+		return block.data;
 	}
 	
 	public DataBlock readBlock() throws FileEOFException {
@@ -245,17 +247,17 @@ public class LogEntity {
 			}
 		}
 
+		//length
+		mappedByteBuffer.position(readerPosition);
+		int length = mappedByteBuffer.getInt();
 		try {
-			//length
-			mappedByteBuffer.position(readerPosition);
-			int length = mappedByteBuffer.getInt();
 			
 			//data[]
 			byte[] b = new byte[length];
 			mappedByteBuffer.get(b);
 			return new DataBlock(readerIndex,readerPosition,length,b);
 		}catch(Throwable e) {
-			throw new RuntimeException("error read, current LogEntity:"+this+" LogIndex:"+db,e);
+			throw new RuntimeException("error read, current LogEntity:"+this+" LogIndex:"+db+" read length:"+length,e);
 		}
 	}
 	

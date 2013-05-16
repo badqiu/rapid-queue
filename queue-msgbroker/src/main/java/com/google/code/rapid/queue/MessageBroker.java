@@ -29,7 +29,11 @@ public class MessageBroker {
 		if(msg.getBody() == null) throw new IllegalArgumentException("'msg.body' must be not null");
 		
 		TopicExchange exchange = lookupExchange(msg.getExchange());
-		exchange.offer(msg);
+		try {
+			exchange.offer(msg);
+		} catch (InterruptedException e) {
+			throw new RuntimeException("InterruptedException on msg:"+msg);
+		}
 	}
 	
 	/**

@@ -43,10 +43,10 @@ public class TopicExchange implements InitializingBean{
 	
 	private ExecutorService executor = Executors.newSingleThreadExecutor(new CustomizableThreadFactory("TopicExchangeComsumeThread"));
 	
-	public void offer(Message msg) {
-		exchangeQueue.offer(Message.toBytes(msg));
+	public void offer(Message msg) throws InterruptedException {
+		logger.debug("offer {} msg:{}",exchangeName,msg);
+		exchangeQueue.put(Message.toBytes(msg));
 	}
-	
 	
 	public void startComsumeThread() {
 		executor.execute(new Runnable() {
@@ -58,6 +58,8 @@ public class TopicExchange implements InitializingBean{
 						exchangeComsume();
 					} catch (InterruptedException e) {
 						break;
+					} catch(Exception e) {
+						logger.error("error on consume exchange:"+exchangeName,e);
 					}
 				}
 				logger.info("stoped comsumeThread for exchange:"+exchangeName);
@@ -76,6 +78,7 @@ public class TopicExchange implements InitializingBean{
 
 	private void exchangeComsume() throws InterruptedException {
 		Message msg = Message.fromBytes(exchangeQueue.take());
+		logger.debug("exchangeComsume {} msg:{}",exchangeName,msg);
 		if(msg != null) {
 			router2QueueList(msg.getRouterKey(),msg.getBody());
 			router2ExchangeList(msg);
@@ -86,7 +89,11 @@ public class TopicExchange implements InitializingBean{
 		if(bindExchangeList != null) {
 			for(TopicExchange exchange : bindExchangeList) {
 				if(exchange.matchRouterKey(msg.getRouterKey())) {
-					exchange.offer(msg);
+					try {
+						exchange.offer(msg);
+					}catch(Exception e) {
+						logger.error("error on router2ExchangeList,exchange:"+exchange);
+					}
 				}
 			}
 		}
