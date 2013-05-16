@@ -84,7 +84,7 @@ public class MessageBroker {
 			totalCostTime += System.currentTimeMillis() - start;
 			nextWaittime = timeout - totalCostTime;
 			
-			if(totalCostTime >= timeout) {
+			if(totalCostTime >= timeout || nextWaittime <= 0) {
 				break;
 			}
 		}

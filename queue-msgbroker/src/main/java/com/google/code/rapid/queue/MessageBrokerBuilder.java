@@ -107,7 +107,7 @@ public class MessageBrokerBuilder {
 		r.setRemarks(queue.getRemarks());
 		r.setAutoDelete(queue.getAutoDelete());
 		r.setDurableType(DurableTypeEnum.valueOf(queue.getDurableType()));
-		r.setQueue(newBlockQueue(r.getDurableType(),queue.getMemorySize(),queue.getMaxSize(),"queue/"+queue.getQueueName()));
+		r.setQueue(newBlockQueue(r.getDurableType(),queue.getMemorySize(),queue.getMaxSize(),queue.getVhostName()+"/queue/"+queue.getQueueName()));
 		r.setMaxSize(queue.getMaxSize());
 		return r;
 	}
@@ -118,7 +118,7 @@ public class MessageBrokerBuilder {
 		r.setRemarks(exchange.getRemarks());
 		r.setAutoDelete(exchange.getAutoDelete());
 		r.setDurableType(DurableTypeEnum.valueOf(exchange.getDurableType()));
-		r.setExchangeQueue(newBlockQueue(r.getDurableType(),exchange.getMemorySize(),exchange.getMaxSize(),"exchange/"+exchange.getExchangeName()));
+		r.setExchangeQueue(newBlockQueue(r.getDurableType(),exchange.getMemorySize(),exchange.getMaxSize(),exchange.getVhostName()+"/exchange/"+exchange.getExchangeName()));
 		r.setMaxSize(exchange.getMaxSize());
 		
 		r.afterPropertiesSet();

@@ -8,39 +8,48 @@ import org.apache.thrift.server.TThreadPoolServer.Args;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.code.rapid.queue.server.thrift.MessageBrokerService;
 import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Processor;
 import com.google.code.rapid.queue.server.util.SpringContext;
 
 public class Server {
-	public static int DEFAULT_PORT = 29088;
+	private static Logger logger = LoggerFactory.getLogger(Server.class);
+	
+	public static final int DEFAULT_PORT = 29888;
+	
 	private int port = DEFAULT_PORT;
 	
-	public void startServer() {
-		try {
-			MessageBrokerService.Iface iface = SpringContext.getBean(MessageBrokerService.Iface.class);
-			TServerTransport serverTransport = new TServerSocket(port);
-
-			MessageBrokerService.Processor processor = new Processor(iface);
-
-			Factory portFactory = new TBinaryProtocol.Factory(true, true);
-
-			Args args = new Args(serverTransport);
-			args.maxWorkerThreads(2000);
-			args.minWorkerThreads(8);
-			args.processor(processor);
-			args.protocolFactory(portFactory);
-			TServer server = new TThreadPoolServer(args); // 有多种server可选择
-			server.setServerEventHandler(new TServerEventHandlerImpl());
-			System.out.println("start server on port:"+port);
-			server.serve();
-		} catch (TTransportException e) {
-			e.printStackTrace();
-		}
+	public Server() {
+	}
+	
+	public Server(int port) {
+		this.port = port;
 	}
 
-	public static void main(String[] args) {
+	public void startServer() throws TTransportException {
+		MessageBrokerService.Iface iface = SpringContext.getBean(MessageBrokerService.Iface.class);
+		TServerTransport serverTransport = new TServerSocket(port);
+
+		MessageBrokerService.Processor processor = new Processor(iface);
+
+		Factory portFactory = new TBinaryProtocol.Factory(true, true);
+
+		Args args = new Args(serverTransport);
+		args.maxWorkerThreads(2000);
+		args.minWorkerThreads(8);
+		args.processor(processor);
+		args.protocolFactory(portFactory);
+		
+		TServer server = new TThreadPoolServer(args); // 有多种server可选择
+		server.setServerEventHandler(new TServerEventHandlerImpl());
+		logger.info("start MessageBrokerService thrift server on port:"+port);
+		server.serve();
+	}
+
+	public static void main(String[] args) throws TTransportException {
 		Server server = new Server();
 		server.startServer();
 	}
