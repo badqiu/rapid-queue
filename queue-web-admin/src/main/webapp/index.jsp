@@ -50,9 +50,8 @@ $(document).ready(function() {
 
   <div id="nav">
    <ul>
-    <li><a href="left.jsp" target="leftFrame">网站管理</a></li>
-    <li><a href="../doc/guide.html" target="rightFrame">文章管理</a></li>
-	<li><a href="/admin/cmschannel/index.do" target="rightFrame">频道管理</a></li>
+    <li><a href="left.jsp" target="leftFrame">系统管理</a></li>
+    <li><a href="left.jsp" target="leftFrame">系统管理</a></li>
    </ul>
   </div>
 

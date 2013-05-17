@@ -29,12 +29,15 @@
 <body>
 
 <div class="urbangreymenu">
-	  <h3 class="headerbar">网站管理</h3>
+	  <h3 class="headerbar">队列管理</h3>
 	  <ul>
 		<li><a href="${ctx}/vhost/index.do" target="rightFrame">vhost管理</a></li>
 		<li><a href="${ctx}/exchange/index.do" target="rightFrame">exchange管理</a></li>
 		<li><a href="${ctx}/queue/index.do" target="rightFrame">queue管理</a></li>
 		<li><a href="${ctx}/binding/index.do" target="rightFrame">binding管理</a></li>
+	  </ul>
+	  <h3 class="headerbar">用户管理</h3>
+	  <ul>
 		<li><a href="${ctx}/user/index.do" target="rightFrame">user管理</a></li>
 	  </ul>
 </div>
