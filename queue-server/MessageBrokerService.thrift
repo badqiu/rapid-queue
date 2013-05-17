@@ -70,6 +70,10 @@ service MessageBrokerService {
 	 * 登出
 	 */
 	void logout() throws (1:MessageBrokerException e),	
-		
+
+	/**
+	 * 心跳检查,返回字符串: PONG
+	 */
+	string ping() throws (1:MessageBrokerException e),			
 }
 

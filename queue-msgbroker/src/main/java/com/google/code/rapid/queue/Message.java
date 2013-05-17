@@ -80,7 +80,7 @@ public class Message implements Serializable{
 	@Override
 	public String toString() {
 		return "Message [exchange=" + exchange + ", routerKey=" + routerKey
-				+ ", body.length=" + ArrayUtils.getLength(body) + ", messageProperties="
+				+ ", body.length=" + (body == null ? "null" : body.length) + ", messageProperties="
 				+ messageProperties + "]";
 	}
 	

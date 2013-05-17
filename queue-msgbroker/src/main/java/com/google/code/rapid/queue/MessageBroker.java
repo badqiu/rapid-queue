@@ -7,10 +7,14 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.code.rapid.queue.exchange.TopicExchange;
 
 public class MessageBroker {
+	private static final Logger logger = LoggerFactory.getLogger(MessageBroker.class);
+	
 	// Map<exchangeName,TopicExchange>
 	private Map<String,TopicExchange> exchangeMap = new HashMap<String,TopicExchange>();
 	
@@ -117,14 +121,16 @@ public class MessageBroker {
 	}
 	
 	public class MessageBrokerManager {
-	
 		public void queueAdd(TopicQueue queue) {
 			if(StringUtils.isBlank(queue.getQueueName())) throw new IllegalArgumentException("queueName must be not blank");
 			if(queueMap.containsKey(queue.getQueueName())) throw new IllegalArgumentException("already contain queue:"+queue.getQueueName());
+			
+			logger.info("queueAdd(),queue:"+queue);
 			queueMap.put(queue.getQueueName(),queue);
 		}
 		
 		public void queueDelete(String queueName) {
+			logger.info("queueDelete() queueName:"+queueName);
 			queueUnbindAllExchange(queueName);
 			TopicQueue queue = queueMap.remove(queueName);
 			queue.truncate();
@@ -138,6 +144,7 @@ public class MessageBroker {
 		}
 		
 		public void queueBind(String exchangeName,String queueName,String routerKey) {
+			logger.info("queueBind(),exchangeName:"+exchangeName+" queueName:"+queueName+" routerKey:"+routerKey);
 			TopicExchange exchange = lookupExchange(exchangeName);
 			TopicQueue queue = lookupQueue(queueName);
 			queue.getRouterKeyList().add(routerKey);
@@ -145,6 +152,7 @@ public class MessageBroker {
 		}
 	
 		public void queueUnbind(String exchangeName,String queueName,String routerKey) {
+			logger.info("queueUnbind(),exchangeName:"+exchangeName+" queueName:"+queueName+" routerKey:"+routerKey);
 			TopicExchange exchange = lookupExchange(exchangeName);
 			exchange.unbindQueue(queueName,routerKey);
 		}
@@ -153,10 +161,12 @@ public class MessageBroker {
 			if(StringUtils.isBlank(exchange.getExchangeName())) throw new IllegalArgumentException("exchangeName must be not blank");
 			if(exchangeMap.containsKey(exchange.getExchangeName())) throw new IllegalArgumentException("already contain exchange:"+exchange.getExchangeName());
 			
+			logger.info("exchangeAdd(),exchange:"+exchange);
 			exchangeMap.put(exchange.getExchangeName(),exchange);
 		}
 		
 		public void exchangeDelete(String exchangeName) {
+			logger.info("exchangeDelete(),exchangeName:"+exchangeName);
 			exchangeMap.remove(exchangeName);
 		}
 	}

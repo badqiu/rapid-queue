@@ -19,12 +19,12 @@ public class MessageBrokerServiceClientTest {
 	
 	Message msg = new Message();
 	@Before
-	public void setUp() throws MessageBrokerException, TException {
+	public void setUp() throws Exception {
 		client.setHost("localhost");
 		client.setUsername("user_demo");
 		client.setPassword("pwd");
 		client.setVhost("vhost");
-		client.open();
+		client.afterPropertiesSet();
 		
 		msg.setExchange("ex_demo");
 		msg.setBody(StringUtils.repeat("a", 100).getBytes());

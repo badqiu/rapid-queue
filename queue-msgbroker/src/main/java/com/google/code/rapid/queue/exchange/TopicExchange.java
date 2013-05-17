@@ -231,7 +231,14 @@ public class TopicExchange implements InitializingBean{
 			return false;
 		return true;
 	}
-
+	
+	@Override
+	public String toString() {
+		return "TopicExchange [exchangeName=" + exchangeName + ", remarks="
+				+ remarks + ", durableType=" + durableType + ", autoDelete="
+				+ autoDelete + ", maxSize=" + maxSize + ", memorySize="
+				+ memorySize + "]";
+	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

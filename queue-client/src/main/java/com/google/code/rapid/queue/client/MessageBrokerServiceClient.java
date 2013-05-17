@@ -1,7 +1,8 @@
 package com.google.code.rapid.queue.client;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.ObjectPool;
@@ -13,6 +14,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import com.google.code.rapid.queue.server.Server;
@@ -22,7 +24,7 @@ import com.google.code.rapid.queue.server.thrift.MessageBrokerService;
 import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Client;
 import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Iface;
 
-public class MessageBrokerServiceClient implements Iface {
+public class MessageBrokerServiceClient implements Iface,InitializingBean {
 	private static Logger logger = LoggerFactory.getLogger(MessageBrokerServiceClient.class);
 	
 	private String host;
@@ -137,27 +139,7 @@ public class MessageBrokerServiceClient implements Iface {
 			returnObject(client);
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	public void open() throws MessageBrokerException, TException {
-		Assert.hasText(host, "host must be not empty");
-		Assert.isTrue(port > 0, "port > 0 must be true");
-		
-		clientPool = new GenericObjectPool<MessageBrokerService.Client>(new BasePoolableObjectFactory() {
-			@Override
-			public Object makeObject() throws Exception {
-				TTransport transport = new TSocket(host, port);
-				TProtocol protocol = new TBinaryProtocol(transport);
-				transport.open();
-				MessageBrokerService.Client client = new MessageBrokerService.Client(protocol);
-				login(client);
-				return client;
-			}
-		},clientPoolSize);
-		
-		logger.info("connected to server:"+host+":"+port+" by username:"+username+" vhost:"+vhost);
-	}
-
+	
 	private void login(MessageBrokerService.Client client)
 			throws MessageBrokerException, TException {
 		Assert.hasText(username, "username must be not empty");
@@ -187,6 +169,16 @@ public class MessageBrokerServiceClient implements Iface {
 		}
 	}
 
+	@Override
+	public String ping() throws MessageBrokerException, TException {
+		Client client = borrowObject();
+		try {
+			return client.ping();
+		}finally {
+			returnObject(client);
+		}
+	}
+	
 	private void invalidateObject(Client client) {
 		try {
 			clientPool.invalidateObject(client);
@@ -210,5 +202,53 @@ public class MessageBrokerServiceClient implements Iface {
 			throw new RuntimeException("borrowObject error",e);
 		}
 	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Assert.hasText(host, "host must be not empty");
+		Assert.isTrue(port > 0, "port > 0 must be true");
+		Assert.isTrue(clientPoolSize > 0, "clientPoolSize > 0 must be true");
+		clientPool = new GenericObjectPool<MessageBrokerService.Client>(new ClientPoolableObjectFactory(),clientPoolSize);
+		logger.info("init end,server="+host+":"+port+" clientPoolSize:"+clientPoolSize+" username:"+username);
+	}
+	
+	private class ClientPoolableObjectFactory extends BasePoolableObjectFactory<MessageBrokerService.Client> {
+		final Map<Client,TTransport> clientTTransportMap = new HashMap<Client,TTransport> ();
+		@Override
+		public MessageBrokerService.Client makeObject() throws Exception {
+			TTransport transport = new TSocket(host, port);
+			TProtocol protocol = new TBinaryProtocol(transport);
+			transport.open();
+			MessageBrokerService.Client client = new MessageBrokerService.Client(protocol);
+			login(client);
+			clientTTransportMap.put(client, transport);
+			logger.info("connected_to_server:"+host+":"+port+" by username:"+username+" vhost:"+vhost);
+			return client;
+		}
+		
+		@Override
+		public void destroyObject(MessageBrokerService.Client obj) throws Exception {
+			TTransport transport = clientTTransportMap.get(obj);
+			if(transport != null) {
+				logger.info("closed_transport, server:"+host+":"+port+" by username:"+username+" vhost:"+vhost);
+				transport.close();
+			}
+		}
+		
+		@Override
+		public boolean validateObject(Client obj) {
+			try {
+				if("PONG".equals(obj.ping())) {
+					return true;
+				}
+				return false;
+			} catch (Exception e) {
+				return false;
+			}
+		}
+	}
+
+
+
 
 }

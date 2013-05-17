@@ -2,7 +2,12 @@ package com.google.code.rapid.queue.server;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * Thrift上下文
+ * 
+ * @author badqiu
+ *
+ */
 public class ThriftContext {
 	private static ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>();
 	public static final String CLIENT_IP = "clientIp";

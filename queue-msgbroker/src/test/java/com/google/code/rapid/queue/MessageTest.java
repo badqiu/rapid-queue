@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.google.code.rapid.queue.util.JavaSerUtil;
 import com.google.code.rapid.queue.util.KryoUtil;
 
 
@@ -36,14 +37,14 @@ public class MessageTest {
 		long start = System.currentTimeMillis();
 		
 		for(int i = 0; i < count; i++) {
-			byte[] b = m.toBytes();
+			byte[] b = JavaSerUtil.toBytes(m,5000);
 		}
 		printTps("toBytes()",start, count);
 		
-		byte[] bytes = m.toBytes();
+		byte[] bytes = JavaSerUtil.toBytes(m,5000);
 		start = System.currentTimeMillis();
 		for(int i = 0; i < count; i++) {
-			Message msg = Message.fromBytes(bytes);
+			Message msg = (Message)JavaSerUtil.fromBytes(bytes);
 		}
 		printTps("fromBytes()",start, count);
 	}

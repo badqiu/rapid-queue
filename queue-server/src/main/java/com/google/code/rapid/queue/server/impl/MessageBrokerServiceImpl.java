@@ -121,4 +121,10 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 		Assert.notNull(messageBrokerBuilder,"messageBrokerBuilder must be not null");
 		messageBrokerMap = messageBrokerBuilder.build();
 	}
+
+	@Override
+	public String ping() throws MessageBrokerException, TException {
+		return "PONG";
+	}
+	
 }

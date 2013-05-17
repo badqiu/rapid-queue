@@ -105,6 +105,13 @@ public class TopicQueue {
 	}
 	
 	@Override
+	public String toString() {
+		return "TopicQueue [queueName=" + queueName + ", remarks=" + remarks
+				+ ", durableType=" + durableType + ", autoDelete=" + autoDelete
+				+ ", maxSize=" + maxSize + ", memorySize=" + memorySize + "]";
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
