@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import com.google.code.rapid.queue.MessageBroker;
 import com.google.code.rapid.queue.MessageBrokerBuilder;
 import com.google.code.rapid.queue.server.ThriftContext;
+import com.google.code.rapid.queue.thrift.api.Constants;
 import com.google.code.rapid.queue.thrift.api.Message;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerException;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerService.Iface;
@@ -109,16 +110,16 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 		ThriftContext.getServerContext().put(VHOST_KEY, vhost);
 		logger.info("login_success by username:"+username+" vhost:"+vhost+" on clientIp:"+ThriftContext.get(ThriftContext.CLIENT_IP));
 	}
-
+	
+	@Override
+	public String ping() throws MessageBrokerException, TException {
+		return Constants.PING_RESPONSE;
+	}
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(messageBrokerBuilder,"messageBrokerBuilder must be not null");
 		messageBrokerMap = messageBrokerBuilder.build();
 	}
 
-	@Override
-	public String ping() throws MessageBrokerException, TException {
-		return "PONG";
-	}
-	
 }

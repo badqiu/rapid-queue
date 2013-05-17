@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.impl.GenericObjectPool;
@@ -14,8 +15,8 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 
 import com.google.code.rapid.queue.thrift.api.Constants;
 import com.google.code.rapid.queue.thrift.api.Message;
@@ -24,7 +25,7 @@ import com.google.code.rapid.queue.thrift.api.MessageBrokerService;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerService.Client;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerService.Iface;
 
-public class MessageBrokerServiceClient implements Iface,InitializingBean {
+public class MessageBrokerServiceClient implements Iface,InitializingBean,DisposableBean{
 	private static Logger logger = LoggerFactory.getLogger(MessageBrokerServiceClient.class);
 	
 	private String host;
@@ -142,9 +143,10 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean {
 	
 	private void login(MessageBrokerService.Client client)
 			throws MessageBrokerException, TException {
-		Assert.hasText(username, "username must be not empty");
-		Assert.hasText(password, "password must be not empty");
-		Assert.hasText(vhost, "vhost must be not empty");
+		if(StringUtils.isBlank(vhost)) throw new IllegalStateException("vhost must be not empty");
+		if(StringUtils.isBlank(password)) throw new IllegalStateException("password must be not empty");
+		if(StringUtils.isBlank(username)) throw new IllegalStateException("username must be not empty");
+		
 		client.login(username, password, vhost);
 	}
 
@@ -193,13 +195,19 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean {
 		}
 	}
 
-	@Override
 	public void afterPropertiesSet() throws Exception {
-		Assert.hasText(host, "host must be not empty");
-		Assert.isTrue(port > 0, "port > 0 must be true");
-		Assert.isTrue(clientPoolSize > 0, "clientPoolSize > 0 must be true");
+		if(StringUtils.isBlank(host)) throw new IllegalStateException("host must be not empty");
+		if(port <= 0) throw new IllegalArgumentException("port > 0 must be true");
+		if(clientPoolSize <= 0) throw new IllegalArgumentException("clientPoolSize > 0 must be true");
+		
 		clientPool = new GenericObjectPool<MessageBrokerService.Client>(new ClientPoolableObjectFactory(),clientPoolSize);
 		logger.info("init end,server="+host+":"+port+" clientPoolSize:"+clientPoolSize+" username:"+username);
+	}
+	
+	public void destroy() throws Exception {
+		if(clientPool != null) {
+			clientPool.close();
+		}
 	}
 	
 	private class ClientPoolableObjectFactory extends BasePoolableObjectFactory<MessageBrokerService.Client> {
@@ -228,7 +236,7 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean {
 		@Override
 		public boolean validateObject(Client obj) {
 			try {
-				if("PONG".equals(obj.ping())) {
+				if(Constants.PING_RESPONSE.equals(obj.ping())) {
 					return true;
 				}
 				return false;
