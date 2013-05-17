@@ -70,7 +70,7 @@ public class VhostController extends BaseController {
 	}
 	
 	/** 列表 */
-	@RequestMapping(value="/index")
+	@RequestMapping()
 	public String index(ModelMap model,VhostQuery query,HttpServletRequest request) {
 		Page<Vhost> page = this.vhostService.findPage(query);
 		
@@ -79,7 +79,7 @@ public class VhostController extends BaseController {
 	}
 	
 	/** 显示 */
-	@RequestMapping(value="/show")
+	@RequestMapping()
 	public String show(ModelMap model,@RequestParam("vhostName") String vhostName) throws Exception {
 		Vhost vhost = (Vhost)vhostService.getById(vhostName);
 		model.addAttribute("vhost",vhost);
@@ -87,14 +87,14 @@ public class VhostController extends BaseController {
 	}
 
 	/** 进入新增 */
-	@RequestMapping(value="/add")
+	@RequestMapping()
 	public String add(ModelMap model,Vhost vhost) throws Exception {
 		model.addAttribute("vhost",vhost);
 		return "/vhost/add";
 	}
 	
 	/** 保存新增,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/create")
+	@RequestMapping()
 	public String create(ModelMap model,Vhost vhost,BindingResult errors) throws Exception {
 		try {
 			vhostService.create(vhost);
@@ -110,7 +110,7 @@ public class VhostController extends BaseController {
 	}
 	
 	/** 编辑 */
-	@RequestMapping(value="/edit")
+	@RequestMapping()
 	public String edit(ModelMap model,@RequestParam("vhostName") String vhostName) throws Exception {
 		Vhost vhost = (Vhost)vhostService.getById(vhostName);
 		model.addAttribute("vhost",vhost);
@@ -118,7 +118,7 @@ public class VhostController extends BaseController {
 	}
 	
 	/** 保存更新,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/update")
+	@RequestMapping()
 	public String update(ModelMap model,@RequestParam("vhostName") String vhostName,Vhost vhost,BindingResult errors) throws Exception {
 		try {
 			vhostService.update(vhost);
@@ -134,7 +134,7 @@ public class VhostController extends BaseController {
 	}
 	
 	/** 批量删除 */
-	@RequestMapping(value="/delete")
+	@RequestMapping()
 	public String delete(ModelMap model,@RequestParam("vhostName") String vhostName) {
 		vhostService.removeById(vhostName);
 		Flash.current().success(DELETE_SUCCESS);

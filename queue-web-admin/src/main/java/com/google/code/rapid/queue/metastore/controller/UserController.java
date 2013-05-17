@@ -70,7 +70,7 @@ public class UserController extends BaseController{
 	}
 	
 	/** 列表 */
-	@RequestMapping(value="/index")
+	@RequestMapping()
 	public String index(ModelMap model,UserQuery query,HttpServletRequest request) {
 		Page<User> page = this.userService.findPage(query);
 		
@@ -79,7 +79,7 @@ public class UserController extends BaseController{
 	}
 	
 	/** 显示 */
-	@RequestMapping(value="/show")
+	@RequestMapping()
 	public String show(ModelMap model,@RequestParam("username") String username) throws Exception {
 		User user = (User)userService.getById(username);
 		model.addAttribute("user",user);
@@ -87,14 +87,14 @@ public class UserController extends BaseController{
 	}
 
 	/** 进入新增 */
-	@RequestMapping(value="/add")
+	@RequestMapping()
 	public String add(ModelMap model,User user) throws Exception {
 		model.addAttribute("user",user);
 		return "/user/add";
 	}
 	
 	/** 保存新增,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/create")
+	@RequestMapping()
 	public String create(ModelMap model,User user,BindingResult errors) throws Exception {
 		try {
 			userService.create(user);
@@ -110,7 +110,7 @@ public class UserController extends BaseController{
 	}
 	
 	/** 编辑 */
-	@RequestMapping(value="/edit")
+	@RequestMapping()
 	public String edit(ModelMap model,@RequestParam("username") String username) throws Exception {
 		User user = (User)userService.getById(username);
 		model.addAttribute("user",user);
@@ -118,7 +118,7 @@ public class UserController extends BaseController{
 	}
 	
 	/** 保存更新,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/update")
+	@RequestMapping()
 	public String update(ModelMap model,@RequestParam("username") String username,User user,BindingResult errors) throws Exception {
 		try {
 			userService.update(user);
@@ -134,7 +134,7 @@ public class UserController extends BaseController{
 	}
 	
 	/** 批量删除 */
-	@RequestMapping(value="/delete")
+	@RequestMapping()
 	public String delete(ModelMap model,@RequestParam("username") String username) {
 		userService.removeById(username);
 		Flash.current().success(DELETE_SUCCESS);

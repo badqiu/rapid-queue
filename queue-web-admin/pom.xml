@@ -4,7 +4,7 @@
 	<groupId>com.google.code.rapid-queue</groupId>
 	<artifactId>rapid-queue-web-admin</artifactId>
 	<version>0.1.0</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<url>http://code.google.com/p/rapid-queue/</url>
 	
 	<developers>

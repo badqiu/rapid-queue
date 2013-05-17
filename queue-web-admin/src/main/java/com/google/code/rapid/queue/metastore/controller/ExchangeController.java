@@ -70,7 +70,7 @@ public class ExchangeController extends BaseController {
 	}
 	
 	/** 列表 */
-	@RequestMapping(value="/index")
+	@RequestMapping()
 	public String index(ModelMap model,ExchangeQuery query,HttpServletRequest request) {
 		Page<Exchange> page = this.exchangeService.findPage(query);
 		
@@ -79,7 +79,7 @@ public class ExchangeController extends BaseController {
 	}
 	
 	/** 显示 */
-	@RequestMapping(value="/show")
+	@RequestMapping()
 	public String show(ModelMap model,@RequestParam("exchangeName") String exchangeName, @RequestParam("vhostName") String vhostName) throws Exception {
 		Exchange exchange = (Exchange)exchangeService.getById(exchangeName,vhostName);
 		model.addAttribute("exchange",exchange);
@@ -87,14 +87,14 @@ public class ExchangeController extends BaseController {
 	}
 
 	/** 进入新增 */
-	@RequestMapping(value="/add")
+	@RequestMapping()
 	public String add(ModelMap model,Exchange exchange) throws Exception {
 		model.addAttribute("exchange",exchange);
 		return "/exchange/add";
 	}
 	
 	/** 保存新增,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/create")
+	@RequestMapping()
 	public String create(ModelMap model,Exchange exchange,BindingResult errors) throws Exception {
 		try {
 			exchangeService.create(exchange);
@@ -110,7 +110,7 @@ public class ExchangeController extends BaseController {
 	}
 	
 	/** 编辑 */
-	@RequestMapping(value="/edit")
+	@RequestMapping()
 	public String edit(ModelMap model,@RequestParam("exchangeName") String exchangeName, @RequestParam("vhostName") String vhostName) throws Exception {
 		Exchange exchange = (Exchange)exchangeService.getById(exchangeName,vhostName);
 		model.addAttribute("exchange",exchange);
@@ -118,7 +118,7 @@ public class ExchangeController extends BaseController {
 	}
 	
 	/** 保存更新,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/update")
+	@RequestMapping()
 	public String update(ModelMap model,@RequestParam("exchangeName") String exchangeName, @RequestParam("vhostName") String vhostName,Exchange exchange,BindingResult errors) throws Exception {
 		try {
 			exchangeService.update(exchange);
@@ -134,7 +134,7 @@ public class ExchangeController extends BaseController {
 	}
 	
 	/** 批量删除 */
-	@RequestMapping(value="/delete")
+	@RequestMapping()
 	public String delete(ModelMap model,@RequestParam("exchangeName") String exchangeName, @RequestParam("vhostName") String vhostName) {
 		exchangeService.removeById(exchangeName,vhostName);
 		Flash.current().success(DELETE_SUCCESS);

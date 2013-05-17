@@ -70,7 +70,7 @@ public class BindingController extends BaseController{
 	}
 	
 	/** 列表 */
-	@RequestMapping(value="/index")
+	@RequestMapping()
 	public String index(ModelMap model,BindingQuery query,HttpServletRequest request) {
 		Page<Binding> page = this.bindingService.findPage(query);
 		
@@ -79,7 +79,7 @@ public class BindingController extends BaseController{
 	}
 	
 	/** 显示 */
-	@RequestMapping(value="/show")
+	@RequestMapping()
 	public String show(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("exchangeName") String exchangeName, @RequestParam("vhostName") String vhostName) throws Exception {
 		Binding binding = (Binding)bindingService.getById(queueName,exchangeName,vhostName);
 		model.addAttribute("binding",binding);
@@ -87,14 +87,14 @@ public class BindingController extends BaseController{
 	}
 
 	/** 进入新增 */
-	@RequestMapping(value="/add")
+	@RequestMapping()
 	public String add(ModelMap model,Binding binding) throws Exception {
 		model.addAttribute("binding",binding);
 		return "/binding/add";
 	}
 	
 	/** 保存新增,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/create")
+	@RequestMapping()
 	public String create(ModelMap model,Binding binding,BindingResult errors) throws Exception {
 		try {
 			bindingService.create(binding);
@@ -110,7 +110,7 @@ public class BindingController extends BaseController{
 	}
 	
 	/** 编辑 */
-	@RequestMapping(value="/edit")
+	@RequestMapping()
 	public String edit(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("exchangeName") String exchangeName, @RequestParam("vhostName") String vhostName) throws Exception {
 		Binding binding = (Binding)bindingService.getById(queueName,exchangeName,vhostName);
 		model.addAttribute("binding",binding);
@@ -118,7 +118,7 @@ public class BindingController extends BaseController{
 	}
 	
 	/** 保存更新,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/update")
+	@RequestMapping()
 	public String update(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("exchangeName") String exchangeName, @RequestParam("vhostName") String vhostName,Binding binding,BindingResult errors) throws Exception {
 		try {
 			bindingService.update(binding);
@@ -134,7 +134,7 @@ public class BindingController extends BaseController{
 	}
 	
 	/** 批量删除 */
-	@RequestMapping(value="/delete")
+	@RequestMapping()
 	public String delete(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("exchangeName") String exchangeName, @RequestParam("vhostName") String vhostName) {
 		bindingService.removeById(queueName,exchangeName,vhostName);
 		Flash.current().success(DELETE_SUCCESS);

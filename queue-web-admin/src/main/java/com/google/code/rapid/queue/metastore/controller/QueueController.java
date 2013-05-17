@@ -70,7 +70,7 @@ public class QueueController extends BaseController{
 	}
 	
 	/** 列表 */
-	@RequestMapping(value="/index")
+	@RequestMapping()
 	public String index(ModelMap model,QueueQuery query,HttpServletRequest request) {
 		Page<Queue> page = this.queueService.findPage(query);
 		
@@ -79,7 +79,7 @@ public class QueueController extends BaseController{
 	}
 	
 	/** 显示 */
-	@RequestMapping(value="/show")
+	@RequestMapping()
 	public String show(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("vhostName") String vhostName) throws Exception {
 		Queue queue = (Queue)queueService.getById(queueName,vhostName);
 		model.addAttribute("queue",queue);
@@ -87,14 +87,14 @@ public class QueueController extends BaseController{
 	}
 
 	/** 进入新增 */
-	@RequestMapping(value="/add")
+	@RequestMapping()
 	public String add(ModelMap model,Queue queue) throws Exception {
 		model.addAttribute("queue",queue);
 		return "/queue/add";
 	}
 	
 	/** 保存新增,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/create")
+	@RequestMapping()
 	public String create(ModelMap model,Queue queue,BindingResult errors) throws Exception {
 		try {
 			queueService.create(queue);
@@ -110,7 +110,7 @@ public class QueueController extends BaseController{
 	}
 	
 	/** 编辑 */
-	@RequestMapping(value="/edit")
+	@RequestMapping()
 	public String edit(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("vhostName") String vhostName) throws Exception {
 		Queue queue = (Queue)queueService.getById(queueName,vhostName);
 		model.addAttribute("queue",queue);
@@ -118,7 +118,7 @@ public class QueueController extends BaseController{
 	}
 	
 	/** 保存更新,@Valid标注spirng在绑定对象时自动为我们验证对象属性并存放errors在BindingResult  */
-	@RequestMapping(value="/update")
+	@RequestMapping()
 	public String update(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("vhostName") String vhostName,Queue queue,BindingResult errors) throws Exception {
 		try {
 			queueService.update(queue);
@@ -134,7 +134,7 @@ public class QueueController extends BaseController{
 	}
 	
 	/** 批量删除 */
-	@RequestMapping(value="/delete")
+	@RequestMapping()
 	public String delete(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("vhostName") String vhostName) {
 		queueService.removeById(queueName,vhostName);
 		Flash.current().success(DELETE_SUCCESS);

@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.service.impl;
 
+import static cn.org.rapid_framework.util.holder.BeanValidatorHolder.validateWithException;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,7 +22,6 @@ import com.google.code.rapid.queue.metastore.dao.ExchangeDao;
 import com.google.code.rapid.queue.metastore.model.Exchange;
 import com.google.code.rapid.queue.metastore.query.ExchangeQuery;
 import com.google.code.rapid.queue.metastore.service.ExchangeService;
-import static cn.org.rapid_framework.util.holder.BeanValidatorHolder.validateWithException;
 
 /**
  * [Exchange] 的业务操作实现类
