@@ -50,7 +50,6 @@ public class MessageProperties implements Serializable{
 	private String sourceApp; // 发送消息的来源App
 	private String sourceUser; // 发送消息的来源User
 
-	private String vhost;
 	
 	public String getMessageId() {
 		return messageId;
@@ -140,13 +139,6 @@ public class MessageProperties implements Serializable{
 		this.sourceUser = sourceUser;
 	}
 
-	public String getVhost() {
-		return vhost;
-	}
-
-	public void setVhost(String vhost) {
-		this.vhost = vhost;
-	}
 
 	@Override
 	public String toString() {
@@ -156,7 +148,7 @@ public class MessageProperties implements Serializable{
 				+ contentLength + ", expiration=" + expiration + ", timestamp="
 				+ timestamp + ", deliveryMode=" + deliveryMode + ", sourceIp="
 				+ sourceIp + ", sourceApp=" + sourceApp + ", sourceUser="
-				+ sourceUser + ", vhost=" + vhost + "]";
+				+ sourceUser + "]";
 	}
 	
 }

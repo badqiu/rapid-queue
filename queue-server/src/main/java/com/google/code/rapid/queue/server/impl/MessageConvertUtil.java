@@ -67,7 +67,6 @@ public class MessageConvertUtil {
 		result.setSourceApp(source.getSourceApp());
 		result.setSourceIp(source.getSourceIp());
 		result.setSourceUser(source.getSourceUser());
-		result.setVhost(source.getVhost());
 		return result;
 	}
 	
@@ -85,7 +84,6 @@ public class MessageConvertUtil {
 		result.setSourceApp(source.getSourceApp());
 		result.setSourceIp(source.getSourceIp());
 		result.setSourceUser(source.getSourceUser());
-		result.setVhost(source.getVhost());
 		return result;
 	}
 }
