@@ -11,16 +11,15 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rapid.queue.server.thrift.MessageBrokerService;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Processor;
 import com.google.code.rapid.queue.server.util.SpringContext;
+import com.google.code.rapid.queue.thrift.api.Constants;
+import com.google.code.rapid.queue.thrift.api.MessageBrokerService;
+import com.google.code.rapid.queue.thrift.api.MessageBrokerService.Processor;
 
 public class Server {
 	private static Logger logger = LoggerFactory.getLogger(Server.class);
 	
-	public static final int DEFAULT_PORT = 29888;
-	
-	private int port = DEFAULT_PORT;
+	private int port = Constants.DEFAULT_SERVER_PORT;
 	
 	public Server() {
 	}

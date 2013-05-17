@@ -1,6 +1,6 @@
 // thrift --gen java  <xxxx.thrift>
 
-namespace java com.google.code.rapid.queue.server.thrift
+namespace java com.google.code.rapid.queue.thrift.api
 
 struct MessageProperties {
 	1: string messageId, // 消息ID
@@ -65,11 +65,6 @@ service MessageBrokerService {
 	 * 登陆
 	 */
 	void login(1:string username,2:string password,3:string vhost) throws (1:MessageBrokerException e),
-
-	/**
-	 * 登出
-	 */
-	void logout() throws (1:MessageBrokerException e),	
 
 	/**
 	 * 心跳检查,返回字符串: PONG

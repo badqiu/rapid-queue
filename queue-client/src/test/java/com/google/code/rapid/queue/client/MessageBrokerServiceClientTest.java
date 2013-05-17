@@ -1,17 +1,15 @@
 package com.google.code.rapid.queue.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.thrift.TException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.rapid.queue.server.thrift.Message;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerException;
+import com.google.code.rapid.queue.thrift.api.Message;
 
 public class MessageBrokerServiceClientTest {
 	

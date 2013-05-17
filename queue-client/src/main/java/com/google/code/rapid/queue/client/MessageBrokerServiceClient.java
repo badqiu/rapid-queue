@@ -17,18 +17,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
-import com.google.code.rapid.queue.server.Server;
-import com.google.code.rapid.queue.server.thrift.Message;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerException;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerService;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Client;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Iface;
+import com.google.code.rapid.queue.thrift.api.Constants;
+import com.google.code.rapid.queue.thrift.api.Message;
+import com.google.code.rapid.queue.thrift.api.MessageBrokerException;
+import com.google.code.rapid.queue.thrift.api.MessageBrokerService;
+import com.google.code.rapid.queue.thrift.api.MessageBrokerService.Client;
+import com.google.code.rapid.queue.thrift.api.MessageBrokerService.Iface;
 
 public class MessageBrokerServiceClient implements Iface,InitializingBean {
 	private static Logger logger = LoggerFactory.getLogger(MessageBrokerServiceClient.class);
 	
 	private String host;
-	private int port = Server.DEFAULT_PORT;
+	private int port = Constants.DEFAULT_SERVER_PORT;
 
 	private String username;
 	private String password;
@@ -154,16 +154,6 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean {
 		Client client = borrowObject();
 		try {
 			client.login(username, password, vhost);
-		}finally {
-			returnObject(client);
-		}
-	}
-
-	@Override
-	public void logout() throws MessageBrokerException, TException {
-		Client client = borrowObject();
-		try {
-			client.logout();
 		}finally {
 			returnObject(client);
 		}

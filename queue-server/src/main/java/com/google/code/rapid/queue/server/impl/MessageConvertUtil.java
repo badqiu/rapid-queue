@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.code.rapid.queue.server.thrift.Message;
-import com.google.code.rapid.queue.server.thrift.MessageProperties;
+import com.google.code.rapid.queue.thrift.api.Message;
+import com.google.code.rapid.queue.thrift.api.MessageProperties;
 
 public class MessageConvertUtil {
 

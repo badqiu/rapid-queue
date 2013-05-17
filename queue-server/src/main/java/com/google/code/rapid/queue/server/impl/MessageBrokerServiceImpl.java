@@ -13,9 +13,9 @@ import org.springframework.util.Assert;
 import com.google.code.rapid.queue.MessageBroker;
 import com.google.code.rapid.queue.MessageBrokerBuilder;
 import com.google.code.rapid.queue.server.ThriftContext;
-import com.google.code.rapid.queue.server.thrift.Message;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerException;
-import com.google.code.rapid.queue.server.thrift.MessageBrokerService.Iface;
+import com.google.code.rapid.queue.thrift.api.Message;
+import com.google.code.rapid.queue.thrift.api.MessageBrokerException;
+import com.google.code.rapid.queue.thrift.api.MessageBrokerService.Iface;
 
 public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	private Logger logger = LoggerFactory.getLogger(MessageBrokerServiceImpl.class);
@@ -108,12 +108,6 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 		ThriftContext.getServerContext().put(LOGIN_USER_KEY, username);
 		ThriftContext.getServerContext().put(VHOST_KEY, vhost);
 		logger.info("login_success by username:"+username+" vhost:"+vhost+" on clientIp:"+ThriftContext.get(ThriftContext.CLIENT_IP));
-	}
-
-	@Override
-	public void logout() throws MessageBrokerException, TException {
-		logger.info("logout by username:"+ThriftContext.getServerContext().get(LOGIN_USER_KEY)+" vhost:"+ThriftContext.getServerContext().get(VHOST_KEY)+" on clientIp:"+ThriftContext.get(ThriftContext.CLIENT_IP));
-		ThriftContext.getServerContext().clear();
 	}
 
 	@Override
