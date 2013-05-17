@@ -23,30 +23,34 @@ public class DurableBlockingQueue extends DurableQueue implements BlockingQueue<
 
 	@Override
 	public boolean add(byte[] e) {
-		if(e == null) throw new NullPointerException();
-		
-		try {
-			lock.lock();
-			boolean result = super.add(e);
-			notEmpty.signalAll();
-			return result;
-		}finally {
-			lock.unlock();
-		}
+		return offer(e);
 	}
 	
 	@Override
 	public void put(byte[] e) throws InterruptedException {
 		if(e == null) throw new NullPointerException();
 		
-		add(e);
+		offer(e);
+	}
+	
+	@Override
+	public boolean offer(byte[] e) {
+		if(e == null) throw new NullPointerException();
+		try {
+			lock.lock();
+			boolean result = super.offer(e);
+			notEmpty.signalAll();
+			return result;
+		}finally {
+			lock.unlock();
+		}
 	}
 
 	@Override
-	public boolean offer(byte[] e, long timeout, TimeUnit unit)throws InterruptedException {
+	public boolean offer(byte[] e, long timeout, TimeUnit unit) throws InterruptedException {
 		if(e == null) throw new NullPointerException();
 		
-		return add(e);
+		return offer(e);
 	}
 
 	@Override
@@ -64,6 +68,20 @@ public class DurableBlockingQueue extends DurableQueue implements BlockingQueue<
 		return b;
 	}
 	
+//	@Override
+//	public byte[] peek() {
+//		byte[] b = super.peek();
+//		if(b == null) {
+//			try {
+//				await(-1, null);
+//			}catch(Exception e) {
+//				//ignore
+//			}
+//			b = super.peek();
+//		}
+//		return b;
+//	}
+//	
 	private void await(long timeout, TimeUnit unit) throws InterruptedException {
 		try {
 			lock.lock();

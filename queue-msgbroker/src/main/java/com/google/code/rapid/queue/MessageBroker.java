@@ -29,7 +29,11 @@ public class MessageBroker {
 		if(msg.getBody() == null) throw new IllegalArgumentException("'msg.body' must be not null");
 		
 		TopicExchange exchange = lookupExchange(msg.getExchange());
-		exchange.offer(msg);
+		try {
+			exchange.offer(msg);
+		} catch (InterruptedException e) {
+			throw new RuntimeException("InterruptedException on msg:"+msg);
+		}
 	}
 	
 	/**
@@ -84,7 +88,7 @@ public class MessageBroker {
 			totalCostTime += System.currentTimeMillis() - start;
 			nextWaittime = timeout - totalCostTime;
 			
-			if(totalCostTime >= timeout) {
+			if(totalCostTime >= timeout || nextWaittime <= 0) {
 				break;
 			}
 		}

@@ -84,6 +84,10 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	}
 	
 	private MessageBroker getRequiredMessageBroker(String vhost) {
+		if(StringUtils.isBlank(vhost)) {
+			throw new IllegalArgumentException("vhost must be not empty");
+		}
+		
 		MessageBroker mb = messageBrokerMap.get(vhost);
 		if(mb == null) {
 			throw new IllegalArgumentException("not found messageBroker by vhost"+vhost);
@@ -108,6 +112,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 
 	@Override
 	public void logout() throws MessageBrokerException, TException {
+		logger.info("logout by username:"+ThriftContext.getServerContext().get(LOGIN_USER_KEY)+" vhost:"+ThriftContext.getServerContext().get(VHOST_KEY)+" on clientIp:"+ThriftContext.get(ThriftContext.CLIENT_IP));
 		ThriftContext.getServerContext().clear();
 	}
 

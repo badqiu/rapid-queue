@@ -180,11 +180,15 @@ public class LogIndex {
 	}
 	
 	public void incrementQueueSize() {
-		putSize(queueSize.incrementAndGet());
+		int newSize = queueSize.get()+1;
+		putSize(newSize);
+		queueSize.incrementAndGet();
 	}
 
 	public void decrementQueueSize() {
-		putSize(queueSize.decrementAndGet());
+		int newSize = queueSize.get()-1;
+		putSize(newSize);
+		queueSize.decrementAndGet();
 	}
 
 	public String getMagicString() {

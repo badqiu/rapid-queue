@@ -73,10 +73,10 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 			return true;
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
+			return false;
 		} finally {
 			writeLock.unlock();
 		}
-		return false;
 	}
 
 	@Override
