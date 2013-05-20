@@ -1,6 +1,7 @@
 package com.google.code.rapid.queue;
 
 import java.util.Arrays;
+import java.util.concurrent.BlockingQueue;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,7 +9,7 @@ import org.junit.Test;
 
 public class BufferedBlockingQueueTest extends Assert{
 
-	DurableBlockingQueue persistence = new DurableBlockingQueue("test_db/half_durable_block_queue");
+	BlockingQueue persistence = new DurableBlockingQueue("test_db/half_durable_block_queue");
 	BufferedBlockingQueue<byte[]> q = new BufferedBlockingQueue<byte[]>(100,persistence);
 	
 	@Before
