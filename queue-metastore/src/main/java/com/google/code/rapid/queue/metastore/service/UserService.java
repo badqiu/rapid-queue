@@ -21,6 +21,11 @@ import com.google.code.rapid.queue.metastore.query.UserQuery;
  */
 public interface UserService {
 
+	public void auth(String username,String password);
+	
+	
+	public void changePassword(String username,String oldPassword,String newPassword);
+	
 	/** 
 	 * 创建User
 	 **/

@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 
 import com.google.code.rapid.queue.MessageBroker;
 import com.google.code.rapid.queue.MessageBrokerBuilder;
+import com.google.code.rapid.queue.metastore.service.UserService;
 import com.google.code.rapid.queue.server.ThriftContext;
 import com.google.code.rapid.queue.thrift.api.Constants;
 import com.google.code.rapid.queue.thrift.api.Message;
@@ -25,10 +26,15 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	private static final String VHOST_KEY = "VHOST";
 	
 	private MessageBrokerBuilder messageBrokerBuilder;
+	private UserService userService;
 	private Map<String,MessageBroker> messageBrokerMap;
 	
 	public void setMessageBrokerBuilder(MessageBrokerBuilder messageBrokerBuilder) {
 		this.messageBrokerBuilder = messageBrokerBuilder;
+	}
+	
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
 
 	@Override
@@ -106,6 +112,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	@Override
 	public void login(String username, String password, String vhost)
 			throws MessageBrokerException, TException {
+		userService.auth(username, password);
 		ThriftContext.getServerContext().put(LOGIN_USER_KEY, username);
 		ThriftContext.getServerContext().put(VHOST_KEY, vhost);
 		logger.info("login_success by username:"+username+" vhost:"+vhost+" on clientIp:"+ThriftContext.get(ThriftContext.CLIENT_IP));

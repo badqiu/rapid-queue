@@ -49,7 +49,9 @@ public class MessageProperties implements Serializable{
 	private String sourceIp; // 发送消息的来源IP
 	private String sourceApp; // 发送消息的来源App
 	private String sourceUser; // 发送消息的来源User
-
+	
+	private boolean compress; //是否压缩
+	private String compressAlgorithm; //压缩算法
 	
 	public String getMessageId() {
 		return messageId;
@@ -139,6 +141,21 @@ public class MessageProperties implements Serializable{
 		this.sourceUser = sourceUser;
 	}
 
+	public boolean isCompress() {
+		return compress;
+	}
+
+	public void setCompress(boolean compress) {
+		this.compress = compress;
+	}
+
+	public String getCompressAlgorithm() {
+		return compressAlgorithm;
+	}
+
+	public void setCompressAlgorithm(String compressAlgorithm) {
+		this.compressAlgorithm = compressAlgorithm;
+	}
 
 	@Override
 	public String toString() {

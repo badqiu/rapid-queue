@@ -16,6 +16,7 @@
 		<module>queue-web-admin</module>
 		<module>queue-metastore</module>
 		<module>queue-thrift-api</module>
+		<module>queue-benchmark</module>
 	</modules>
 	
 	<developers>

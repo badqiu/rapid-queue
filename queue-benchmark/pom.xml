@@ -2,9 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.google.code.rapid-queue</groupId>
-	<artifactId>rapid-queue-web-admin</artifactId>
+	<artifactId>rapid-queue-benchmark</artifactId>
 	<version>0.1.0</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
+	<name>rapid-queue-benchmark</name>
 	<url>http://code.google.com/p/rapid-queue/</url>
 	
 	<developers>
@@ -17,7 +18,6 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jetty.version>6.1.24</jetty.version>
 	</properties>
 	
 	<repositories>
@@ -32,34 +32,6 @@
 	
 	<dependencies>
 
-		<!-- jetty -->
-		<dependency>
-			<groupId>com.google.code.rapid-queue</groupId>
-			<artifactId>rapid-queue-metastore</artifactId>
-			<version>0.1.0</version>
-		</dependency>
-		
-		<!-- jetty -->
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty</artifactId>
-			<scope>test</scope>
-			<version>${jetty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jsp-2.1-jetty</artifactId>
-			<scope>test</scope>
-			<version>${jetty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
-			<scope>provided</scope>
-			<optional>true</optional>
-			<version>7.2.2.v20101205</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

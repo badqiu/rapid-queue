@@ -23,6 +23,7 @@ import com.google.code.rapid.queue.metastore.query.VhostQuery;
  */
 public interface VhostService {
 
+	
 	/** 
 	 * 创建Vhost
 	 **/

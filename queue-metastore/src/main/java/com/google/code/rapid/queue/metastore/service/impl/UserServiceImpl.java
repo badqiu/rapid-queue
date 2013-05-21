@@ -6,6 +6,9 @@
 
 package com.google.code.rapid.queue.metastore.service.impl;
 
+import static cn.org.rapid_framework.util.holder.BeanValidatorHolder.validateWithException;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,7 +21,6 @@ import com.google.code.rapid.queue.metastore.dao.UserDao;
 import com.google.code.rapid.queue.metastore.model.User;
 import com.google.code.rapid.queue.metastore.query.UserQuery;
 import com.google.code.rapid.queue.metastore.service.UserService;
-import static cn.org.rapid_framework.util.holder.BeanValidatorHolder.validateWithException;
 
 /**
  * [User] 的业务操作实现类
@@ -116,4 +118,34 @@ public class UserServiceImpl implements UserService {
         	//复杂的属性的检查一般需要分开写几个方法，如 checkProperty1(v),checkProperty2(v)
         }
     }
+
+	@Override
+	public void auth(String username, String password) {
+		User user = userDao.getById(username);
+		if(user == null) {
+			throw new IllegalArgumentException("username not exist,username:"+username);
+		}
+		String md5 = getUserPasswordMd5(username, password);
+		if(!user.getPassword().equals(md5)) {
+			throw new IllegalArgumentException("password error,username:"+username+" password:"+password);
+		}
+	}
+
+	private String getUserPasswordMd5(String username, String password) {
+		return DigestUtils.md5Hex(username+password);
+	}
+
+	@Override
+	public void changePassword(String username, String oldPassword,String newPassword) {
+		auth(username,oldPassword);
+		updatePassword(username, newPassword);
+	}
+
+	private void updatePassword(String username, String newPassword) {
+		String newPasswordMd5 = getUserPasswordMd5(username,newPassword);
+		User user = userDao.getById(username);
+		user.setPassword(newPasswordMd5);
+		userDao.update(user);
+	}
+	
 }

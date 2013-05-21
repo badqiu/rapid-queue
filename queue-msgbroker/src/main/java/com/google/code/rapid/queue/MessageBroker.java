@@ -31,6 +31,12 @@ public class MessageBroker {
 		if(StringUtils.isEmpty(msg.getExchange())) throw new IllegalArgumentException("'msg.exchange' must be not empty");
 		if(StringUtils.isEmpty(msg.getRouterKey())) throw new IllegalArgumentException("'msg.routerKey' must be not empty");
 		if(msg.getBody() == null) throw new IllegalArgumentException("'msg.body' must be not null");
+		if(msg.getExchange().length() > 50) {
+			throw new IllegalArgumentException("'msg.exchange' length must <= 50");
+		}
+		if(msg.getRouterKey().length()> 50) {
+			throw new IllegalArgumentException("'msg.routerKey' length must <= 50");
+		}
 		
 		TopicExchange exchange = lookupExchange(msg.getExchange());
 		try {
