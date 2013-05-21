@@ -14,6 +14,7 @@
 			<email>badqiu@gmail.com</email>
 		</developer>
 	</developers>
+	<!-- 
 	<repositories>
 		<repository>
 			<id>repository.jboss.org</id>
@@ -23,6 +24,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	 -->
 		
 	<properties>
 		<hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
@@ -31,11 +33,11 @@
 	</properties>
 	
 	<dependencies>
-
+		
 		<dependency>
 		    <groupId>com.googlecode.rapid-framework</groupId>
 		    <artifactId>rapid-core</artifactId>
-		    <version>4.0.6-SNAPSHOT</version>
+		    <version>4.0.6</version>
 		</dependency>
 
 		<!-- JSR303 bean validation begin -->
@@ -240,6 +242,5 @@
 				</configuration>
 			</plugin>
 		</plugins>
-
 	</build>	
 </project>

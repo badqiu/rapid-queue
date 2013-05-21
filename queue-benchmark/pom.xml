@@ -18,6 +18,7 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring.version>3.2.2.RELEASE</spring.version>
 	</properties>
 	
 	<repositories>
@@ -32,6 +33,27 @@
 	
 	<dependencies>
 
+		<dependency>
+			<groupId>com.google.code.rapid-queue</groupId>
+			<artifactId>rapid-queue-client</artifactId>
+			<version>0.1.0</version>
+		</dependency>
+		
+		
+		<!-- spring begin -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+			<optional>true</optional>
+		</dependency>
+				
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
