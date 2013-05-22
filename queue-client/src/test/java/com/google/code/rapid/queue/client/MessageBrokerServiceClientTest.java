@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.thrift.TException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,14 +20,19 @@ public class MessageBrokerServiceClientTest {
 	@Before
 	public void setUp() throws Exception {
 		client.setHost("localhost");
-		client.setUsername("user_demo");
-		client.setPassword("pwd");
+		client.setUsername("admin");
+		client.setPassword("admin");
 		client.setVhost("vhost");
 		client.afterPropertiesSet();
 		
 		msg.setExchange("ex_demo");
-		msg.setBody(StringUtils.repeat("a", 100).getBytes());
+		msg.setBody(StringUtils.repeat("a", 1024).getBytes());
 		msg.setRouterKey("yygame.ddt");
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		client.destroy();
 	}
 	
 	@Test

@@ -20,10 +20,29 @@
 20. 支持message ttl过期机制
 21. 提供便于测试的 rest接口,直接通过 url测试
 22. 支持消息正确处理完再滚动指针的方法,如 poll(ProcessCallback callback),在callback正确执行完成后，再移动指针
+23. 避免随机写，变为顺序写磁盘
+24. Producer端压缩消息，Consumer端解压消息
 
+25     Broker的Buffer满了怎么办？
+Broker的Buffer通常指的是Broker中一个队列的内存Buffer大小，这类Buffer通常大小有限，如果Buffer满了以后怎么办？
+下面是CORBA Notification规范中处理方式：
+(1).     RejectNewEvents
+拒绝新来的消息，向Producer返回RejectNewEvents错误码。
+(2).    按照特定策略丢弃已有消息
+a)        AnyOrder - Any event may be discarded on overflow. This is the default setting for this
+property.
+b)        FifoOrder - The first event received will be the first discarded.
+c)         LifoOrder - The last event received will be the first discarded.
+d)        PriorityOrder - Events should be discarded in priority order, such that lower priority
+events will be discarded before higher priority events.
+e)        DeadlineOrder - Events should be discarded in the order of shortest expiry deadline first.
 
 权限
 1. 增加用户权限功能
 2. 用户身份验证功能
 3. 增加基于IP的访问认证
+
+参考:
+metaq存储机制: http://alibaba.github.io/metaq/document/storeqa/storeqa.htm
+
 

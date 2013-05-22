@@ -112,10 +112,15 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	@Override
 	public void login(String username, String password, String vhost)
 			throws MessageBrokerException, TException {
-		userService.auth(username, password);
-		ThriftContext.getServerContext().put(LOGIN_USER_KEY, username);
-		ThriftContext.getServerContext().put(VHOST_KEY, vhost);
-		logger.info("login_success by username:"+username+" vhost:"+vhost+" on clientIp:"+ThriftContext.get(ThriftContext.CLIENT_IP));
+		try {
+			userService.auth(username, password);
+			ThriftContext.getServerContext().put(LOGIN_USER_KEY, username);
+			ThriftContext.getServerContext().put(VHOST_KEY, vhost);
+			logger.info("login_success by username:"+username+" vhost:"+vhost+" on clientIp:"+ThriftContext.get(ThriftContext.CLIENT_IP));
+		}catch(RuntimeException e) {
+			logger.error("error on login(),username="+username+" password="+password+" vhost="+vhost,e);
+			throw new MessageBrokerException(e.getClass().getSimpleName(),e.getMessage());
+		}
 	}
 	
 	@Override

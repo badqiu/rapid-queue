@@ -38,7 +38,11 @@
 			<artifactId>rapid-queue-client</artifactId>
 			<version>0.1.0</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.google.code.rapid-queue</groupId>
+			<artifactId>rapid-queue-msgbroker</artifactId>
+			<version>0.1.0</version>
+		</dependency>		
 		
 		<!-- spring begin -->
 		<dependency>

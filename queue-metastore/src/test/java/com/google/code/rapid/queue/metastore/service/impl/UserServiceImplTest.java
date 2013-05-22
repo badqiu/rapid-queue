@@ -8,6 +8,7 @@
 package com.google.code.rapid.queue.metastore.service.impl;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -67,6 +68,12 @@ public class UserServiceImplTest extends BaseServiceTestCase{
 		assertNotNull(user);
 	}
 	
+	@Test
+	public void test_getUserPasswordMd5() {
+		String md5 = UserServiceImpl.getUserPasswordMd5("admin", "admin");
+		System.out.println(md5);
+		assertEquals("f6fdffe48c908deb0f4c3bd36c032e72",md5);
+	}
 	
 }
 

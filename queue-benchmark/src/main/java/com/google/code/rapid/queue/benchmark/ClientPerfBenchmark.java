@@ -2,26 +2,27 @@ package com.google.code.rapid.queue.benchmark;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.Test;
 
 import cn.org.rapid_framework.test.util.MultiThreadTestUtils;
-import cn.org.rapid_framework.util.Profiler;
 
 import com.google.code.rapid.queue.client.MessageBrokerServiceClient;
+import com.google.code.rapid.queue.client.SimpleMessage;
 import com.google.code.rapid.queue.client.SimpleMessageBrokerServiceClient;
-import com.google.code.rapid.queue.thrift.api.Message;
 
 public class ClientPerfBenchmark {
 
 	MessageBrokerServiceClient client = new MessageBrokerServiceClient();
 	SimpleMessageBrokerServiceClient simpleClient = new SimpleMessageBrokerServiceClient();
 	
-	Message msg = new Message();
+	SimpleMessage msg = new SimpleMessage();
 	@Before
 	public void setUp() throws Exception {
 		client.setHost("localhost");
-		client.setUsername("user_demo");
-		client.setPassword("pwd");
+		client.setUsername("admin");
+		client.setPassword("admin");
 		client.setVhost("vhost");
+		client.setClientPoolSize(20);
 		client.afterPropertiesSet();
 		simpleClient.setClient(client);
 		simpleClient.afterPropertiesSet();
@@ -31,22 +32,30 @@ public class ClientPerfBenchmark {
 		msg.setRouterKey("yygame.ddt");
 	}
 	
+	@Test
+	public void test_perf() throws Exception {
+		runPerf(100000,2);
+		runPerf(400000,10);
+	}
 	
-	public void test_100(final int conrrent) throws Exception{
-		final int count = 100000;
-		Profiler.start(count);
-		
-		MultiThreadTestUtils.executeAndWait(conrrent, new Runnable() {
+	public void runPerf(final int count,final int concurrency) throws Exception{
+		long start = System.currentTimeMillis();
+		Runnable task = new Runnable() {
 			@Override
 			public void run() {
-				for(int i = 0; i < count / conrrent; i++) {
+				for(int i = 0; i < count / concurrency; i++) {
 					simpleClient.send(msg);
 				}
 			}
-		});
+		};
 		
-		
-		Profiler.release();
+		MultiThreadTestUtils.executeAndWait(concurrency, task);
+		printTps("runPerf,concurrency:"+concurrency,count,start);
+	}
+	
+	private static void printTps(String info, int count, long start) {
+		long cost = System.currentTimeMillis() - start;
+		System.out.println(info+" cost:" + cost + " count:"+count+" tps:"+(count * 1000.0 / cost));
 	}
 	
 }

@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	private String getUserPasswordMd5(String username, String password) {
+	public static String getUserPasswordMd5(String username, String password) {
 		return DigestUtils.md5Hex(username+password);
 	}
 
