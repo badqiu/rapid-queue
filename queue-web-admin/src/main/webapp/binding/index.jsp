@@ -26,7 +26,19 @@
 		<fieldset>
 			<legend>搜索</legend>
 			<table>
-				<tr>	
+				<tr>
+					<td class="tdLabel">vhost</td>		
+					<td>
+						<input value="${query.vhostName}" id="vhostName" name="vhostName" maxlength="3000"  class=""/>
+					</td>
+					<td class="tdLabel">queueName</td>		
+					<td>
+						<input value="${query.queueName}" id="queueName" name="queueName" maxlength="3000"  class=""/>
+					</td>
+					<td class="tdLabel">exchangeName</td>		
+					<td>
+						<input value="${query.exchangeName}" id="exchangeName" name="exchangeName" maxlength="3000"  class=""/>
+					</td>		
 					<td class="tdLabel">交换机的router_key</td>		
 					<td>
 						<input value="${query.routerKey}" id="routerKey" name="routerKey" maxlength="3000"  class=""/>
@@ -40,7 +52,7 @@
 		</fieldset>
 		<div class="handleControl">
 			<input type="submit" class="stdButton" style="width:80px" value="查询" onclick="getReferenceForm(this).action='${ctx}/binding/index.do'"/>
-			<input type="button" class="stdButton" style="width:80px" value="新增" onclick="window.location = '${ctx}/binding/add.do'"/>
+			<input type="button" class="stdButton" style="width:80px" value="新增" onclick="window.location = '${ctx}/binding/add.do?queueName=${query.queueName}&exchangeName=${query.exchangeName}&vhostName=${query.vhostName}'"/>
 		<div>
 	
 	</div>
@@ -85,7 +97,6 @@
 					<a href="${ctx}/binding/delete.do?queueName=${item.queueName}&exchangeName=${item.exchangeName}&vhostName=${item.vhostName}" onclick="doRestDelete(this,'你确认删除?');return false;">删除</a>
 				</td>
 			  </tr>
-			  
 		  	  </c:forEach>
 		  </tbody>
 		</table>

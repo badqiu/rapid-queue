@@ -27,6 +27,16 @@
 			<legend>搜索</legend>
 			<table>
 				<tr>	
+					<td class="tdLabel">vhostName</td>		
+					<td>
+						<input value="${query.vhostName}" id="vhostName" name="vhostName" maxlength="200"  class=""/>
+					</td>
+					<td class="tdLabel">exchangeName</td>		
+					<td>
+						<input value="${query.exchangeName}" id="exchangeName" name="exchangeName" maxlength="30"  class=""/>
+					</td>
+				</tr>				
+				<tr>	
 					<td class="tdLabel">备注</td>		
 					<td>
 						<input value="${query.remarks}" id="remarks" name="remarks" maxlength="200"  class=""/>
@@ -82,7 +92,7 @@
 		</fieldset>
 		<div class="handleControl">
 			<input type="submit" class="stdButton" style="width:80px" value="查询" onclick="getReferenceForm(this).action='${ctx}/exchange/index.do'"/>
-			<input type="button" class="stdButton" style="width:80px" value="新增" onclick="window.location = '${ctx}/exchange/add.do'"/>
+			<input type="button" class="stdButton" style="width:80px" value="新增" onclick="window.location = '${ctx}/exchange/add.do?vhostName=${query.vhostName}'"/>
 		<div>
 	
 	</div>
@@ -138,6 +148,7 @@
 				<td><c:out value='${item.operator}'/>&nbsp;</td>
 				<td><fmt:formatDate value='${item.lastUpdatedTime}' pattern='yyyy-MM-dd'/>&nbsp;</td>
 				<td>
+					<a href="${ctx}/binding/index.do?exchangeName=${item.exchangeName}&vhostName=${item.vhostName}">管理binding</a>&nbsp;&nbsp;
 					<a href="${ctx}/exchange/show.do?exchangeName=${item.exchangeName}&vhostName=${item.vhostName}">查看</a>&nbsp;&nbsp;
 					<a href="${ctx}/exchange/edit.do?exchangeName=${item.exchangeName}&vhostName=${item.vhostName}">修改</a>&nbsp;&nbsp;
 					<a href="${ctx}/exchange/delete.do?exchangeName=${item.exchangeName}&vhostName=${item.vhostName}" onclick="doRestDelete(this,'你确认删除?');return false;">删除</a>

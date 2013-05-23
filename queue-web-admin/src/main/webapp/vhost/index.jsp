@@ -74,6 +74,8 @@
 				<td><c:out value='${item.remarks}'/>&nbsp;</td>
 				<td><c:out value='${item.host}'/>&nbsp;</td>
 				<td>
+					<a href="${ctx}/exchange/index.do?vhostName=${item.vhostName}">管理exchange</a>&nbsp;&nbsp;
+					<a href="${ctx}/queue/index.do?vhostName=${item.vhostName}">管理queue</a>&nbsp;&nbsp;
 					<a href="${ctx}/vhost/show.do?vhostName=${item.vhostName}">查看</a>&nbsp;&nbsp;
 					<a href="${ctx}/vhost/edit.do?vhostName=${item.vhostName}">修改</a>&nbsp;&nbsp;
 					<a href="${ctx}/vhost/delete.do?vhostName=${item.vhostName}" onclick="doRestDelete(this,'你确认删除?');return false;">删除</a>
