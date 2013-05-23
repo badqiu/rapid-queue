@@ -38,7 +38,9 @@
 			<span class="required">*</span>持久模式:memory,durable,haft_durable:
 		</td>		
 		<td>
-		<form:input path="durableType" id="durableType" cssClass="required " maxlength="30" />
+		<form:radiobutton path="durableType" value="MEMORY"/>MEMORY
+		<form:radiobutton path="durableType" value="DURABLE"/>DURABLE
+		<form:radiobutton path="durableType" value="HAFT_DURABLE"/>HAFT_DURABLE
 		<font color='red'><form:errors path="durableType"/></font>
 		</td>
 	</tr>	
@@ -48,7 +50,8 @@
 			<span class="required">*</span>是否自动删除:
 		</td>		
 		<td>
-		<form:input path="autoDelete" id="autoDelete" cssClass="required validate-integer max-value-2147483647" maxlength="3" />
+		<form:radiobutton path="autoDelete" value="true"/>true
+		<form:radiobutton path="autoDelete" value="false"/>false
 		<font color='red'><form:errors path="autoDelete"/></font>
 		</td>
 	</tr>	
@@ -68,7 +71,8 @@
 			<span class="required">*</span>是否互斥，即该队列只能有一个客户端连接:
 		</td>		
 		<td>
-		<form:input path="exclusive" id="exclusive" cssClass="required validate-integer max-value-2147483647" maxlength="3" />
+		<form:radiobutton path="exclusive" value="true"/>true
+		<form:radiobutton path="exclusive" value="false"/>false
 		<font color='red'><form:errors path="exclusive"/></font>
 		</td>
 	</tr>	
@@ -113,34 +117,6 @@
 		</td>
 	</tr>	
 	
-	<tr>	
-		<td class="tdLabel">
-			<span class="required">*</span>创建时间:
-		</td>		
-		<td>
-		<input value='<fmt:formatDate value="${queue.createdTime}" pattern="yyyy-MM-dd"/>' onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" id="createdTime" name="createdTime"  maxlength="0" class="required " />
-		<font color='red'><form:errors path="createdTime"/></font>
-		</td>
-	</tr>	
-	
-	<tr>	
-		<td class="tdLabel">
-			<span class="required">*</span>创建人:
-		</td>		
-		<td>
-		<form:input path="operator" id="operator" cssClass="required " maxlength="50" />
-		<font color='red'><form:errors path="operator"/></font>
-		</td>
-	</tr>	
-	
-	<tr>	
-		<td class="tdLabel">
-			<span class="required">*</span>最后更新时间:
-		</td>		
-		<td>
-		<input value='<fmt:formatDate value="${queue.lastUpdatedTime}" pattern="yyyy-MM-dd"/>' onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" id="lastUpdatedTime" name="lastUpdatedTime"  maxlength="0" class="required " />
-		<font color='red'><form:errors path="lastUpdatedTime"/></font>
-		</td>
-	</tr>	
+
 	
 		

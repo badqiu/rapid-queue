@@ -49,6 +49,7 @@ public class VhostDaoImpl extends BaseSpringJdbcDao implements VhostDao{
 	}
 	
 	public void insert(Vhost entity) {
+		
 		String sql = "insert into rq_vhost " 
 			 + " (vhost_name,remarks,host) " 
 			 + " values "

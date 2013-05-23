@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.dao.impl;
 
+import java.util.Date;
+
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;

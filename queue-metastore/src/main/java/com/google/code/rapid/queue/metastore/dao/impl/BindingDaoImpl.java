@@ -6,6 +6,7 @@
 
 package com.google.code.rapid.queue.metastore.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.support.DataAccessUtils;

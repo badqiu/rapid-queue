@@ -6,6 +6,7 @@
 
 package com.google.code.rapid.queue.metastore.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.support.DataAccessUtils;
@@ -49,6 +50,7 @@ public class ExchangeDaoImpl extends BaseSpringJdbcDao implements ExchangeDao{
 	}
 	
 	public void insert(Exchange entity) {
+		entity.setCreatedTime(new Date());
 		String sql = "insert into rq_exchange " 
 			 + " (exchange_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,type,size,memory_size,max_size,created_time,operator,last_updated_time) " 
 			 + " values "
@@ -63,6 +65,7 @@ public class ExchangeDaoImpl extends BaseSpringJdbcDao implements ExchangeDao{
 	}
 	
 	public int update(Exchange entity) {
+		entity.setLastUpdatedTime(new Date());
 		String sql = "update rq_exchange set "
 					+ " remarks=:remarks,durable_type=:durableType,auto_delete=:autoDelete,auto_delete_expires=:autoDeleteExpires,type=:type,size=:size,memory_size=:memorySize,max_size=:maxSize,created_time=:createdTime,operator=:operator,last_updated_time=:lastUpdatedTime "
 					+ " where  exchange_name = :exchangeName and vhost_name = :vhostName ";

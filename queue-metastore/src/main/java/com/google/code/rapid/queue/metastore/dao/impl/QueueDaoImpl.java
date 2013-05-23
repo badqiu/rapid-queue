@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.dao.impl;
 
+import java.util.Date;
+
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -47,6 +49,7 @@ public class QueueDaoImpl extends BaseSpringJdbcDao implements QueueDao{
 	}
 	
 	public void insert(Queue entity) {
+		entity.setCreatedTime(new Date());
 		String sql = "insert into rq_queue " 
 			 + " (queue_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,exclusive,size,memory_size,max_size,ttl,created_time,operator,last_updated_time) " 
 			 + " values "
@@ -61,6 +64,7 @@ public class QueueDaoImpl extends BaseSpringJdbcDao implements QueueDao{
 	}
 	
 	public int update(Queue entity) {
+		entity.setLastUpdatedTime(new Date());
 		String sql = "update rq_queue set "
 					+ " remarks=:remarks,durable_type=:durableType,auto_delete=:autoDelete,auto_delete_expires=:autoDeleteExpires,exclusive=:exclusive,size=:size,memory_size=:memorySize,max_size=:maxSize,ttl=:ttl,created_time=:createdTime,operator=:operator,last_updated_time=:lastUpdatedTime "
 					+ " where  queue_name = :queueName and vhost_name = :vhostName ";

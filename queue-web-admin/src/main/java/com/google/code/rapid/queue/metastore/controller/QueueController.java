@@ -97,6 +97,7 @@ public class QueueController extends BaseController{
 	@RequestMapping()
 	public String create(ModelMap model,Queue queue,BindingResult errors) throws Exception {
 		try {
+			queue.setOperator(getLoginUser());
 			queueService.create(queue);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
@@ -109,6 +110,8 @@ public class QueueController extends BaseController{
 		return LIST_ACTION;
 	}
 	
+
+
 	/** 编辑 */
 	@RequestMapping()
 	public String edit(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("vhostName") String vhostName) throws Exception {
@@ -121,6 +124,7 @@ public class QueueController extends BaseController{
 	@RequestMapping()
 	public String update(ModelMap model,@RequestParam("queueName") String queueName, @RequestParam("vhostName") String vhostName,Queue queue,BindingResult errors) throws Exception {
 		try {
+			queue.setOperator(getLoginUser());
 			queueService.update(queue);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);

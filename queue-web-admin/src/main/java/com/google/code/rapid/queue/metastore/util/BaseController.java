@@ -34,5 +34,8 @@ public class BaseController {
 	public static void convert(ConstraintViolationException exception,Errors errors) {
 		ValidationErrorsUtils.convert(exception.getConstraintViolations(),errors);
 	}
-	
+
+	protected String getLoginUser() {
+		return "demo_login_user";
+	}
 }

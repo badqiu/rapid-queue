@@ -97,6 +97,7 @@ public class ExchangeController extends BaseController {
 	@RequestMapping()
 	public String create(ModelMap model,Exchange exchange,BindingResult errors) throws Exception {
 		try {
+			exchange.setOperator(getLoginUser());
 			exchangeService.create(exchange);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
@@ -121,6 +122,7 @@ public class ExchangeController extends BaseController {
 	@RequestMapping()
 	public String update(ModelMap model,@RequestParam("exchangeName") String exchangeName, @RequestParam("vhostName") String vhostName,Exchange exchange,BindingResult errors) throws Exception {
 		try {
+			exchange.setOperator(getLoginUser());
 			exchangeService.update(exchange);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
