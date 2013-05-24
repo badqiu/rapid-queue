@@ -70,6 +70,9 @@ public class QueueDaoImplTest extends BaseDaoTestCase{
 		dao.getById(new java.lang.String("1"),new java.lang.String("1"));
 	}
 	
-	
+	@Test
+	public void test_findByVhostName() {
+		dao.findByVhostName("vhost");
+	}
 }
 

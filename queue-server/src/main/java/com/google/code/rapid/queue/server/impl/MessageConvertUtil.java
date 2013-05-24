@@ -9,29 +9,29 @@ import com.google.code.rapid.queue.thrift.api.MessageProperties;
 
 public class MessageConvertUtil {
 
-	public static List<Message> toThriftMessageList(List<com.google.code.rapid.queue.Message> sourceList) {
+	public static List<Message> toThriftMessageList(List<com.google.code.rapid.queue.model.Message> sourceList) {
 		if(sourceList == null) return Collections.EMPTY_LIST;
 		
 		List<Message> resultList = new ArrayList<Message>(sourceList.size());
-		for(com.google.code.rapid.queue.Message source : sourceList) {
+		for(com.google.code.rapid.queue.model.Message source : sourceList) {
 			Message target = toThriftMessage(source);
 			resultList.add(target);
 		}
 		return resultList;
 	}
 
-	public static List<com.google.code.rapid.queue.Message> totoMessageBrokerMessageList(List<Message> sourceList) {
+	public static List<com.google.code.rapid.queue.model.Message> totoMessageBrokerMessageList(List<Message> sourceList) {
 		if(sourceList == null) return Collections.EMPTY_LIST;
 		
-		List<com.google.code.rapid.queue.Message> resultList = new ArrayList<com.google.code.rapid.queue.Message>(sourceList.size());
+		List<com.google.code.rapid.queue.model.Message> resultList = new ArrayList<com.google.code.rapid.queue.model.Message>(sourceList.size());
 		for(Message source : sourceList) {
-			com.google.code.rapid.queue.Message target = toMessageBrokerMessage(source);
+			com.google.code.rapid.queue.model.Message target = toMessageBrokerMessage(source);
 			resultList.add(target);
 		}
 		return resultList;
 	}
 	
-	public static Message toThriftMessage(com.google.code.rapid.queue.Message source) {
+	public static Message toThriftMessage(com.google.code.rapid.queue.model.Message source) {
 		if(source == null) return null;
 		
 		Message result = new Message();
@@ -42,10 +42,10 @@ public class MessageConvertUtil {
 		return result;
 	}
 	
-	public static com.google.code.rapid.queue.Message toMessageBrokerMessage(Message source) {
+	public static com.google.code.rapid.queue.model.Message toMessageBrokerMessage(Message source) {
 		if(source == null) return null;
 		
-		com.google.code.rapid.queue.Message result = new com.google.code.rapid.queue.Message();
+		com.google.code.rapid.queue.model.Message result = new com.google.code.rapid.queue.model.Message();
 		result.setBody(source.getBody());
 		result.setExchange(source.getExchange());
 		result.setRouterKey(source.getRouterKey());
@@ -53,7 +53,7 @@ public class MessageConvertUtil {
 		return result;
 	}
 	
-	public static MessageProperties toThriftMessageProperties(com.google.code.rapid.queue.MessageProperties source) {
+	public static MessageProperties toThriftMessageProperties(com.google.code.rapid.queue.model.MessageProperties source) {
 		if(source == null) return null;
 		
 		MessageProperties result = new MessageProperties();
@@ -70,10 +70,10 @@ public class MessageConvertUtil {
 		return result;
 	}
 	
-	public static com.google.code.rapid.queue.MessageProperties toMessageBrokerMessageProperties(MessageProperties source) {
+	public static com.google.code.rapid.queue.model.MessageProperties toMessageBrokerMessageProperties(MessageProperties source) {
 		if(source == null) return null;
 		
-		com.google.code.rapid.queue.MessageProperties result = new com.google.code.rapid.queue.MessageProperties();
+		com.google.code.rapid.queue.model.MessageProperties result = new com.google.code.rapid.queue.model.MessageProperties();
 		result.setContentEncoding(source.getContentEncoding());
 		result.setContentLength(source.getContentLength());
 		result.setContentType(source.getContentType());

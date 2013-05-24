@@ -7,7 +7,9 @@ import java.util.concurrent.LinkedBlockingDeque;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.code.rapid.queue.exchange.TopicExchange;
+import com.google.code.rapid.queue.model.BrokerExchange;
+import com.google.code.rapid.queue.model.BrokerQueue;
+import com.google.code.rapid.queue.model.Message;
 
 
 public class MessageBrokerTest extends Assert{
@@ -66,13 +68,13 @@ public class MessageBrokerTest extends Assert{
 	}
 	
 	private void bind(String routerKey) throws Exception {
-		TopicExchange exchange = new TopicExchange();
+		BrokerExchange exchange = new BrokerExchange();
 		exchange.setExchangeName(exchangeName);
 		exchange.setExchangeQueue(new LinkedBlockingDeque<byte[]>());
 		exchange.afterPropertiesSet();
 		mb.getManager().exchangeAdd(exchange);
 		
-		TopicQueue queue = new TopicQueue();
+		BrokerQueue queue = new BrokerQueue();
 		queue.setQueueName(queueName);
 		queue.setQueue(new LinkedBlockingDeque<byte[]>());
 		mb.getManager().queueAdd(queue);

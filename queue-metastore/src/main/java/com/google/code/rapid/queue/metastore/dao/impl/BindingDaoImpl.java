@@ -110,5 +110,11 @@ public class BindingDaoImpl extends BaseSpringJdbcDao implements BindingDao{
 			String exchangeName) {
 		return getSimpleJdbcTemplate().query(SELECT_FROM+" where vhost_name = ? and exchange_name = ?", getEntityRowMapper(), vhostName,exchangeName);
 	}
+
+	@Override
+	public List<Binding> findByVhostName(String vhostName) {
+		String sql = SELECT_FROM+" where vhost_name = ?";
+		return getSimpleJdbcTemplate().query(sql, getEntityRowMapper(), vhostName);
+	}
 	
 }

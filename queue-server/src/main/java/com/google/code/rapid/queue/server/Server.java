@@ -1,5 +1,7 @@
 package com.google.code.rapid.queue.server;
 
+import java.lang.Thread.UncaughtExceptionHandler;
+
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TBinaryProtocol.Factory;
 import org.apache.thrift.server.TServer;
@@ -22,6 +24,13 @@ public class Server {
 	private int port = Constants.DEFAULT_SERVER_PORT;
 	
 	public Server() {
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				logger.error("uncaughtException,Thread:"+t+" cuase:"+e,e);
+			}
+		});
+		
 	}
 	
 	public Server(int port) {

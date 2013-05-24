@@ -1,4 +1,4 @@
-package com.google.code.rapid.queue;
+package com.google.code.rapid.queue.model;
 
 import java.io.Serializable;
 

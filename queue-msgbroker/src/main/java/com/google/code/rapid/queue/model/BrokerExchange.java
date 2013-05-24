@@ -1,12 +1,13 @@
-package com.google.code.rapid.queue.exchange;
+package com.google.code.rapid.queue.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -14,19 +15,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.util.Assert;
-
-import com.google.code.rapid.queue.DurableTypeEnum;
-import com.google.code.rapid.queue.Message;
-import com.google.code.rapid.queue.TopicQueue;
-import com.google.code.rapid.queue.util.RouterKeyUtil;
 /**
  * 消息队列交换机,实现  exchange => queue, exchange => exchange的消息传递
  * 
  * @author badqiu
  *
  */
-public class TopicExchange implements InitializingBean{
-	private static Logger logger = LoggerFactory.getLogger(TopicExchange.class);
+public class BrokerExchange implements InitializingBean{
+	private static Logger logger = LoggerFactory.getLogger(BrokerExchange.class);
 	
 	private DurableTypeEnum durableType;
 	private boolean autoDelete;  //auto delete exchange by timeout
@@ -34,38 +30,12 @@ public class TopicExchange implements InitializingBean{
 	private int memorySize;
 	private String exchangeName; //exchange名称
 	private String remarks; // 备注
-	private List<String> routerKeyList;	//exchange routerKey for exchange <=> exchange msg transfer
 	
 	private BlockingQueue<byte[]> exchangeQueue; //内部exchange的一个队列
 	
-	private List<TopicQueue> bindQueueList = new ArrayList<TopicQueue>();
-	private List<TopicExchange> bindExchangeList = new ArrayList<TopicExchange>();
+	private Map<String,BrokerBinding> bindQueueMap = new HashMap<String,BrokerBinding>();
 	
 	private ExecutorService executor = Executors.newSingleThreadExecutor(new CustomizableThreadFactory("TopicExchangeComsumeThread"));
-	
-	public void offer(Message msg) throws InterruptedException {
-		logger.debug("offer {} msg:{}",exchangeName,msg);
-		exchangeQueue.put(Message.toBytes(msg));
-	}
-	
-	public void startComsumeThread() {
-		executor.execute(new Runnable() {
-			@Override
-			public void run() {
-				logger.info("started comsumeThread for exchange:"+exchangeName);
-				while(true) {
-					try {
-						exchangeComsume();
-					} catch (InterruptedException e) {
-						break;
-					} catch(Exception e) {
-						logger.error("error on consume exchange:"+exchangeName,e);
-					}
-				}
-				logger.info("stoped comsumeThread for exchange:"+exchangeName);
-			}
-		});
-	}
 	
 	public Queue<byte[]> getExchangeQueue() {
 		return exchangeQueue;
@@ -81,38 +51,9 @@ public class TopicExchange implements InitializingBean{
 		logger.debug("exchangeComsume {} msg:{}",exchangeName,msg);
 		if(msg != null) {
 			router2QueueList(msg.getRouterKey(),msg.getBody());
-			router2ExchangeList(msg);
 		}
 	}
 	
-	private void router2ExchangeList(Message msg) {
-		if(bindExchangeList != null) {
-			for(TopicExchange exchange : bindExchangeList) {
-				if(exchange.matchRouterKey(msg.getRouterKey())) {
-					try {
-						exchange.offer(msg);
-					}catch(Exception e) {
-						logger.error("error on router2ExchangeList,exchange:"+exchange);
-					}
-				}
-			}
-		}
-	}
-
-	private boolean matchRouterKey(String routerKeyValue) {
-		return RouterKeyUtil.matchRouterKey(routerKeyList, routerKeyValue);
-	}
-
-	private void router2QueueList(String routerKey, byte[] data) {
-		if(bindQueueList != null) {
-			for(TopicQueue queue : bindQueueList) {
-				if(queue.matchRouterKey(routerKey)) {
-					queue.getQueue().offer(data);
-				}
-			}
-		}
-	}
-
 	public DurableTypeEnum getDurableType() {
 		return durableType;
 	}
@@ -154,51 +95,69 @@ public class TopicExchange implements InitializingBean{
 		this.memorySize = memorySize;
 	}
 
-
-	public void bindQueue(TopicQueue queue) {
-		if(bindQueueList.contains(queue)) {
+	public void offer(Message msg) throws InterruptedException {
+		logger.debug("offer {} msg:{}",exchangeName,msg);
+		exchangeQueue.put(Message.toBytes(msg));
+	}
+	
+	public void startComsumeThread() {
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				logger.info("started comsumeThread for exchange:"+exchangeName);
+				while(true) {
+					try {
+						exchangeComsume();
+					} catch (InterruptedException e) {
+						break;
+					} catch(Exception e) {
+						logger.error("error on consume exchange:"+exchangeName,e);
+					}
+				}
+				logger.info("stoped comsumeThread for exchange:"+exchangeName);
+			}
+		});
+	}
+	
+	private void router2QueueList(String routerKey, byte[] data) {
+		for(BrokerBinding binding : bindQueueMap.values()) {
+			if(binding.matchRouterKey(routerKey)) {
+				binding.getQueue().getQueue().offer(data);
+			}
+		}
+	}
+	
+	public void bindQueue(BrokerQueue queue,String routerKey) {
+		if(bindQueueMap.containsKey(queue.getQueueName())) {
 			throw new IllegalArgumentException("already bind queue:"+queue.getQueueName()+" on exchange:"+exchangeName);
 		}
+		BrokerBinding binding = bindQueueMap.get(queue.getQueueName());
+		if(binding == null) {
+			binding = new BrokerBinding(queue);
+			bindQueueMap.put(queue.getQueueName(),binding);
+		}
 		
-		bindQueueList.add(queue);
+		binding.addRouterKey(routerKey);
 	}
 
 	public void unbindQueue(String queueName) {
 		if(StringUtils.isBlank(queueName)) throw new IllegalArgumentException("queueName must be not empty");
-		
-		for(ListIterator<TopicQueue> it = bindQueueList.listIterator(); it.hasNext(); ) {
-			TopicQueue q = it.next();
-			if(q.getQueueName().equals(queueName)) {
-				it.remove();
-			}
-		}
+		bindQueueMap.remove(queueName);
 	}
 	
 	public void unbindQueue(String queueName,String routerKey) {
 		if(StringUtils.isBlank(queueName)) throw new IllegalArgumentException("queueName must be not empty");
 		
-		for(ListIterator<TopicQueue> it = bindQueueList.listIterator(); it.hasNext(); ) {
-			TopicQueue q = it.next();
-			if(q.getQueueName().equals(queueName)) {
-				q.getRouterKeyList().remove(routerKey);
-				if(q.getRouterKeyList().isEmpty()) {
-					it.remove();
-				}
-			}
-		}
+		BrokerBinding binding = bindQueueMap.get(queueName);
+		binding.removeRouterKey(routerKey);
 	}
 	
-	public void bindExchange(TopicExchange exchange) {
-		if(bindExchangeList.contains(exchange)) {
-			throw new IllegalArgumentException("already bind exchange:"+exchange.getExchangeName()+" on exchange:"+exchangeName);
-		}
-		
-		bindExchangeList.add(exchange);
+	public Collection<BrokerBinding> getBindQueueList() {
+		return bindQueueMap.values();
 	}
-	
+
 	public void clearAllBind() {
-		bindExchangeList.clear();
-		bindQueueList.clear();
+		bindQueueMap.clear();
 	}
 	
 	public void setMaxSize(int maxSize) {
@@ -223,7 +182,7 @@ public class TopicExchange implements InitializingBean{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TopicExchange other = (TopicExchange) obj;
+		BrokerExchange other = (BrokerExchange) obj;
 		if (exchangeName == null) {
 			if (other.exchangeName != null)
 				return false;
@@ -246,6 +205,13 @@ public class TopicExchange implements InitializingBean{
 		Assert.notNull(exchangeQueue,"exchangeQueue must be not null");
 		
 		startComsumeThread();
+	}
+
+
+	public void destroy() throws InterruptedException {
+		executor.shutdown();
+		executor.awaitTermination(10, TimeUnit.SECONDS);
+		//exchangeQueue.clear(); //FIXME 增加exchange queue的 destroy
 	}
 	
 }

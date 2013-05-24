@@ -2,27 +2,42 @@ package com.google.code.rapid.queue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.rapid.queue.exchange.TopicExchange;
+import com.google.code.rapid.queue.model.BrokerBinding;
+import com.google.code.rapid.queue.model.BrokerExchange;
+import com.google.code.rapid.queue.model.BrokerQueue;
+import com.google.code.rapid.queue.model.Message;
 
 public class MessageBroker {
 	private static final Logger logger = LoggerFactory.getLogger(MessageBroker.class);
 	
 	// Map<exchangeName,TopicExchange>
-	private Map<String,TopicExchange> exchangeMap = new HashMap<String,TopicExchange>();
+	private Map<String,BrokerExchange> exchangeMap = new HashMap<String,BrokerExchange>();
 	
 	// Map<queueName,TopicExchange>
-	private Map<String,TopicQueue> queueMap = new HashMap<String,TopicQueue>();
+	private Map<String,BrokerQueue> queueMap = new HashMap<String,BrokerQueue>();
 	
 	private MessageBrokerManager manager = new MessageBrokerManager();
 	
+	private String vhostName;
+	
+	public String getVhostName() {
+		return vhostName;
+	}
+
+	public void setVhostName(String vhostName) {
+		this.vhostName = vhostName;
+	}
+
 	/**
 	 * 发送消息
 	 * @param msg
@@ -38,7 +53,7 @@ public class MessageBroker {
 			throw new IllegalArgumentException("'msg.routerKey' length must <= 50");
 		}
 		
-		TopicExchange exchange = lookupExchange(msg.getExchange());
+		BrokerExchange exchange = lookupExchange(msg.getExchange());
 		try {
 			exchange.offer(msg);
 		} catch (InterruptedException e) {
@@ -62,7 +77,7 @@ public class MessageBroker {
 	 * @param timeout 等待超时时间,单位(毫秒)
 	 */	
 	public Message receive(String queueName,int timeout) {
-		TopicQueue queue = lookupQueue(queueName);
+		BrokerQueue queue = lookupQueue(queueName);
 		try {
 			byte[] body = queue.getQueue().poll(timeout,TimeUnit.MILLISECONDS);
 			return new Message(body);
@@ -78,7 +93,7 @@ public class MessageBroker {
 	 * @param batchSize 批量接收的大小
 	 */		
 	public List<Message> receiveBatch(String queueName,int timeout,int batchSize) {
-		TopicQueue queue = lookupQueue(queueName);
+		BrokerQueue queue = lookupQueue(queueName);
 		List<Message> result = new ArrayList<Message>(batchSize);
 		
 		long totalCostTime = 0;
@@ -110,16 +125,16 @@ public class MessageBroker {
 		return manager;
 	}
 
-	private TopicExchange lookupExchange(String exchangeName) {
-		TopicExchange exchange = exchangeMap.get(exchangeName);
+	private BrokerExchange lookupExchange(String exchangeName) {
+		BrokerExchange exchange = exchangeMap.get(exchangeName);
 		if(exchange == null) {
 			throw new IllegalArgumentException("not found exchange by name:"+exchangeName);
 		}
 		return exchange;
 	}
 
-	private TopicQueue lookupQueue(String queueName) {
-		TopicQueue queue = queueMap.get(queueName);
+	private BrokerQueue lookupQueue(String queueName) {
+		BrokerQueue queue = queueMap.get(queueName);
 		if(queue == null) {
 			throw new IllegalArgumentException("not found queue by name:"+queueName);
 		}
@@ -127,7 +142,7 @@ public class MessageBroker {
 	}
 	
 	public class MessageBrokerManager {
-		public void queueAdd(TopicQueue queue) {
+		public void queueAdd(BrokerQueue queue) {
 			if(StringUtils.isBlank(queue.getQueueName())) throw new IllegalArgumentException("queueName must be not blank");
 			if(queueMap.containsKey(queue.getQueueName())) throw new IllegalArgumentException("already contain queue:"+queue.getQueueName());
 			
@@ -138,32 +153,37 @@ public class MessageBroker {
 		public void queueDelete(String queueName) {
 			logger.info("queueDelete() queueName:"+queueName);
 			queueUnbindAllExchange(queueName);
-			TopicQueue queue = queueMap.remove(queueName);
+			BrokerQueue queue = queueMap.remove(queueName);
 			queue.truncate();
 		}
 	
 		public void queueUnbindAllExchange(String queueName) {
 			for(String exchangeName : exchangeMap.keySet()) {
-				TopicExchange exchange = lookupExchange(exchangeName);
+				BrokerExchange exchange = lookupExchange(exchangeName);
 				exchange.unbindQueue(queueName);
 			}
 		}
 		
 		public void queueBind(String exchangeName,String queueName,String routerKey) {
 			logger.info("queueBind(),exchangeName:"+exchangeName+" queueName:"+queueName+" routerKey:"+routerKey);
-			TopicExchange exchange = lookupExchange(exchangeName);
-			TopicQueue queue = lookupQueue(queueName);
-			queue.getRouterKeyList().add(routerKey);
-			exchange.bindQueue(queue);
+			BrokerExchange exchange = lookupExchange(exchangeName);
+			BrokerQueue queue = lookupQueue(queueName);
+			exchange.bindQueue(queue,routerKey);
 		}
 	
 		public void queueUnbind(String exchangeName,String queueName,String routerKey) {
 			logger.info("queueUnbind(),exchangeName:"+exchangeName+" queueName:"+queueName+" routerKey:"+routerKey);
-			TopicExchange exchange = lookupExchange(exchangeName);
+			BrokerExchange exchange = lookupExchange(exchangeName);
 			exchange.unbindQueue(queueName,routerKey);
 		}
+
+		public void queueUnbind(String exchangeName,String queueName) {
+			logger.info("queueUnbind(),exchangeName:"+exchangeName+" queueName:"+queueName);
+			BrokerExchange exchange = lookupExchange(exchangeName);
+			exchange.unbindQueue(queueName);
+		}
 		
-		public void exchangeAdd(TopicExchange exchange) {
+		public void exchangeAdd(BrokerExchange exchange) {
 			if(StringUtils.isBlank(exchange.getExchangeName())) throw new IllegalArgumentException("exchangeName must be not blank");
 			if(exchangeMap.containsKey(exchange.getExchangeName())) throw new IllegalArgumentException("already contain exchange:"+exchange.getExchangeName());
 			
@@ -173,7 +193,42 @@ public class MessageBroker {
 		
 		public void exchangeDelete(String exchangeName) {
 			logger.info("exchangeDelete(),exchangeName:"+exchangeName);
-			exchangeMap.remove(exchangeName);
+			BrokerExchange exchange = exchangeMap.remove(exchangeName);
+			if(exchange != null) {
+				try {
+					exchange.destroy();
+				} catch (InterruptedException e) {
+					logger.error("exchangeDelete() error,exchangeName:"+exchangeName,e);
+				}
+			}
 		}
+		
+		/**
+		 * 返回所有binding
+		 * 
+		 * @return Map<exchangeName,List<queueName>>
+		 */
+		public Map<String,List<String>> getAllBinding() {
+			Map<String,List<String>> map = new HashMap<String,List<String>>();
+			for(BrokerExchange ex : exchangeMap.values()) {
+				String exchangeName = ex.getExchangeName();
+				List<String> queueNames = new ArrayList<String>();
+				for(BrokerBinding binding : ex.getBindQueueList()) {
+					queueNames.add(binding.getQueue().getQueueName());
+				}
+				
+				map.put(exchangeName, queueNames);
+			}
+			return map;
+		}
+		
+		public Set<String> getQueueNames() {
+			return new HashSet<String>(queueMap.keySet());
+		}
+
+		public Set<String> getExchangeNames() {
+			return new HashSet<String>(exchangeMap.keySet());
+		}
+		
 	}
 }

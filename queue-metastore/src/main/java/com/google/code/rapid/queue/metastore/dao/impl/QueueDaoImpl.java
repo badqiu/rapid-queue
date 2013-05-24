@@ -7,6 +7,7 @@
 package com.google.code.rapid.queue.metastore.dao.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -138,4 +139,11 @@ public class QueueDaoImpl extends BaseSpringJdbcDao implements QueueDao{
 		
 		return pageQuery(sql.toString(),query,getEntityRowMapper());				
 	}
+
+	@Override
+	public List<Queue> findByVhostName(String vhostName) {
+		String sql = SELECT_FROM+" where vhost_name = ?";
+		return getSimpleJdbcTemplate().query(sql, getEntityRowMapper(), vhostName);
+	}
+	
 }

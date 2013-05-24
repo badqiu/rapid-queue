@@ -9,9 +9,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
-import com.google.code.rapid.queue.exchange.TopicExchange;
 import com.google.code.rapid.queue.metastore.model.Binding;
 import com.google.code.rapid.queue.metastore.model.Exchange;
 import com.google.code.rapid.queue.metastore.model.Queue;
@@ -20,14 +20,18 @@ import com.google.code.rapid.queue.metastore.service.BindingService;
 import com.google.code.rapid.queue.metastore.service.ExchangeService;
 import com.google.code.rapid.queue.metastore.service.QueueService;
 import com.google.code.rapid.queue.metastore.service.VhostService;
+import com.google.code.rapid.queue.model.BrokerExchange;
+import com.google.code.rapid.queue.model.BrokerQueue;
+import com.google.code.rapid.queue.model.DurableTypeEnum;
 
-public class MessageBrokerBuilder {
-	private Logger logger = LoggerFactory.getLogger(MessageBrokerBuilder.class);
+public class MessageBrokerPoolBuilder implements InitializingBean {
+
+	private Logger logger = LoggerFactory.getLogger(MessageBrokerPoolFactoryBean.class);
 	
-	private BindingService bindingService;
-	private QueueService queueService;
-	private ExchangeService exchangeService;
-	private VhostService vhostService;
+	protected BindingService bindingService;
+	protected QueueService queueService;
+	protected ExchangeService exchangeService;
+	protected VhostService vhostService;
 	
 	private File dataDir;
 	
@@ -51,7 +55,7 @@ public class MessageBrokerBuilder {
 		this.dataDir = dataDir;
 	}
 
-	public Map<String,MessageBroker> build() {
+	public MessageBrokerPool build() {
 		Assert.notNull(dataDir,"dataDir must be not null");
 		Assert.notNull(bindingService,"bindingService must be not null");
 		Assert.notNull(queueService,"queueService must be not null");
@@ -61,11 +65,12 @@ public class MessageBrokerBuilder {
 			dataDir.mkdirs();
 		}
 		
-		return new Builder().execute();
+		Map<String,MessageBroker> map = new Builder().execute();
+		MessageBrokerPool pool = new MessageBrokerPool(map);
+		return pool;
 	}
 	
 	private class Builder {
-		
 		public Map<String,MessageBroker> execute() {
 			Map<String,MessageBroker> messageBrokerMap = new HashMap<String,MessageBroker>();
 			List<Vhost> vhostList = vhostService.findAll();
@@ -75,34 +80,53 @@ public class MessageBrokerBuilder {
 			}
 			return messageBrokerMap;
 		}
+	}
+	
+	public MessageBroker buildMessageBroker(Vhost vhost) {
+		MessageBroker mb = new MessageBroker();
+		mb.setVhostName(vhost.getVhostName());
+		addAllExchange(vhost, mb);
+		addAllQueue(vhost, mb);
+		bindQueuesAndExchanges(vhost, mb);
+		return mb;
+	}
 
-		private MessageBroker buildMessageBroker(Vhost vhost) {
-			MessageBroker mb = new MessageBroker();
-			
-			List<Exchange> exchangeList = exchangeService.findByVhostName(vhost.getVhostName());
-			for(Exchange exchange : exchangeList) {
-				try {
-					TopicExchange topicExchange = newTopicExchange(exchange);
-					mb.getManager().exchangeAdd(topicExchange);
-					
-					List<Binding> bindingList = bindingService.findBindingByVhostName(vhost.getVhostName(),exchange.getExchangeName());
-					for(Binding binding : bindingList) {
-						Queue queue = queueService.getById(binding.getQueueName(), binding.getVhostName());
-						TopicQueue q = newTopicQueue(queue);
-						mb.getManager().queueAdd(q);
-						mb.getManager().queueBind(exchange.getExchangeName(), q.getQueueName(),binding.getRouterKey());
-					}
-				}catch(Exception e) {
-					logger.error("error on create exchcnage:"+exchange,e);
-				}
+	private void bindQueuesAndExchanges(Vhost vhost, MessageBroker mb) {
+		List<Binding> bindingList = bindingService.findByVhostName(vhost.getVhostName());
+		for(Binding binding : bindingList) {
+			try {
+				mb.getManager().queueBind(binding.getExchangeName(), binding.getQueueName(),binding.getRouterKey());
+			}catch(Exception e) {
+				logger.error("error on bindding:"+binding,e);
 			}
-			
-			return mb;
+		}
+	}
+
+	private void addAllQueue(Vhost vhost, MessageBroker mb) {
+		for(Queue queue : queueService.findByVhostName(vhost.getVhostName())) {
+			try {
+				BrokerQueue q = newBrokerQueue(queue);
+				mb.getManager().queueAdd(q);
+			}catch(Exception e) {
+				logger.error("error on create queue:"+queue,e);
+			}
+		}
+	}
+
+	private void addAllExchange(Vhost vhost, MessageBroker mb) {
+		List<Exchange> exchangeList = exchangeService.findByVhostName(vhost.getVhostName());
+		for(Exchange exchange : exchangeList) {
+			try {
+				BrokerExchange topicExchange = newTopicExchange(exchange);
+				mb.getManager().exchangeAdd(topicExchange);
+			}catch(Exception e) {
+				logger.error("error on create exchcnage:"+exchange,e);
+			}
 		}
 	}
 	
-	private TopicQueue newTopicQueue(Queue queue) {
-		TopicQueue r = new TopicQueue();
+	public BrokerQueue newBrokerQueue(Queue queue) throws Exception{
+		BrokerQueue r = new BrokerQueue();
 		r.setQueueName(queue.getQueueName());
 		r.setRemarks(queue.getRemarks());
 		r.setAutoDelete(queue.getAutoDelete());
@@ -112,8 +136,8 @@ public class MessageBrokerBuilder {
 		return r;
 	}
 	
-	private TopicExchange newTopicExchange(Exchange exchange) throws Exception {
-		TopicExchange r = new TopicExchange();
+	public BrokerExchange newTopicExchange(Exchange exchange) throws Exception {
+		BrokerExchange r = new BrokerExchange();
 		r.setExchangeName(exchange.getExchangeName());
 		r.setRemarks(exchange.getRemarks());
 		r.setAutoDelete(exchange.getAutoDelete());
@@ -147,4 +171,14 @@ public class MessageBrokerBuilder {
 			throw new IllegalArgumentException("unknow durableType:"+durableType);
 		}
 	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(dataDir,"dataDir must be not null");
+		Assert.notNull(bindingService,"bindingService must be not null");
+		Assert.notNull(queueService,"queueService must be not null");
+		Assert.notNull(exchangeService,"exchangeService must be not null");
+		Assert.notNull(vhostService,"vhostService must be not null");
+	}
+	
 }

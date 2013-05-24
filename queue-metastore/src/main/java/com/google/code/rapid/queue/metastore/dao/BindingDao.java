@@ -34,6 +34,8 @@ public interface BindingDao {
 	public Page<Binding> findPage(BindingQuery query);
 
 	public List<Binding> findBindingByVhostName(String vhostName,
-			String exchangeName);	
+			String exchangeName);
+
+	public List<Binding> findByVhostName(String vhostName);	
 	
 }

@@ -1,4 +1,4 @@
-package com.google.code.rapid.queue;
+package com.google.code.rapid.queue.model;
 /**
  * 持久模式
  * 

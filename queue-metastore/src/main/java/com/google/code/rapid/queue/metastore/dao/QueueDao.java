@@ -6,6 +6,8 @@
 
 package com.google.code.rapid.queue.metastore.dao;
 
+import java.util.List;
+
 import cn.org.rapid_framework.page.Page;
 
 import com.google.code.rapid.queue.metastore.model.Queue;
@@ -30,6 +32,8 @@ public interface QueueDao {
 	public Queue getById(String queueName, String vhostName);
 	
 
-	public Page<Queue> findPage(QueueQuery query);	
+	public Page<Queue> findPage(QueueQuery query);
+
+	public List<Queue> findByVhostName(String vhostName);	
 	
 }

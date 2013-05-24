@@ -6,8 +6,15 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
     default-autowire="byName" default-lazy-init="false">
 
-	<bean id="messageBrokerBuilder" class="com.google.code.rapid.queue.MessageBrokerBuilder">
+	<bean id="messageBrokerPool" class="com.google.code.rapid.queue.MessageBrokerPoolFactoryBean">
 		<property name="dataDir" value="/data/rapid-queue/"></property>
+	</bean>
+	
+	<bean id="messageBrokerAutoRefresher" class="com.google.code.rapid.queue.MessageBrokerAutoRefresher">
+		<property name="dataDir" value="/data/rapid-queue/"></property>
+	</bean>
+	
+	<bean class="com.google.code.rapid.queue.cron.job.MessageBrokerAutoRefresherJob">
 	</bean>
 	
 </beans>

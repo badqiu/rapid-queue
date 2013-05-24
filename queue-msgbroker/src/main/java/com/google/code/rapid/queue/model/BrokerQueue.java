@@ -1,4 +1,4 @@
-package com.google.code.rapid.queue;
+package com.google.code.rapid.queue.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import com.google.code.rapid.queue.util.RouterKeyUtil;
  * @author badqiu
  *
  */
-public class TopicQueue {
+public class BrokerQueue {
 	
 	private List<String> routerKeyList = new ArrayList<String>();
 	private BlockingQueue<byte[]> queue;
@@ -106,7 +106,7 @@ public class TopicQueue {
 	
 	@Override
 	public String toString() {
-		return "TopicQueue [queueName=" + queueName + ", remarks=" + remarks
+		return "BrokerQueue [queueName=" + queueName + ", remarks=" + remarks
 				+ ", durableType=" + durableType + ", autoDelete=" + autoDelete
 				+ ", maxSize=" + maxSize + ", memorySize=" + memorySize + "]";
 	}
@@ -128,7 +128,7 @@ public class TopicQueue {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TopicQueue other = (TopicQueue) obj;
+		BrokerQueue other = (BrokerQueue) obj;
 		if (queueName == null) {
 			if (other.queueName != null)
 				return false;

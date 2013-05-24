@@ -50,5 +50,6 @@ public interface BindingService {
 
 	public List<Binding> findBindingByVhostName(String vhostName,String exchangeName);
 	
+	public List<Binding> findByVhostName(String vhostName);
     
 }

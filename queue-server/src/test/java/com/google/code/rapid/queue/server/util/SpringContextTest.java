@@ -6,16 +6,17 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.code.rapid.queue.MessageBroker;
-import com.google.code.rapid.queue.MessageBrokerBuilder;
+import com.google.code.rapid.queue.MessageBrokerPoolFactoryBean;
+import com.google.code.rapid.queue.MessageBrokerPool;
 
 
 public class SpringContextTest extends Assert{
 
 	@Test
-	public void test() {
-		MessageBrokerBuilder builder = SpringContext.getBean("messageBrokerBuilder",MessageBrokerBuilder.class);
-		Map<String,MessageBroker> map = builder.build();
-		assertNotNull(map);
+	public void test_build() {
+		MessageBrokerPoolFactoryBean builder = SpringContext.getBean("messageBrokerBuilder",MessageBrokerPoolFactoryBean.class);
+		MessageBrokerPool pool = builder.build();
+		assertNotNull(pool);
 	}
 	
 }

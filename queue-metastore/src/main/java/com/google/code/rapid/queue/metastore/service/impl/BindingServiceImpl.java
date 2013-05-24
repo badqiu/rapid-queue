@@ -124,4 +124,9 @@ public class BindingServiceImpl implements BindingService {
 			String exchangeName) {
 		return bindingDao.findBindingByVhostName(vhostName,exchangeName);
 	}
+
+	@Override
+	public List<Binding> findByVhostName(String vhostName) {
+		return bindingDao.findByVhostName(vhostName);
+	}
 }

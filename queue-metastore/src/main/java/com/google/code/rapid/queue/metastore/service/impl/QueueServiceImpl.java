@@ -119,4 +119,9 @@ public class QueueServiceImpl implements QueueService {
         }
     }
 
+	@Override
+	public List<Queue> findByVhostName(String vhostName) {
+		return queueDao.findByVhostName(vhostName);
+	}
+
 }

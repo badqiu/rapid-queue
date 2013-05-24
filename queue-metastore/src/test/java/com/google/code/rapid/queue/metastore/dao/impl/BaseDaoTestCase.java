@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
  *
  * @author badqiu
  */
-@ContextConfiguration(locations = {"classpath:/rapid_queuq_spring/*.xml"})  
+@ContextConfiguration(locations = {"classpath:/rapid_queue_spring/*.xml"})  
 public class BaseDaoTestCase extends AbstractTransactionalJUnit4SpringContextTests{
 	
 	protected String[] getDbUnitDataFiles() {

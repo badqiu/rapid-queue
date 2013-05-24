@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.google.code.rapid.queue.model.Message;
+import com.google.code.rapid.queue.model.MessageProperties;
 import com.google.code.rapid.queue.util.JavaSerUtil;
 import com.google.code.rapid.queue.util.KryoUtil;
 

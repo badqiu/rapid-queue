@@ -7,7 +7,7 @@
     default-autowire="byName" default-lazy-init="false">
 
 	<bean id="messageBrokerService" class="com.google.code.rapid.queue.server.impl.MessageBrokerServiceImpl">
-		<property name="messageBrokerBuilder" ref="messageBrokerBuilder"></property>
+		<property name="messageBrokerPool" ref="messageBrokerPool"></property>
 	</bean>
 	
 </beans>

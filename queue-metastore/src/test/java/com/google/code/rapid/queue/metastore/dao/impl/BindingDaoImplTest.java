@@ -75,5 +75,10 @@ public class BindingDaoImplTest extends BaseDaoTestCase{
 	public void test_findBindingByVhostName() {
 		dao.findBindingByVhostName("vhost", "exchange");
 	}
+	
+	@Test
+	public void test_findByVhostName() {
+		dao.findByVhostName("vhost");
+	}
 }
 

@@ -1,7 +1,6 @@
 package com.google.code.rapid.queue.server.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.TException;
@@ -11,7 +10,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import com.google.code.rapid.queue.MessageBroker;
-import com.google.code.rapid.queue.MessageBrokerBuilder;
+import com.google.code.rapid.queue.MessageBrokerPool;
 import com.google.code.rapid.queue.metastore.service.UserService;
 import com.google.code.rapid.queue.server.ThriftContext;
 import com.google.code.rapid.queue.thrift.api.Constants;
@@ -25,16 +24,15 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	private static final String LOGIN_USER_KEY = "LOGIN_USER";
 	private static final String VHOST_KEY = "VHOST";
 	
-	private MessageBrokerBuilder messageBrokerBuilder;
 	private UserService userService;
-	private Map<String,MessageBroker> messageBrokerMap;
-	
-	public void setMessageBrokerBuilder(MessageBrokerBuilder messageBrokerBuilder) {
-		this.messageBrokerBuilder = messageBrokerBuilder;
-	}
+	private MessageBrokerPool messageBrokerPool;
 	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
+	}
+
+	public void setMessageBrokerPool(MessageBrokerPool messageBrokerPool) {
+		this.messageBrokerPool = messageBrokerPool;
 	}
 
 	@Override
@@ -95,7 +93,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 			throw new IllegalArgumentException("vhost must be not empty");
 		}
 		
-		MessageBroker mb = messageBrokerMap.get(vhost);
+		MessageBroker mb = messageBrokerPool.getMessageBroker(vhost);
 		if(mb == null) {
 			throw new IllegalArgumentException("not found messageBroker by vhost"+vhost);
 		}
@@ -130,8 +128,8 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(messageBrokerBuilder,"messageBrokerBuilder must be not null");
-		messageBrokerMap = messageBrokerBuilder.build();
+		Assert.notNull(messageBrokerPool,"messageBrokerPool must be not null");
+		Assert.notNull(userService,"userService must be not null");
 	}
 
 }
