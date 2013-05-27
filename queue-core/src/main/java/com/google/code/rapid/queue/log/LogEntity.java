@@ -31,6 +31,9 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.code.rapid.queue.FileQueue;
+import com.google.code.rapid.queue.log.task.FileRunner;
+import com.google.code.rapid.queue.log.task.MappedByteBufferSyncExecutor;
 import com.google.code.rapid.queue.util.FileMappedByteBuffer;
 /**
  *@author badqiu
@@ -57,7 +60,6 @@ public class LogEntity {
 	public static int MESSAGE_START_POSITION = 16;
 	public static int VERSION = 1;
 	
-	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private File file;
 	public FileMappedByteBuffer fmbb;
 	public MappedByteBuffer mappedByteBuffer;
@@ -76,8 +78,9 @@ public class LogEntity {
 	
 	private int useCount = 0;
 	
+	private FileRunner fileRunner = FileRunner.getInstance();
 	
-	private LogEntity(String path, LogIndex db, int fileNumber,int fileLimitLength) throws IOException {
+	private LogEntity(String baseDataPath,String path, LogIndex db, int fileNumber,int fileLimitLength) throws IOException {
 		this.currentFileNumber = fileNumber;
 		this.fileLimitLength = fileLimitLength;
 		this.db = db;
@@ -91,25 +94,25 @@ public class LogEntity {
 			fmbb.close();
 			
 			init(openLogEntryFile(file,fileLimitLength));
-			FileRunner.addCreateFile(fileNumber + 1);
+			fileRunner.addCreateFile(FileQueue.getLogEntityPath(baseDataPath,fileNumber + 1),fileLimitLength);
 		}
 		
-		executor.execute(new MappedByteBufferSync());
 		if(mappedByteBuffer == null) {
 			throw new IllegalStateException("mappedByteBuffer must be not null");
 		}
 		if(fmbb == null) {
 			throw new IllegalStateException("fmbb must be not null");
 		}
+		MappedByteBufferSyncExecutor.getInstance().add(mappedByteBuffer);
 		useCount++;
 	}
 	
 	private static Map<String,LogEntity> logEntityCache = new HashMap<String,LogEntity>();
-	public static synchronized LogEntity newInstance(String path,LogIndex db,int fileNumber,int fileLimitLength) throws IOException {
+	public static synchronized LogEntity newInstance(String baseDataPath,String path,LogIndex db,int fileNumber,int fileLimitLength) throws IOException {
 		String cacheKey = new File(path).getAbsolutePath();
 		LogEntity entity = logEntityCache.get(cacheKey);
 		if(entity == null || entity.closed) {
-			entity = new LogEntity(path, db, fileNumber, fileLimitLength);
+			entity = new LogEntity(baseDataPath,path, db, fileNumber, fileLimitLength);
 			logEntityCache.put(cacheKey, entity);
 		}else {
 			entity.incrementUseCount();
@@ -139,28 +142,9 @@ public class LogEntity {
 		endPosition = mbb.getInt();
 	}
 
-
-
-	public class MappedByteBufferSync implements Runnable {
-		@Override
-		public void run() {
-			while (true) {
-				if (mappedByteBuffer != null) {
-					try {
-						mappedByteBuffer.force();
-					} catch (Exception e) {
-						break;
-					}
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						break;
-					}
-				} else {
-					break;
-				}
-			}
-			log.info("stop LogEntity MappedByteBufferSync thread,index:"+getCurrentFileNumber());
+	public void flush() {
+		if (mappedByteBuffer != null) {
+				mappedByteBuffer.force();
 		}
 	}
 
@@ -304,15 +288,10 @@ public class LogEntity {
 		log.info("close LogEntity:"+this);
 		
 		logEntityCache.remove(file.getAbsolutePath());
+		MappedByteBufferSyncExecutor.getInstance().remove(mappedByteBuffer);
 	    if(fmbb != null) {
 	    	fmbb.close();
 	    }
-	    executor.shutdownNow();
-	    try {
-			executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public String toString() {
@@ -328,6 +307,10 @@ public class LogEntity {
 		if (file.createNewFile() == false) {
 			return null;
 		}
+		if(fileLimitLength <= 0) {
+			throw new IllegalArgumentException("fileLimitLength must be > 0");
+		}
+		
 		RandomAccessFile raFile = new RandomAccessFile(file, "rwd");
 		FileChannel fc = raFile.getChannel();
 		MappedByteBuffer mappedByteBuffer = fc.map(MapMode.READ_WRITE, 0, fileLimitLength);

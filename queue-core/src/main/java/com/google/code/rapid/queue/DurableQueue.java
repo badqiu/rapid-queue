@@ -34,8 +34,9 @@ import org.slf4j.LoggerFactory;
 public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>,
 		java.io.Serializable {
 	private static final long serialVersionUID = -5960741434564940154L;
+	private static final Logger log = LoggerFactory.getLogger(DurableQueue.class);
+	
 	private FileQueue fsQueue = null;
-	final Logger log = LoggerFactory.getLogger(DurableQueue.class);
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	private Lock writeLock = lock.writeLock();
 
@@ -62,7 +63,7 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 
 	@Override
 	public int size() {
-		return fsQueue.getQueuSize();
+		return fsQueue.getQueueSize();
 	}
 
 	@Override
@@ -105,6 +106,18 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 	public void close() {
 		if (fsQueue != null) {
 			fsQueue.close();
+		}
+	}
+	
+	@Override
+	public void clear() {
+		try {
+			writeLock.lock();
+			fsQueue.clear();
+		} catch (IOException e) {
+			throw new RuntimeException("error on clear",e);
+		} finally {
+			writeLock.unlock();
 		}
 	}
 	

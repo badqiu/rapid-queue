@@ -191,6 +191,11 @@ public class LogIndex {
 		queueSize.decrementAndGet();
 	}
 
+	public void setQueueSize(int size) {
+		queueSize.set(size);
+		putSize(size);
+	}
+	
 	public String getMagicString() {
 		return magicString;
 	}

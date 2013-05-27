@@ -17,19 +17,15 @@ package com.google.code.rapid.queue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
-
 import com.google.code.rapid.queue.log.FileEOFException;
-import com.google.code.rapid.queue.log.FileRunner;
 import com.google.code.rapid.queue.log.LogEntity;
 import com.google.code.rapid.queue.log.LogEntity.WriteFlagEnum;
 import com.google.code.rapid.queue.log.LogIndex;
+import com.google.code.rapid.queue.log.task.FileRunner;
 
 /**
  * 完成基于文件的先进先出(FIFO)的读写功能
@@ -45,8 +41,6 @@ public class FileQueue {
 	public static final String LOG_ENTITY_FILE_PREFIX = LogEntity.MAGIC+"_";
 	public static int DEFAULT_FILE_LIMIT_LENGTH = 1024 * 1024 * 100;
 	
-	private final Executor executor = Executors.newSingleThreadExecutor();
-	
 	private int fileLimitLength;
 	private String path = null;
 	/**
@@ -58,6 +52,7 @@ public class FileQueue {
 	
 	private boolean closed = false;
 
+	private FileRunner fileRunner = FileRunner.getInstance();
 	public FileQueue(String dir) throws Exception {
 		this(dir, DEFAULT_FILE_LIMIT_LENGTH);
 	}
@@ -88,12 +83,10 @@ public class FileQueue {
 		setWriterHandle(openWriterHandle(logIndexDb.getWriterIndex()));
 		openReaderHandle(logIndexDb.getReaderIndex());
 		
-		FileRunner deleteFileRunner = new FileRunner(path, fileLimitLength);
-		executor.execute(deleteFileRunner);
 	}
 
 	private LogEntity openWriterHandle(int writerIndex) throws IOException {
-		LogEntity logEntity = createLogEntity(getLogEntityPath(logIndexDb.getWriterIndex()), logIndexDb,writerIndex);
+		LogEntity logEntity = createLogEntity(path,getLogEntityPath(logIndexDb.getWriterIndex()), logIndexDb,writerIndex);
 		log.info("open LogEntity for writer:"+writerIndex+" logEntity:"+logEntity);
 		return logEntity;
 	}
@@ -113,14 +106,14 @@ public class FileQueue {
 	/**
 	 * 创建或者获取一个数据读写实例
 	 * 
-	 * @param dbpath
+	 * @param filePath
 	 * @param db
 	 * @param fileNumber
 	 * @return
 	 * @throws IOException
 	 */
-	private LogEntity createLogEntity(String dbpath, LogIndex db, int fileNumber) throws IOException {
-		return LogEntity.newInstance(dbpath, db, fileNumber, this.fileLimitLength);
+	private LogEntity createLogEntity(String baseDataPath,String filePath, LogIndex db, int fileNumber) throws IOException {
+		return LogEntity.newInstance(baseDataPath,filePath, db, fileNumber, this.fileLimitLength);
 	}
 
 	/**
@@ -208,7 +201,7 @@ public class FileQueue {
 	private void rotateNextLogReader() throws IOException {
 		int deleteNum = readerHandle.getCurrentFileNumber();
 		readerHandle.close();
-		FileRunner.addDeleteFile(getLogEntityPath(deleteNum));
+		fileRunner.addDeleteFile(getLogEntityPath(deleteNum));
 		
 		int nextReaderIndex = logIndexDb.getReaderIndex() + 1;
 		// 更新下一次读取的位置和索引
@@ -218,7 +211,7 @@ public class FileQueue {
 	}
 
 	private void openReaderHandle(int index) throws IOException {
-		readerHandle = createLogEntity(getLogEntityPath(index), logIndexDb,index);
+		readerHandle = createLogEntity(path,getLogEntityPath(index), logIndexDb,index);
 		log.info("open LogEntity for reader:"+index+" readerHandle:"+readerHandle);
 	}
 	
@@ -226,9 +219,24 @@ public class FileQueue {
 		closed = true;
 		readerHandle.close();
 		getWriterHandle().close();
+		logIndexDb.close();
+	}
+	
+	/**
+	 * 清空所有数据
+	 * @throws IOException
+	 */
+	public void clear() throws IOException {
+		logIndexDb.setQueueSize(0);
+		logIndexDb.putReaderIndex(logIndexDb.getWriterIndex());
+		logIndexDb.putReaderPosition(logIndexDb.getWriterPosition());
+	}
+	
+	public void delete() {
+		throw new UnsupportedOperationException(); //FIXME delete()
 	}
 
-	public int getQueuSize() {
+	public int getQueueSize() {
 		return (int)logIndexDb.getQueueSize();
 	}
 

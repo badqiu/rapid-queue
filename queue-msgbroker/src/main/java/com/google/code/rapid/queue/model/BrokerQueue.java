@@ -97,7 +97,7 @@ public class BrokerQueue {
 	}
 
 	public void truncate() {
-		throw new UnsupportedOperationException(); //FIXME truncate()
+		queue.clear();
 	}
 	
 	public void delete() {

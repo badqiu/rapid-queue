@@ -77,4 +77,28 @@ public class DurableQueueTest extends Assert{
 		
 	}
 	
+	@Test
+	public void test_close() throws Exception {
+		int beforeStartActiveCount = Thread.activeCount();
+		System.out.println("before start:"+beforeStartActiveCount);
+		DurableQueue queue = new DurableQueue("test_db/durable_test_close");
+		System.out.println("running:"+Thread.activeCount());
+		queue.close();
+		System.out.println("closed:"+Thread.activeCount());
+		assertEquals(Thread.activeCount(),beforeStartActiveCount);
+		
+	}
+	
+	@Test
+	public void test_clear() throws Exception {
+		for(int i = 0; i < 100; i++) {
+			queue.offer(String.valueOf(i).getBytes());
+		}
+		assertEquals("0",new String(queue.poll()));
+		assertEquals(queue.size() , 99);
+		queue.clear();
+		assertEquals(null,queue.poll());
+		assertEquals(queue.size() , 0);
+	}
+	
 }
