@@ -75,7 +75,7 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 			}
 		}
 		
-		refreshBy(new AutoRefersher() {
+		refreshBy("refreshBindings",new AutoRefersher() {
 			@Override
 			public void update(String name) {
 			}
@@ -126,7 +126,7 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 		List<Queue> list = queueService.findByVhostName(mb.getVhostName());
 		List<String> names = CollectionHelper.selectProperty(list, "queueName");
 		Set<String> holdedNames = mb.getManager().getQueueNames();
-		refreshBy(new AutoRefersher() {
+		refreshBy("refreshQueues",new AutoRefersher() {
 			@Override
 			public void update(String name) {
 			}
@@ -149,7 +149,7 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 		List<Exchange> list = exchangeService.findByVhostName(mb.getVhostName());
 		List<String> names = CollectionHelper.selectProperty(list, "exchangeName");
 		Set<String> holdedNames = mb.getManager().getExchangeNames();
-		refreshBy(new AutoRefersher() {
+		refreshBy("refreshExchanges",new AutoRefersher() {
 			@Override
 			public void update(String name) {
 			}
@@ -168,7 +168,7 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 		},new HashSet(names),new HashSet(holdedNames));
 	}
 	
-	private void refreshBy(AutoRefersher refersher,Set<String> names,Set<String> holdNames) {
+	private void refreshBy(String info,AutoRefersher refersher,Set<String> names,Set<String> holdNames) {
 		for(String name : names) {
 			try {
 				if(holdNames.contains(name)) {
@@ -177,7 +177,7 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 					refersher.create(name);
 				}
 			}catch(Exception e) {
-				logger.error("error on refersher,name:"+name,e);
+				logger.error(info+" error on refersher,name:"+name,e);
 			}
 		}
 		
@@ -186,7 +186,7 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 				try {
 					refersher.delete(holdedName);
 				}catch(Exception e) {
-					logger.error("error on delete,name:"+holdedName,e);
+					logger.error(info + "error on delete,name:"+holdedName,e);
 				}
 			}
 		}
