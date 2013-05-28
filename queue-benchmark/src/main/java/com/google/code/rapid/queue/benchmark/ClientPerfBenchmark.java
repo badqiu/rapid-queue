@@ -22,7 +22,8 @@ public class ClientPerfBenchmark {
 	}
 	
 	public void setUp() throws Exception {
-		client.setHost("localhost");
+		client.setHost("121.9.240.16");
+//		client.setHost("localhost");
 		client.setUsername("admin");
 		client.setPassword("admin");
 		client.setVhost("vhost");
