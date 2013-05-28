@@ -16,7 +16,11 @@ public class ClientPerfBenchmark {
 	SimpleMessageBrokerServiceClient simpleClient = new SimpleMessageBrokerServiceClient();
 	
 	SimpleMessage msg = new SimpleMessage();
-	@Before
+	
+	public ClientPerfBenchmark() throws Exception {
+		setUp();
+	}
+	
 	public void setUp() throws Exception {
 		client.setHost("localhost");
 		client.setUsername("admin");
@@ -32,22 +36,22 @@ public class ClientPerfBenchmark {
 		msg.setRouterKey("yygame.ddt");
 	}
 	
-	@Test
 	public void test_perf() throws Exception {
-		int[] countArray = {100000,200000,500000};
+		int[] countArray = {200000};
 		int[] concurrencyArray = {1,2,8,16,50};
 		int[] bodySizeArray = {1,100,1024,1024*1024};
 		for(int count : countArray) {
 			for(int concurrency : concurrencyArray) {
 				for(int bodySize : bodySizeArray) {
-					runPerf(count,concurrency,bodySize);
+					runSendPerf(count,concurrency,bodySize);
+					runReceivePerf(count,concurrency);
 				}
 			}
 		}
 	}
 	
-	public void runPerf(final int count,final int concurrency,int bodySize) throws Exception{
-		msg.setBody(StringUtils.repeat("a", bodySize).getBytes());
+	public void runSendPerf(final int count,final int concurrency,int bodySize) throws Exception{
+		msg.setPayload(StringUtils.repeat("a", bodySize).getBytes());
 		long start = System.currentTimeMillis();
 		Runnable task = new Runnable() {
 			@Override
@@ -59,12 +63,31 @@ public class ClientPerfBenchmark {
 		};
 		
 		MultiThreadTestUtils.executeAndWait(concurrency, task);
-		printTps("runPerf,concurrency:"+concurrency+" bodySize:"+bodySize,count,start);
+		printTps("runSendPerf,concurrency:"+concurrency+" bodySize:"+bodySize,count,start);
+	}
+	
+	public void runReceivePerf(final int count,final int concurrency) throws Exception{
+		long start = System.currentTimeMillis();
+		Runnable task = new Runnable() {
+			@Override
+			public void run() {
+				for(int i = 0; i < count / concurrency; i++) {
+					simpleClient.receive("demo_queue", 1, String.class);
+				}
+			}
+		};
+		
+		MultiThreadTestUtils.executeAndWait(concurrency, task);
+		printTps("runReceivePerf,concurrency:"+concurrency,count,start);
 	}
 	
 	private static void printTps(String info, int count, long start) {
 		long cost = System.currentTimeMillis() - start;
 		System.out.println(info+" cost:" + cost + " count:"+count+" tps:"+(count * 1000.0 / cost));
+	}
+	
+	public static void main(String[] args) throws Exception {
+		new ClientPerfBenchmark().test_perf();
 	}
 	
 }
