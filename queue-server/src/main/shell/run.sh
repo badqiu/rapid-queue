@@ -1,50 +1,52 @@
 #!/bin/sh
 ulimit -SHn 51200
 dir=`dirname $0`
-pidfile=pid
-cd  $dir
+
+RAPID_QUEUE_HOME=../${dir}
+
+echo "RAPID_QUEUE_HOME=${RAPID_QUEUE_HOME}"
+
+pidfile=${RAPID_QUEUE_HOME}/pid
+cd ${RAPID_QUEUE_HOME} 
+
 CP=.:config/
 for file in lib/*;
-do CP=${CP}:$file;
+do
+        CP=${CP}:$file;
 done
+
+
+#JVM_OPTS="-Xms300M -Xmx300M -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+HeapDumpOnOutOfMemoryError -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps "
+
 retval=0
 # start the server
 start(){
- 	printf 'Starting the server of FQueue\n'
-	if [ -f "$pidfile" ] ; then
-		pid=`cat "$pidfile"`
-    	printf 'Existing process: %d\n' "$pid"
-  		retval=1
-	else
-		java  -Xms300M \
-		      -Xmx300M \
-		      -XX:+UseParallelGC \
-		      -XX:+AggressiveOpts \
-		      -XX:+UseFastAccessorMethods \
-		      -XX:+HeapDumpOnOutOfMemoryError \
-		      -verbose:gc \
-		      -XX:+PrintGCDetails \
-		      -XX:+PrintGCTimeStamps \
-		      -Xloggc:logs/gc`date +%Y%m%d%H%M%S`.log \
-		      -cp $CP com.google.code.fqueue.memcached.StartServer >>logs/log.log &
-		echo $! >"$pidfile"
-		if [ "$?" -eq 0 ] ; then
-			printf 'Done\n'
-		else
-			printf 'The server could not started\n'
-			retval=1
-		fi
-	fi
+        printf 'Starting the server of FQueue\n'
+        if [ -f "$pidfile" ] ; then
+                pid=`cat "$pidfile"`
+        printf 'Existing process: %d\n' "$pid"
+                retval=1
+        else
+                java  ${JVM_OPTS}  -cp $CP com.google.code.rapid.queue.server.Server &
+                echo $! >"$pidfile"
+                if [ "$?" -eq 0 ] ; then
+                        printf 'Done\n'
+                else
+                        printf 'The server could not started\n'
+                        retval=1
+                fi
+        fi
 }
+
 # stop the server
 stop(){
-  printf 'Stopping the server of FQueue\n'
+  printf 'Stopping the server\n'
   if [ -f "$pidfile" ] ; then
     pid=`cat "$pidfile"`
     printf "Sending the terminal signal to the process: %s\n" "$pid"
     PROCESSPID=`ps -ef|awk  '{print $2}'|grep "$pid"`
     if [[ $PROCESSPID -ne "$pidfile" ]] ; then
-    	rm -f "$pidfile";
+        rm -f "$pidfile";
         printf 'Done\n'
     fi
     kill -TERM "$pid"
@@ -70,6 +72,7 @@ stop(){
     retval=1
   fi
 }
+
 # dispatch the command
 case "$1" in
 start)
@@ -82,9 +85,6 @@ restart)
   stop
   start
   ;;
-hup)
-  hup
-  ;;
 *)
   printf 'Usage: %s {start|stop|restart}\n'
   exit 1
@@ -95,6 +95,3 @@ esac
 # exit
 exit "$retval"
 
-
-
-# END OF FILE

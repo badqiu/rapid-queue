@@ -51,8 +51,11 @@ public class DurableQueueTest extends Assert{
 			System.out.println(i + " ----------------restart Queue----------------------- ");
 			System.out.println(" queue: " + queue);
 			System.out.println(" -------------------------------------------------------- ");
-			queue.close();
-			queue = new DurableQueue("test_db/durable_test");
+			
+			DurableQueue tmpQueue = new DurableQueue("test_db/durable_test");
+			DurableQueue orgiQueue = queue;
+			queue = tmpQueue;
+			orgiQueue.close();
 		}
 		
 	}

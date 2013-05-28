@@ -38,6 +38,10 @@ public class MappedByteBufferSyncExecutor {
 	public boolean remove(MappedByteBuffer o) {
 		return bufList.remove(o);
 	}
+	
+	public int size() {
+		return bufList.size();
+	}
 
 	public void start() {
 		Runnable task = new Runnable() {

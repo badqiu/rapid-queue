@@ -104,8 +104,11 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 	}
 
 	public void close() {
-		if (fsQueue != null) {
+		try {
+			writeLock.lock();
 			fsQueue.close();
+		} finally {
+			writeLock.unlock();
 		}
 	}
 	

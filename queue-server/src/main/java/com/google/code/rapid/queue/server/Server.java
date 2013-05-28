@@ -32,7 +32,6 @@ public class Server {
 				logger.error("uncaughtException,Thread:"+t+" cuase:"+e,e);
 			}
 		});
-		
 	}
 	
 	public Server(int port) {

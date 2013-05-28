@@ -37,21 +37,29 @@ public class ClientPerfBenchmark {
 	}
 	
 	public void test_perf() throws Exception {
-		int[] countArray = {200000};
+		int[] countArray = {200000,2000000};
 		int[] concurrencyArray = {1,2,8,16,50};
 		int[] bodySizeArray = {1,100,1024,1024*1024};
 		for(int count : countArray) {
 			for(int concurrency : concurrencyArray) {
 				for(int bodySize : bodySizeArray) {
 					runSendPerf(count,concurrency,bodySize);
-					runReceivePerf(count,concurrency);
 				}
 			}
 		}
+		
+//		for(int count : countArray) {
+//			for(int concurrency : concurrencyArray) {
+//				for(int bodySize : bodySizeArray) {
+//					runReceivePerf(count,concurrency);
+//				}
+//			}
+//		}
 	}
 	
 	public void runSendPerf(final int count,final int concurrency,int bodySize) throws Exception{
 		msg.setPayload(StringUtils.repeat("a", bodySize).getBytes());
+		System.out.println("runSendPerf() started");
 		long start = System.currentTimeMillis();
 		Runnable task = new Runnable() {
 			@Override
@@ -72,7 +80,7 @@ public class ClientPerfBenchmark {
 			@Override
 			public void run() {
 				for(int i = 0; i < count / concurrency; i++) {
-					simpleClient.receive("demo_queue", 1, String.class);
+					simpleClient.receive("queue_demo", 1, String.class);
 				}
 			}
 		};

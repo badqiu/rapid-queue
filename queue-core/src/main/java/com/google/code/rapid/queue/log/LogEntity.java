@@ -76,7 +76,7 @@ public class LogEntity {
 	private int version = VERSION;
 	private int endPosition = -1;
 	
-	private int useCount = 0;
+	private int useCount = 1;
 	
 	private FileRunner fileRunner = FileRunner.getInstance();
 	
@@ -105,10 +105,9 @@ public class LogEntity {
 			throw new IllegalStateException("fmbb must be not null");
 		}
 		MappedByteBufferSyncExecutor.getInstance().add(mappedByteBuffer);
-		useCount++;
 	}
 	
-	private static Map<String,LogEntity> logEntityCache = new HashMap<String,LogEntity>();
+	public static Map<String,LogEntity> logEntityCache = new HashMap<String,LogEntity>();
 	public static synchronized LogEntity newInstance(String baseDataPath,String path,LogIndex db,int fileNumber,int fileLimitLength) throws IOException {
 		String cacheKey = new File(path).getAbsolutePath();
 		LogEntity entity = logEntityCache.get(cacheKey);
@@ -235,8 +234,11 @@ public class LogEntity {
 		//length
 		mappedByteBuffer.position(readerPosition);
 		int length = mappedByteBuffer.getInt();
+		if(length <= 0) {
+			throw new RuntimeException("error read length:"+length+" LogEntity:"+this);
+		}
+		
 		try {
-			
 			//data[]
 			byte[] b = new byte[length];
 			mappedByteBuffer.get(b);
@@ -286,13 +288,13 @@ public class LogEntity {
 
 	private void close0() {
 		closed = true;
-		log.info("close LogEntity:"+this);
 		
 		logEntityCache.remove(file.getAbsolutePath());
 		MappedByteBufferSyncExecutor.getInstance().remove(mappedByteBuffer);
 	    if(fmbb != null) {
 	    	fmbb.close();
 	    }
+	    log.info("closed LogEntity:"+this+" logEntityCache.size:"+logEntityCache.size()+" MappedByteBufferSyncExecutor.size:"+MappedByteBufferSyncExecutor.getInstance().size());
 	}
 
 	public String toString() {
@@ -301,6 +303,8 @@ public class LogEntity {
 		sb.append(currentFileNumber);
 		sb.append(" endPosition:");
 		sb.append(endPosition);
+		sb.append(" useCount:");
+		sb.append(useCount);
 		return sb.toString();
 	}
 
