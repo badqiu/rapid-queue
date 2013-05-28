@@ -34,11 +34,20 @@ public class ClientPerfBenchmark {
 	
 	@Test
 	public void test_perf() throws Exception {
-		runPerf(100000,2);
-		runPerf(400000,10);
+		int[] countArray = {100000,200000,500000};
+		int[] concurrencyArray = {1,2,8,16,50};
+		int[] bodySizeArray = {1,100,1024,1024*1024};
+		for(int count : countArray) {
+			for(int concurrency : concurrencyArray) {
+				for(int bodySize : bodySizeArray) {
+					runPerf(count,concurrency,bodySize);
+				}
+			}
+		}
 	}
 	
-	public void runPerf(final int count,final int concurrency) throws Exception{
+	public void runPerf(final int count,final int concurrency,int bodySize) throws Exception{
+		msg.setBody(StringUtils.repeat("a", bodySize).getBytes());
 		long start = System.currentTimeMillis();
 		Runnable task = new Runnable() {
 			@Override
@@ -50,7 +59,7 @@ public class ClientPerfBenchmark {
 		};
 		
 		MultiThreadTestUtils.executeAndWait(concurrency, task);
-		printTps("runPerf,concurrency:"+concurrency,count,start);
+		printTps("runPerf,concurrency:"+concurrency+" bodySize:"+bodySize,count,start);
 	}
 	
 	private static void printTps(String info, int count, long start) {

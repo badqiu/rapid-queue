@@ -13,6 +13,8 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cn.org.rapid_framework.util.JVMUtil;
+
 import com.google.code.rapid.queue.server.util.SpringContext;
 import com.google.code.rapid.queue.thrift.api.Constants;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerService;
@@ -38,6 +40,8 @@ public class Server {
 	}
 
 	public void startServer() throws TTransportException {
+		JVMUtil.lockFileForOnlyProcess("rapid-queue-port-"+port);
+		
 		MessageBrokerService.Iface iface = SpringContext.getBean(MessageBrokerService.Iface.class);
 		TServerTransport serverTransport = new TServerSocket(port);
 

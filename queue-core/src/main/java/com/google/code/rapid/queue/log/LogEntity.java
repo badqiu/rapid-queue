@@ -86,8 +86,9 @@ public class LogEntity {
 		this.db = db;
 		file = new File(path);
 		if (file.exists()) {
-			log.info("file exists,so open file"+file);
+			long start = System.currentTimeMillis();
 			init(openLogEntryFile(file,fileLimitLength));
+			log.info("file exists,so open file"+file+" cost:"+(System.currentTimeMillis() - start)+"mills");
 		} else {
 			log.info("file not exists,so create file"+file);
 			FileMappedByteBuffer fmbb = createLogEntityFile(file,fileLimitLength);
@@ -310,7 +311,7 @@ public class LogEntity {
 		if(fileLimitLength <= 0) {
 			throw new IllegalArgumentException("fileLimitLength must be > 0");
 		}
-		
+		long start = System.currentTimeMillis();
 		RandomAccessFile raFile = new RandomAccessFile(file, "rwd");
 		FileChannel fc = raFile.getChannel();
 		MappedByteBuffer mappedByteBuffer = fc.map(MapMode.READ_WRITE, 0, fileLimitLength);
@@ -321,7 +322,7 @@ public class LogEntity {
 		mappedByteBuffer.force();
 		
 		FileMappedByteBuffer result = new FileMappedByteBuffer(raFile,fc,mappedByteBuffer);
-		log.info("create file:"+file);
+		log.info("create file:"+file+" cost:"+(System.currentTimeMillis() - start)+"mills");
 		return result;
 	}
 	
