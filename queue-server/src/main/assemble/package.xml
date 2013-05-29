@@ -7,11 +7,11 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
-			<directory>src/main/shell</directory>
+			<directory>../shell</directory>
 			<outputDirectory>shell</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/config</directory>
+			<directory>../config</directory>
 			<outputDirectory>config</outputDirectory>
 		</fileSet>
 	</fileSets>
