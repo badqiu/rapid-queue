@@ -235,13 +235,18 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 		
 		@Override
 		public boolean validateObject(Client obj) {
+			String ping = null;
 			try {
-				if(Constants.PING_RESPONSE.equals(obj.ping())) {
+				ping = obj.ping();
+				if(Constants.PING_RESPONSE.equals(ping)) {
 					return true;
 				}
 				return false;
 			} catch (Exception e) {
+				ping = e.toString();
 				return false;
+			}finally {
+				logger.info("validateObject,MessageBrokerService.Client ping() "+host+" and get response:"+ping);
 			}
 		}
 	}
