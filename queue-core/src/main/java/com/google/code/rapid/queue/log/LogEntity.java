@@ -24,6 +24,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -107,7 +108,7 @@ public class LogEntity {
 		MappedByteBufferSyncExecutor.getInstance().add(mappedByteBuffer);
 	}
 	
-	public static Map<String,LogEntity> logEntityCache = new HashMap<String,LogEntity>();
+	public static Map<String,LogEntity> logEntityCache = new ConcurrentHashMap<String,LogEntity>();
 	public static synchronized LogEntity newInstance(String baseDataPath,String path,LogIndex db,int fileNumber,int fileLimitLength) throws IOException {
 		String cacheKey = new File(path).getAbsolutePath();
 		LogEntity entity = logEntityCache.get(cacheKey);

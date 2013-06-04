@@ -7,6 +7,9 @@ import org.apache.thrift.protocol.TBinaryProtocol.Factory;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.TThreadPoolServer.Args;
+import org.apache.thrift.server.TThreadedSelectorServer;
+import org.apache.thrift.transport.TNonblockingServerSocket;
+import org.apache.thrift.transport.TNonblockingServerTransport;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
@@ -60,8 +63,30 @@ public class Server {
 		server.serve();
 	}
 
+	public void startNoBlockServer() throws TTransportException {
+		JVMUtil.lockFileForOnlyProcess("rapid-queue-port-"+port);
+		
+		MessageBrokerService.Iface iface = SpringContext.getBean(MessageBrokerService.Iface.class);
+		TNonblockingServerTransport serverTransport = new TNonblockingServerSocket(port);
+
+		MessageBrokerService.Processor processor = new Processor(iface);
+
+		Factory portFactory = new TBinaryProtocol.Factory(true, true);
+
+		TThreadedSelectorServer.Args args = new TThreadedSelectorServer.Args(serverTransport);
+		args.workerThreads(2000);
+		args.processor(processor);
+		args.protocolFactory(portFactory);
+		
+		TServer server = new TThreadedSelectorServer(args); // 有多种server可选择
+		server.setServerEventHandler(new TServerEventHandlerImpl());
+		logger.info("start MessageBrokerService thrift server on port:"+port);
+		server.serve();
+	}
+	
 	public static void main(String[] args) throws TTransportException {
 		Server server = new Server();
+//		server.startNoBlockServer();
 		server.startServer();
 	}
 }

@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import com.google.code.rapid.queue.thrift.api.Message;
 import com.google.code.rapid.queue.thrift.api.MessageProperties;
 
-public class SimpleMessage<T> extends Message {
+public class SimpleMessage<T> extends Message implements Cloneable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -33,4 +33,13 @@ public class SimpleMessage<T> extends Message {
 		return payload;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public SimpleMessage<T> clone()  {
+		try {
+			return (SimpleMessage<T>)super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

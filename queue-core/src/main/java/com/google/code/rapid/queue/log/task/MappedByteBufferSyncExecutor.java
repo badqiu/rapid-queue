@@ -31,11 +31,11 @@ public class MappedByteBufferSyncExecutor {
 	}
 	
 
-	public boolean add(MappedByteBuffer e) {
+	public synchronized boolean add(MappedByteBuffer e) {
 		return bufList.add(e);
 	}
 
-	public boolean remove(MappedByteBuffer o) {
+	public synchronized boolean remove(MappedByteBuffer o) {
 		return bufList.remove(o);
 	}
 	

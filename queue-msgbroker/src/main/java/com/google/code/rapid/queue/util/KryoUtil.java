@@ -17,16 +17,18 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class KryoUtil {
 	
-	private static GenericObjectPool<Kryo> kryoPool;
-	static {
-		BasePoolableObjectFactory<Kryo> poolableObjectFactory = new BasePoolableObjectFactory<Kryo>() {
-			@Override
-			public Kryo makeObject() throws Exception {
-				return new Kryo();
-			}
-		};
-		kryoPool = new GenericObjectPool<Kryo>(poolableObjectFactory,500);
-	};
+//	private static GenericObjectPool<Kryo> kryoPool;
+//	static {
+//		BasePoolableObjectFactory<Kryo> poolableObjectFactory = new BasePoolableObjectFactory<Kryo>() {
+//			@Override
+//			public Kryo makeObject() throws Exception {
+//				return new Kryo();
+//			}
+//		};
+//		kryoPool = new GenericObjectPool<Kryo>(poolableObjectFactory,2000,GenericObjectPool.DEFAULT_WHEN_EXHAUSTED_ACTION,GenericObjectPool.DEFAULT_MAX_WAIT,2000);
+//	};
+//	
+	static ThreadLocal<Kryo> threadLocal = new ThreadLocal<Kryo>();
 	
 	public static byte[] toBytes(Object obj,int bufSize) {
 		if(obj == null) return null;
@@ -55,7 +57,7 @@ public class KryoUtil {
 	
 	private static void returnObject(Kryo kryo)  {
 		try {
-			kryoPool.returnObject(kryo);
+//			kryoPool.returnObject(kryo);
 		} catch (Exception e) {
 			throw new RuntimeException("returnObject error,kryo:"+kryo,e);
 		}
@@ -63,7 +65,13 @@ public class KryoUtil {
 
 	private static Kryo borrowObject()  {
 		try {
-			return kryoPool.borrowObject();
+			Kryo kryo = threadLocal.get();
+			if(kryo == null) {
+				kryo = new Kryo();
+				threadLocal.set(kryo);
+			}
+			return kryo;
+//			return kryoPool.borrowObject();
 		} catch (Exception e) {
 			throw new RuntimeException("borrowObject error",e);
 		}

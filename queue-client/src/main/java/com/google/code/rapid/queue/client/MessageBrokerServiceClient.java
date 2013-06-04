@@ -3,6 +3,7 @@ package com.google.code.rapid.queue.client;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool.BasePoolableObjectFactory;
@@ -200,7 +201,7 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 		if(port <= 0) throw new IllegalArgumentException("port > 0 must be true");
 		if(clientPoolSize <= 0) throw new IllegalArgumentException("clientPoolSize > 0 must be true");
 		
-		clientPool = new GenericObjectPool<MessageBrokerService.Client>(new ClientPoolableObjectFactory(),clientPoolSize);
+		clientPool = new GenericObjectPool<MessageBrokerService.Client>(new ClientPoolableObjectFactory(),clientPoolSize,GenericObjectPool.DEFAULT_WHEN_EXHAUSTED_ACTION,GenericObjectPool.DEFAULT_MAX_WAIT,clientPoolSize);
 		logger.info("init end,server="+host+":"+port+" clientPoolSize:"+clientPoolSize+" username:"+username);
 	}
 	
@@ -211,7 +212,7 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 	}
 	
 	private class ClientPoolableObjectFactory extends BasePoolableObjectFactory<MessageBrokerService.Client> {
-		final Map<Client,TTransport> clientTTransportMap = new HashMap<Client,TTransport> ();
+		final Map<Client,TTransport> clientTTransportMap = new ConcurrentHashMap<Client,TTransport> ();
 		@Override
 		public MessageBrokerService.Client makeObject() throws Exception {
 			TTransport transport = new TSocket(host, port);
@@ -220,15 +221,15 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 			MessageBrokerService.Client client = new MessageBrokerService.Client(protocol);
 			login(client);
 			clientTTransportMap.put(client, transport);
-			logger.info("connected_to_server:"+host+":"+port+" by username:"+username+" vhost:"+vhost);
+			logger.info("connected_to_server:"+host+":"+port+" by username:"+username+" vhost:"+vhost+" clientPool.numActive:"+clientPool.getNumActive()+" clientPool.numIdle:"+clientPool.getNumIdle()+" clientTTransportMap.size:"+clientTTransportMap.size());
 			return client;
 		}
 		
 		@Override
 		public void destroyObject(MessageBrokerService.Client obj) throws Exception {
-			TTransport transport = clientTTransportMap.get(obj);
+			TTransport transport = clientTTransportMap.remove(obj);
 			if(transport != null) {
-				logger.info("closed_transport, server:"+host+":"+port+" by username:"+username+" vhost:"+vhost);
+				logger.info("closed_transport, server:"+host+":"+port+" by username:"+username+" vhost:"+vhost+" clientPool.numActive:"+clientPool.getNumActive()+" clientPool.numIdle:"+clientPool.getNumIdle()+" clientTTransportMap.size:"+clientTTransportMap.size());
 				transport.close();
 			}
 		}

@@ -34,6 +34,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>com.rabbitmq</groupId>
+			<artifactId>amqp-client</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>com.google.code.rapid-queue</groupId>
 			<artifactId>rapid-queue-client</artifactId>
 			<version>0.1.0</version>

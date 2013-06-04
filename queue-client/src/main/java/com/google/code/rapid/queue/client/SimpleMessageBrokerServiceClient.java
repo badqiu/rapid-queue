@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.serializer.DefaultDeserializer;
 import org.springframework.core.serializer.DefaultSerializer;
 import org.springframework.core.serializer.Deserializer;
 import org.springframework.core.serializer.Serializer;
+import org.springframework.util.Assert;
 
 import com.google.code.rapid.queue.thrift.api.Message;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerException;
@@ -18,26 +20,24 @@ import com.google.code.rapid.queue.thrift.api.MessageBrokerException;
 public class SimpleMessageBrokerServiceClient implements InitializingBean{
 	
 	private MessageBrokerServiceClient client;
-	private Deserializer deserializer = new DefaultDeserializer();
-	private Serializer serializer = new DefaultSerializer();
-	private SerDsHelper serDsHelper = new SerDsHelper();
 	
+	private SerDsHelper serDsHelper = new SerDsHelper();
+
 	public void setClient(MessageBrokerServiceClient client) {
 		this.client = client;
 	}
 
-	public void setDeserializer(Deserializer deserializer) {
-		this.deserializer = deserializer;
-	}
 
 	public void setSerDsHelper(SerDsHelper serDsHelper) {
 		this.serDsHelper = serDsHelper;
 	}
 
 	public void send(SimpleMessage<?> msg) {
+		Assert.notNull(msg.getPayload(),"payload must be not null");
 		try {
-			serDsHelper.serializerPayload(msg);
-			client.send(msg);
+			SimpleMessage clone = msg.clone();
+			serDsHelper.serializerPayload(clone);
+			client.send(clone);
 		} catch (MessageBrokerException e) {
 			throw new MessageBrokerRuntimeException(e);
 		}
@@ -78,16 +78,18 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 		}
 	}
 
-	private class SerDsHelper {
+	public static class SerDsHelper {
+		private static Serializer serializer = new DefaultSerializer();
+		private static Deserializer deserializer = new DefaultDeserializer();
 		
 		@SuppressWarnings("rawtypes")
-		private void serializerPayload(SimpleMessage msg) {
+		public void serializerPayload(SimpleMessage msg) {
 			byte[] output = toBytes(msg);
 			msg.setBody(output);
 		}
 		
 		@SuppressWarnings("unchecked")
-		public <T> SimpleMessage<T> toSimpleMessage(Message msg, Class<T> clazz) {
+		public static <T> SimpleMessage<T> toSimpleMessage(Message msg, Class<T> clazz) {
 			SimpleMessage<T> result = new SimpleMessage<T>(msg);
 			T payload = (T)fromBytes(msg.getBody());
 			result.setPayload(payload);
@@ -95,7 +97,7 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 		}
 
 		@SuppressWarnings("unchecked")
-		private byte[] toBytes(Object body) {
+		public static byte[] toBytes(Object body) {
 			try {
 				ByteArrayOutputStream output = new ByteArrayOutputStream();
 				serializer.serialize(body,output);
@@ -105,16 +107,24 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 			}
 		}
 
-		private Object fromBytes(byte[] bytes) {
+		public static Object fromBytes(byte[] bytes) {
+			if(bytes == null) return null;
 			try {
 				return deserializer.deserialize(new ByteArrayInputStream(bytes));
 			} catch (IOException e) {
-				throw new RuntimeException("fromBytes error",e);
+				throw new RuntimeException("fromBytes error,bytes.length="+ArrayUtils.getLength(bytes),e);
 			}
 		}
 		
 		@SuppressWarnings("rawtypes")
-		private byte[] toBytes(SimpleMessage msg) {
+		public static byte[] toBytes(SimpleMessage msg) {
+			if(msg.getBody() == null && msg.getPayload() == null) {
+				throw new RuntimeException("msg.body and msg.payload must be not null, choose only one");
+			}
+			if(msg.getBody() != null && msg.getPayload() != null) {
+				throw new RuntimeException("msg.body and msg.payload must be set only one,msg.body="+msg.getBody()+" msg.payload:"+msg.getPayload());
+			}
+			
 			if(msg.getBody() == null) {
 				return toBytes(msg.getPayload());
 			}else {
