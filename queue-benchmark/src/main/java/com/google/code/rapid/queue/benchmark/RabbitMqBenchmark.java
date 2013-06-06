@@ -118,7 +118,7 @@ public class RabbitMqBenchmark {
 					Connection connection = factory.newConnection();
 					Channel channel = connection.createChannel();
 					byte[] body = StringUtils.repeat('a', bodySize).getBytes();
-					for(int i = 0; i < count; i++) {
+					for(int i = 0; i < count /concurrency; i++) {
 						channel.basicPublish(exchange, "a", null, body );
 					}
 				}catch(Exception e) {
