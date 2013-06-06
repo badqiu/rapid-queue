@@ -185,20 +185,7 @@ public class ClientPerfBenchmark {
 		}
 	}
 	
-	private synchronized void executeAndWait(final int concurrency, final Runnable task)
-			throws InterruptedException {
-		final AtomicInteger doneCount = new AtomicInteger(0);
-		final AtomicInteger startCount = new AtomicInteger(0);
-		Runnable delegate = new Runnable() {
-			@Override
-			public void run() {
-//				System.out.println("task_start,startCount:"+ startCount.incrementAndGet()+" concurrency:"+concurrency+" doneCount:"+doneCount);
-				task.run();
-//				System.out.println("task_done,doneCount:"+ doneCount.incrementAndGet()+" concurrency:"+concurrency);
-			}
-		};
-		MultiThreadTestUtils.executeAndWait(concurrency, delegate);
-	}
+
 	
 	public void runReceivePerf(final String queueName,final int count, final int concurrency)
 			throws Exception {
@@ -220,11 +207,26 @@ public class ClientPerfBenchmark {
 		runPerf("runReceivePerf,concurrency:" + concurrency+" queueName:"+queueName, count, concurrency,task);
 	}
 
-	private void runPerf(final String logInfo, final int count,
+	public static void runPerf(final String logInfo, final int count,
 			final int concurrency,Runnable task) throws InterruptedException {
 		long start = System.currentTimeMillis();
 		executeAndWait(concurrency, task);
 		printTps(logInfo, count, start,concurrency);
+	}
+	
+	private static synchronized void executeAndWait(final int concurrency, final Runnable task)
+	throws InterruptedException {
+		final AtomicInteger doneCount = new AtomicInteger(0);
+		final AtomicInteger startCount = new AtomicInteger(0);
+		Runnable delegate = new Runnable() {
+			@Override
+			public void run() {
+		//		System.out.println("task_start,startCount:"+ startCount.incrementAndGet()+" concurrency:"+concurrency+" doneCount:"+doneCount);
+				task.run();
+		//		System.out.println("task_done,doneCount:"+ doneCount.incrementAndGet()+" concurrency:"+concurrency);
+			}
+		};
+		MultiThreadTestUtils.executeAndWait(concurrency, delegate);
 	}
 
 	private static void printTps(String info, int count, long start,int concurrency) {
