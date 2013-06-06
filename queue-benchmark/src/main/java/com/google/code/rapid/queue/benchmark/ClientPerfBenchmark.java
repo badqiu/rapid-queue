@@ -221,9 +221,9 @@ public class ClientPerfBenchmark {
 		Runnable delegate = new Runnable() {
 			@Override
 			public void run() {
-		//		System.out.println("task_start,startCount:"+ startCount.incrementAndGet()+" concurrency:"+concurrency+" doneCount:"+doneCount);
+				System.out.println("task_start,startCount:"+ startCount.incrementAndGet()+" concurrency:"+concurrency+" doneCount:"+doneCount);
 				task.run();
-		//		System.out.println("task_done,doneCount:"+ doneCount.incrementAndGet()+" concurrency:"+concurrency);
+				System.out.println("task_done,doneCount:"+ doneCount.incrementAndGet()+" concurrency:"+concurrency);
 			}
 		};
 		MultiThreadTestUtils.executeAndWait(concurrency, delegate);
