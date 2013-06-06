@@ -120,7 +120,9 @@ public class RabbitMqBenchmark {
 					byte[] body = StringUtils.repeat('a', bodySize).getBytes();
 					for(int i = 0; i < count /concurrency; i++) {
 						channel.basicPublish(exchange, "a", null, body );
-						System.out.println("i="+i + " threadName:"+Thread.currentThread().getName());
+						if(i % 200 == 0) {
+							System.out.println("i="+i + " threadName:"+Thread.currentThread().getName());
+						}
 					}
 				}catch(Exception e) {
 					throw new RuntimeException("error",e);
