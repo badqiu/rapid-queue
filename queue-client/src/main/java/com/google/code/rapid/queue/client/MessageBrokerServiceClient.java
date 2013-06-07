@@ -87,6 +87,10 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 		this.clientPoolSize = clientPoolSize;
 	}
 
+	public Message receive(String queueName) throws MessageBrokerException {
+		return receive(queueName, -1);
+	}
+	
 	public Message receive(String queueName, int timeout)
 			throws MessageBrokerException {
 		Client client = borrowObject();

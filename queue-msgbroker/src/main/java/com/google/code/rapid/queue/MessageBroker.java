@@ -93,6 +93,13 @@ public class MessageBroker {
 	 * @param batchSize 批量接收的大小
 	 */		
 	public List<Message> receiveBatch(String queueName,int timeout,int batchSize) {
+		if(timeout <= 0) {
+			throw new IllegalArgumentException("timeout > 0 must be true");
+		}
+		if(batchSize <= 0) {
+			throw new IllegalArgumentException("batchSize > 0 must be true");
+		}
+		
 		BrokerQueue queue = lookupQueue(queueName);
 		List<Message> result = new ArrayList<Message>(batchSize);
 		

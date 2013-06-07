@@ -14,6 +14,7 @@ import org.springframework.core.serializer.Deserializer;
 import org.springframework.core.serializer.Serializer;
 import org.springframework.util.Assert;
 
+import com.google.code.rapid.queue.client.util.KryoUtil;
 import com.google.code.rapid.queue.thrift.api.Message;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerException;
 
@@ -55,6 +56,10 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 			throw new MessageBrokerRuntimeException(e);
 		}
 	}
+
+	public <T> SimpleMessage<T> receive(String queueName,Class<T> clazz) {
+		return receive(queueName,-1,clazz);
+	}
 	
 	public <T> SimpleMessage<T> receive(String queueName, int timeout,Class<T> clazz) {
 		try {
@@ -91,7 +96,7 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 		@SuppressWarnings("unchecked")
 		public static <T> SimpleMessage<T> toSimpleMessage(Message msg, Class<T> clazz) {
 			SimpleMessage<T> result = new SimpleMessage<T>(msg);
-			T payload = (T)fromBytes(msg.getBody());
+			T payload = (T)KryoUtil.fromBytes(msg.getBody(),clazz);
 			result.setPayload(payload);
 			return result;
 		}
@@ -126,7 +131,7 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 			}
 			
 			if(msg.getBody() == null) {
-				return toBytes(msg.getPayload());
+				return KryoUtil.toBytes(msg.getPayload(),512);
 			}else {
 				return msg.getBody();
 			}
