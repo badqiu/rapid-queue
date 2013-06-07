@@ -94,9 +94,9 @@ public class RabbitMqBenchmark {
 					Channel channel = connection.createChannel();
 					QueueingConsumer consumer = new QueueingConsumer(channel);
 					channel.basicQos(prefetchCount);
-					channel.basicConsume(queue, false, consumer);
+					channel.basicConsume(queue, true, consumer);
 
-					for(int i = 0; i < count; i++) {
+					for(int i = 0; i < count / concurrency; i++) {
 						consumer.nextDelivery();
 					}
 					
