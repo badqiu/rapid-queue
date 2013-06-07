@@ -18,6 +18,7 @@ package com.google.code.rapid.queue;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,7 +43,7 @@ public class FileQueue {
 	public static int DEFAULT_FILE_LIMIT_LENGTH = 1024 * 1024 * 100;
 	
 	private int fileLimitLength;
-	private String path = null;
+	private String baseDir = null;
 	/**
 	 * 文件操作实例
 	 */
@@ -77,7 +78,7 @@ public class FileQueue {
 				throw new IllegalArgumentException("create dir error,dir:"+dir);
 			}
 		}
-		path = fileDir.getAbsolutePath();
+		baseDir = fileDir.getAbsolutePath();
 		// 打开db
 		logIndexDb = new LogIndex(getDbIndexPath());
 		setWriterHandle(openWriterHandle(logIndexDb.getWriterIndex()));
@@ -86,17 +87,17 @@ public class FileQueue {
 	}
 
 	private LogEntity openWriterHandle(int writerIndex) throws IOException {
-		LogEntity logEntity = createLogEntity(path,getLogEntityPath(logIndexDb.getWriterIndex()), logIndexDb,writerIndex);
+		LogEntity logEntity = createLogEntity(baseDir,getLogEntityPath(logIndexDb.getWriterIndex()), logIndexDb,writerIndex);
 		log.info("open LogEntity for writer:"+writerIndex+" logEntity:"+logEntity);
 		return logEntity;
 	}
 
 	private String getDbIndexPath() {
-		return path + FILE_SEPERATOR + DB_NAME;
+		return baseDir + FILE_SEPERATOR + DB_NAME;
 	}
 
 	private String getLogEntityPath(int index) {
-		return getLogEntityPath(path,index);
+		return getLogEntityPath(baseDir,index);
 	}
 
 	public static String getLogEntityPath(String basePath,int index) {
@@ -211,7 +212,7 @@ public class FileQueue {
 	}
 
 	private void openReaderHandle(int index) throws IOException {
-		readerHandle = createLogEntity(path,getLogEntityPath(index), logIndexDb,index);
+		readerHandle = createLogEntity(baseDir,getLogEntityPath(index), logIndexDb,index);
 		log.info("open LogEntity for reader:"+index+" readerHandle:"+readerHandle);
 	}
 	
@@ -233,7 +234,11 @@ public class FileQueue {
 	}
 	
 	public void delete() {
-		throw new UnsupportedOperationException(); //FIXME delete()
+		try {
+			FileUtils.deleteDirectory(new File(baseDir));
+		} catch (IOException e) {
+			throw new RuntimeException("error on delete directory:"+baseDir,e);
+		}
 	}
 
 	public int getQueueSize() {
