@@ -19,7 +19,6 @@ public class RabbitMqBenchmark {
 	private String virtualHost = System.getProperty("virtualHost","vhost");
 	
 	ConnectionFactory factory = new ConnectionFactory();
-	Connection connection = null;
 	
 	public RabbitMqBenchmark() throws IOException {
 		setUp();
@@ -34,7 +33,7 @@ public class RabbitMqBenchmark {
 		
 		System.out.println("setUp start");
 		
-		
+		Connection connection = factory.newConnection();
 		Channel channel = connection.createChannel();
 		channel.exchangeDeclare("exchange_durable", "topic", true);
 		channel.exchangeDeclare("exchange_memory", "topic", false);
@@ -43,6 +42,7 @@ public class RabbitMqBenchmark {
 		channel.queueBind("queue_durable", "exchange_durable", "*");
 		channel.queueBind("queue_memory", "exchange_memory", "*");
 		channel.close();
+		connection.close();
 		System.out.println("setUp end");
 	}
 	
@@ -91,7 +91,7 @@ public class RabbitMqBenchmark {
 			@Override
 			public void run() {
 				try {
-					connection = factory.newConnection();
+					Connection connection = factory.newConnection();
 					Channel channel = connection.createChannel();
 					QueueingConsumer consumer = new QueueingConsumer(channel);
 					channel.basicQos(prefetchCount);
@@ -102,6 +102,7 @@ public class RabbitMqBenchmark {
 					}
 					
 					channel.close();
+					connection.close();
 				}catch(Exception e) {
 					throw new RuntimeException("error",e);
 				}
@@ -125,6 +126,8 @@ public class RabbitMqBenchmark {
 //							System.out.println("i="+i + " threadName:"+Thread.currentThread().getName());
 //						}
 					}
+					channel.close();
+					connection.close();
 				}catch(Exception e) {
 					throw new RuntimeException("error",e);
 				}
