@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class BufferedQueueTest extends Assert{
 
-	DurableQueue persistence = new DurableQueue("test_db/half_durable_queue");
+	DurableQueue persistence = new DurableQueue("target/test_db/half_durable_queue");
 	BufferedQueue<byte[]> q = new BufferedQueue<byte[]>(100,persistence);
 	
 	@Before

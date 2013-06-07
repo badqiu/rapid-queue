@@ -33,7 +33,7 @@ public class FileQueueTest extends TestCase {
     static {
         try {
         	System.out.println("new DurableQueue:db");
-            queue = new DurableQueue("test_db/db");
+            queue = new DurableQueue("target/test_db/db");
             queue.clear();
         } catch (Exception e) {
             e.printStackTrace();

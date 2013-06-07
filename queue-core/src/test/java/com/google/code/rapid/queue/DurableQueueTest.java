@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DurableQueueTest extends Assert{
-	DurableQueue queue = new DurableQueue("test_db/durable_test");
+	DurableQueue queue = new DurableQueue("target/test_db/durable_test");
 	@Before
 	public void setUp(){
 		queue.clear();
@@ -52,7 +52,7 @@ public class DurableQueueTest extends Assert{
 			System.out.println(" queue: " + queue);
 			System.out.println(" -------------------------------------------------------- ");
 			
-			DurableQueue tmpQueue = new DurableQueue("test_db/durable_test");
+			DurableQueue tmpQueue = new DurableQueue("target/test_db/durable_test");
 			DurableQueue orgiQueue = queue;
 			queue = tmpQueue;
 			orgiQueue.close();
@@ -84,7 +84,7 @@ public class DurableQueueTest extends Assert{
 	public void test_close() throws Exception {
 		int beforeStartActiveCount = Thread.activeCount();
 		System.out.println("before start:"+beforeStartActiveCount);
-		DurableQueue queue = new DurableQueue("test_db/durable_test_close");
+		DurableQueue queue = new DurableQueue("target/test_db/durable_test_close");
 		System.out.println("running:"+Thread.activeCount());
 		queue.close();
 		System.out.println("closed:"+Thread.activeCount());

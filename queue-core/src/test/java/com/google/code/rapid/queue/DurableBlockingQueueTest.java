@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class DurableBlockingQueueTest {
 
-	DurableBlockingQueue queue = new DurableBlockingQueue("test_db/durable_blocking_test");
+	DurableBlockingQueue queue = new DurableBlockingQueue("target/test_db/durable_blocking_test");
 	public void setUp() {
 		queue.clear();
 	}
@@ -72,7 +72,7 @@ public class DurableBlockingQueueTest {
 			
 			System.out.println(i + " ----------------restart Queue-----------------------");
 			queue.close();
-			queue = new DurableBlockingQueue("test_db/durable_blocking_test");
+			queue = new DurableBlockingQueue("target/test_db/durable_blocking_test");
 		}
 		
 	}

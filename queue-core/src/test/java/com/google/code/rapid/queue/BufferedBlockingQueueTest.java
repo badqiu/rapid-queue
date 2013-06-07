@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class BufferedBlockingQueueTest extends Assert{
 
-	BlockingQueue persistence = new DurableBlockingQueue("test_db/half_durable_block_queue");
+	BlockingQueue persistence = new DurableBlockingQueue("target/test_db/half_durable_block_queue");
 	BufferedBlockingQueue<byte[]> q = new BufferedBlockingQueue<byte[]>(100,persistence);
 	
 	@Before
