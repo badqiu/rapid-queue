@@ -33,7 +33,7 @@ public class RabbitMqBenchmark {
 		factory.setVirtualHost(virtualHost);
 		
 		System.out.println("setUp start");
-		connection = factory.newConnection();
+		
 		
 		Channel channel = connection.createChannel();
 		channel.exchangeDeclare("exchange_durable", "topic", true);
@@ -91,6 +91,7 @@ public class RabbitMqBenchmark {
 			@Override
 			public void run() {
 				try {
+					connection = factory.newConnection();
 					Channel channel = connection.createChannel();
 					QueueingConsumer consumer = new QueueingConsumer(channel);
 					channel.basicQos(prefetchCount);
