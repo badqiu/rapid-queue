@@ -1,15 +1,44 @@
 package com.google.code.rapid.queue.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import junit.framework.Assert;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.junit.Test;
 
 import cn.org.rapid_framework.test.util.MultiThreadTestUtils;
 
-public class KryoUtilTest {
+public class KryoUtilTest extends Assert{
 
+	public static class KryoUserBean {
+		private String username;
+		private String password;
+	}
+	
+	File file = new File(FileUtils.getTempDirectory(),"kryo_test");
+	@Test
+	public void testSerDser() throws IOException {
+		KryoUserBean b = new KryoUserBean();
+		b.username = "badqiu";
+		b.password = "pwd";
+		
+		byte[] bytes = KryoUtil.toBytes(b, 1024);
+		FileUtils.writeByteArrayToFile(file, bytes);
+	}
+
+	@Test
+	public void testRead() throws IOException {
+		byte[] fromBytes = FileUtils.readFileToByteArray(file);
+		KryoUserBean fromBean = KryoUtil.fromBytes(fromBytes, KryoUserBean.class);
+		assertEquals(fromBean.username,"badqiu");
+		assertEquals(fromBean.password,"pwd");
+	}
+	
 	@Test
 	public void test() throws InterruptedException {
 

@@ -237,5 +237,22 @@ public class MessageBroker {
 			return new HashSet<String>(exchangeMap.keySet());
 		}
 		
+		public Map<String,Integer> listExchangeSize() {
+			Map<String,Integer> map = new HashMap<String,Integer>();
+			for(BrokerExchange ex : exchangeMap.values()) {
+				int size = ex.getExchangeQueue().size();
+				map.put(ex.getExchangeName(), size);
+			}
+			return map;
+		}
+
+		public Map<String,Integer> listQueueSize() {
+			Map<String,Integer> map = new HashMap<String,Integer>();
+			for(BrokerQueue queue : queueMap.values()) {
+				int size = queue.getQueue().size();
+				map.put(queue.getQueueName(), size);
+			}
+			return map;
+		}
 	}
 }

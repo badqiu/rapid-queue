@@ -1,5 +1,6 @@
 package com.google.code.rapid.queue;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,12 @@ public class MessageBrokerPool {
 		Assert.hasText(mb.getVhostName());
 		map.put(mb.getVhostName(), mb);
 	}
+
+	public Collection<MessageBroker> getAll() {
+		return map.values();
+	}
+	
+	
 	
 	
 }
