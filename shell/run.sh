@@ -9,7 +9,7 @@ echo "RAPID_QUEUE_HOME=${RAPID_QUEUE_HOME}"
 pidfile=${RAPID_QUEUE_HOME}/pid
 cd ${RAPID_QUEUE_HOME} 
 
-CP=.:config/
+CP=.:config/${DWENV}
 for file in lib/*;
 do
         CP=${CP}:$file;
@@ -17,6 +17,7 @@ done
 
 
 #JVM_OPTS="-Xms300M -Xmx300M -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+HeapDumpOnOutOfMemoryError -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps "
+JVM_OPTS="-server -Xpausetarget=100ms -Xverbose:gcpause -Xverbose:gcreport -Xms2000m -Xmx6000m "
 
 retval=0
 # start the server

@@ -19,6 +19,10 @@ public class JavaSerUtil {
 		}
 	}
 	
+	public static <T> T fromBytes(byte[] bytes,Class<T> clazz) {
+		return (T)fromBytes(bytes);
+	}
+	
 	public static Object fromBytes(byte[] bytes) {
 		if(bytes == null) return null;
 		

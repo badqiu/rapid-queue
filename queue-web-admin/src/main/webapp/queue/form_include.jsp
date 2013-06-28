@@ -38,9 +38,7 @@
 			<span class="required">*</span>持久模式:memory,durable,haft_durable:
 		</td>		
 		<td>
-		<form:radiobutton path="durableType" value="MEMORY"/>MEMORY
-		<form:radiobutton path="durableType" value="DURABLE"/>DURABLE
-		<form:radiobutton path="durableType" value="HAFT_DURABLE"/>HAFT_DURABLE
+		<form:radiobuttons path="durableType" id="durableType" cssClass="required " items="${DurableTypeEnum}" />
 		<font color='red'><form:errors path="durableType"/></font>
 		</td>
 	</tr>	

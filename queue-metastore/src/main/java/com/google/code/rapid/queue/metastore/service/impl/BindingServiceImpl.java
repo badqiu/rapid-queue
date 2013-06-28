@@ -6,6 +6,7 @@
 
 package com.google.code.rapid.queue.metastore.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;

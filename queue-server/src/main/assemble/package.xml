@@ -2,6 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0http://maven.apache.org/xsd/assembly-1.0.0.xsd">
 	<id>package</id>
 	<formats>
+		<format>dir</format>
 		<format>tar.gz</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>

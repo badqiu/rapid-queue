@@ -39,7 +39,7 @@ public class DurableBlockingQueue extends DurableQueue implements BlockingQueue<
 		try {
 			lock.lock();
 			boolean result = super.offer(e);
-			notEmpty.signalAll();
+			notEmpty.signal();
 			return result;
 		}finally {
 			lock.unlock();
@@ -60,10 +60,10 @@ public class DurableBlockingQueue extends DurableQueue implements BlockingQueue<
 
 	@Override
 	public byte[] poll(long timeout, TimeUnit unit) throws InterruptedException {
-		byte[] b = poll();
+		byte[] b = super.poll();
 		if(b == null) {
 			await(timeout, unit);
-			b = poll();
+			b = super.poll();
 		}
 		return b;
 	}

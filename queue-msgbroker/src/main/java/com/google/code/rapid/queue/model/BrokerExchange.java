@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.util.Assert;
+
+import com.google.code.rapid.queue.util.Profiler;
+
 /**
  * 消息队列交换机,实现  exchange => queue, exchange => exchange的消息传递
  * 
@@ -35,7 +38,14 @@ public class BrokerExchange implements InitializingBean{
 	
 	private Map<String,BrokerBinding> bindQueueMap = new HashMap<String,BrokerBinding>();
 	
-	private ExecutorService executor = Executors.newSingleThreadExecutor(new CustomizableThreadFactory("TopicExchangeComsumeThread"));
+	private ExecutorService executor = Executors.newSingleThreadExecutor(new CustomizableThreadFactory("TopicExchangeComsumeThread"){
+		@Override
+		public Thread createThread(Runnable runnable) {
+			Thread t= super.createThread(runnable);
+			t.setPriority(Thread.MAX_PRIORITY);
+			return t;
+		}
+	});
 	
 	public Queue<byte[]> getExchangeQueue() {
 		return exchangeQueue;
@@ -46,12 +56,18 @@ public class BrokerExchange implements InitializingBean{
 		this.exchangeQueue = exchangeQueue;
 	}
 
-	private void exchangeComsume() throws InterruptedException {
-		Message msg = Message.fromBytes(exchangeQueue.take());
-		logger.debug("exchangeComsume {} msg:{}",exchangeName,msg);
-		if(msg != null) {
-			router2QueueList(msg.getRouterKey(),msg.getBody());
+	boolean exchangeComsume() throws InterruptedException {
+		byte[] bytes = exchangeQueue.take();
+		if(bytes != null) {
+			Profiler.enter("BrokerExchange.exchangeComsume.Message.fromBytes");
+			Message msg = Message.fromBytes(bytes);
+			Profiler.release();
+			
+			logger.debug("exchangeComsume {} msg:{}",exchangeName,msg);
+			router2QueueList(msg.getRouterKey(),bytes);
+			return true;
 		}
+		return false;
 	}
 	
 	public DurableTypeEnum getDurableType() {
@@ -97,7 +113,18 @@ public class BrokerExchange implements InitializingBean{
 
 	public void offer(Message msg) throws InterruptedException {
 		logger.debug("offer {} msg:{}",exchangeName,msg);
-		exchangeQueue.put(Message.toBytes(msg));
+		router2QueueList(msg.getRouterKey(), msg.getBody());
+//		Profiler.enter("BrokerExchange.offer.Message.toBytes");
+//		byte[] bytes = Message.toBytes(msg);
+//		Profiler.release();
+//		
+//		Profiler.enter("BrokerExchange.offer");
+//		try {
+//			exchangeQueue.put(bytes);
+//		}finally {
+//			Profiler.release();
+//		}
+		
 	}
 	
 	public void startComsumeThread() {
@@ -119,12 +146,14 @@ public class BrokerExchange implements InitializingBean{
 		});
 	}
 	
-	private void router2QueueList(String routerKey, byte[] data) {
+	private void router2QueueList(String routerKey, byte[] msgBytes) {
+		Profiler.enter("BrokerExchange.router2QueueList");
 		for(BrokerBinding binding : bindQueueMap.values()) {
 			if(binding.matchRouterKey(routerKey)) {
-				binding.getQueue().getQueue().offer(data);
+				binding.getQueue().getQueue().offer(msgBytes);
 			}
 		}
+		Profiler.release();
 	}
 	
 	public void bindQueue(BrokerQueue queue,String routerKey) {

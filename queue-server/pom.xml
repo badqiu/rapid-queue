@@ -15,10 +15,10 @@
 		</developer>
 	</developers>
 	
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	
 	<repositories>
 		<repository>
 			<id>repository.jboss.org</id>
@@ -39,7 +39,7 @@
 		<dependency>
 		    <groupId>com.google.code.rapid-queue</groupId>
 		    <artifactId>rapid-queue-thrift-api</artifactId>
-		    <version>0.1.0</version>
+		    <version>0.1.0-SNAPSHOT</version>
 		</dependency>
 				
 		<dependency>

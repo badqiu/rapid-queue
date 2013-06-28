@@ -2,8 +2,16 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/commons/taglibs.jsp" %>
 
-	<input type="hidden" id="username" name="username" value="${user.username}"/>
-
+	<tr>	
+		<td class="tdLabel">
+			username:
+		</td>		
+		<td>
+		<form:input path="username" id="username" cssClass="" />
+		<font color='red'><form:errors path="username"/></font>
+		</td>
+	</tr>
+	
 	<tr>	
 		<td class="tdLabel">
 			password:

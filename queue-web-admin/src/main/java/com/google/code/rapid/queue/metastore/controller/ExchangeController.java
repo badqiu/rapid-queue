@@ -31,6 +31,7 @@ import com.google.code.rapid.queue.metastore.model.Exchange;
 import com.google.code.rapid.queue.metastore.query.ExchangeQuery;
 import com.google.code.rapid.queue.metastore.service.ExchangeService;
 import com.google.code.rapid.queue.metastore.util.BaseController;
+import com.google.code.rapid.queue.metastore.util.Enums;
 
 
 /**
@@ -67,8 +68,9 @@ public class ExchangeController extends BaseController {
 	 */
 	@ModelAttribute
 	public void init(ModelMap model) {
+		Enums.putDurableTypeEnum(model);
 	}
-	
+
 	/** 列表 */
 	@RequestMapping()
 	public String index(ModelMap model,ExchangeQuery query,HttpServletRequest request) {

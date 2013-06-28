@@ -11,6 +11,7 @@ import com.google.code.rapid.queue.MessageBrokerAutoRefresher;
 import com.google.code.rapid.queue.MessageBrokerPool;
 import com.google.code.rapid.queue.log.LogEntity;
 import com.google.code.rapid.queue.log.task.MappedByteBufferSyncExecutor;
+import com.google.code.rapid.queue.util.Profiler;
 
 public class MessageBrokerAutoRefresherJob extends BaseCronJob implements InitializingBean {
 	private static Logger logger = LoggerFactory.getLogger(MessageBrokerAutoRefresherJob.class);
@@ -33,10 +34,11 @@ public class MessageBrokerAutoRefresherJob extends BaseCronJob implements Initia
 	
 	@Override
 	protected void executeInternal() {
-		messageBrokerAutoRefresher.execute();
+		logger.info("--------- profiler ------------\n"+Profiler.dumpAllDur());
 		dumpJvm();
-		
 		dumpMessageBrokerInfo();
+		
+		messageBrokerAutoRefresher.execute();
 	}
 
 	private void dumpMessageBrokerInfo() {

@@ -6,6 +6,9 @@
 
 package com.google.code.rapid.queue.metastore.service.impl;
 
+import static cn.org.rapid_framework.util.holder.BeanValidatorHolder.validateWithException;
+
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,7 +23,6 @@ import com.google.code.rapid.queue.metastore.dao.QueueDao;
 import com.google.code.rapid.queue.metastore.model.Queue;
 import com.google.code.rapid.queue.metastore.query.QueueQuery;
 import com.google.code.rapid.queue.metastore.service.QueueService;
-import static cn.org.rapid_framework.util.holder.BeanValidatorHolder.validateWithException;
 
 /**
  * [Queue] 的业务操作实现类
@@ -94,6 +96,8 @@ public class QueueServiceImpl implements QueueService {
 	 * 为创建时初始化相关默认值 
 	 **/
     public void initDefaultValuesForCreate(Queue queue) {
+    	queue.setCreatedTime(new Date());
+    	queue.setLastUpdatedTime(new Date());
     }
     
     /**

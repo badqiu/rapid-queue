@@ -2,8 +2,16 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/commons/taglibs.jsp" %>
 
-	<input type="hidden" id="vhostName" name="vhostName" value="${vhost.vhostName}"/>
-
+	<tr>	
+		<td class="tdLabel">
+			vhostName:
+		</td>		
+		<td>
+		<form:input path="vhostName" id="vhostName" cssClass="" maxlength="200" />
+		<font color='red'><form:errors path="vhostName"/></font>
+		</td>
+	</tr>
+	
 	<tr>	
 		<td class="tdLabel">
 			备注:

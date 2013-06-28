@@ -31,6 +31,7 @@ import com.google.code.rapid.queue.metastore.model.Queue;
 import com.google.code.rapid.queue.metastore.query.QueueQuery;
 import com.google.code.rapid.queue.metastore.service.QueueService;
 import com.google.code.rapid.queue.metastore.util.BaseController;
+import com.google.code.rapid.queue.metastore.util.Enums;
 
 
 /**
@@ -67,6 +68,7 @@ public class QueueController extends BaseController{
 	 */
 	@ModelAttribute
 	public void init(ModelMap model) {
+		Enums.putDurableTypeEnum(model);
 	}
 	
 	/** 列表 */
@@ -101,9 +103,11 @@ public class QueueController extends BaseController{
 			queueService.create(queue);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
+			logger.info("validate error",e);
 			return  "/queue/add";
 		}catch(MessageException e) {
 			Flash.current().error(e.getMessage());
+			logger.info("message error",e);
 			return  "/queue/add";
 		}
 		Flash.current().success(CREATED_SUCCESS); //存放在Flash中的数据,在下一次http请求中仍然可以读取数据,error()用于显示错误消息

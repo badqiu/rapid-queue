@@ -2,9 +2,8 @@ package com.google.code.rapid.queue.model;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.ArrayUtils;
-
-import com.google.code.rapid.queue.util.KryoUtil;
+import com.google.code.rapid.queue.util.HessianUtil;
+import com.google.code.rapid.queue.util.JavaSerUtil;
 
 
 public class Message implements Serializable{
@@ -65,7 +64,7 @@ public class Message implements Serializable{
 	}
 	
 	public byte[] toBytes() {
-		return KryoUtil.toBytes(this, body.length + 500);
+		return JavaSerUtil.toBytes(this, body.length + 500);
 	}
 	
 	public static byte[] toBytes(Message msg) {
@@ -74,7 +73,7 @@ public class Message implements Serializable{
 	}
 	
 	public static Message fromBytes(byte[] bytes) {
-		return KryoUtil.fromBytes(bytes, Message.class);
+		return JavaSerUtil.fromBytes(bytes, Message.class);
 	}
 
 	@Override

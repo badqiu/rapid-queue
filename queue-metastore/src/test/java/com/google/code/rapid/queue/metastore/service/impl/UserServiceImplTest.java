@@ -8,14 +8,16 @@
 package com.google.code.rapid.queue.metastore.service.impl;
 
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.google.code.rapid.queue.metastore.UserDataFactory;
 import com.google.code.rapid.queue.metastore.dao.UserDao;
 import com.google.code.rapid.queue.metastore.model.User;
+import com.google.code.rapid.queue.metastore.service.UserService;
 
 
 /**
@@ -32,6 +34,7 @@ public class UserServiceImplTest extends BaseServiceTestCase{
 	
 	@Before
 	public void setUp() {
+		cn.org.rapid_framework.util.holder.BeanValidatorHolder.cleanHolder();
 		service.setUserDao(userDao);
 	}
 	
@@ -73,6 +76,19 @@ public class UserServiceImplTest extends BaseServiceTestCase{
 		String md5 = UserServiceImpl.getUserPasswordMd5("admin", "admin");
 		System.out.println(md5);
 		assertEquals("f6fdffe48c908deb0f4c3bd36c032e72",md5);
+	}
+
+	@Test
+	public void test_getHibernate() {
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath*:/rapid_queue_spring/*.xml");
+		UserService us = (UserService)context.getBean("userService");
+		for(int i = 0; i < 3;i++) {
+			try {
+				us.auth("admin", "123456");
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }

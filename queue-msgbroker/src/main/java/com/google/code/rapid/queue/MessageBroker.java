@@ -16,6 +16,7 @@ import com.google.code.rapid.queue.model.BrokerBinding;
 import com.google.code.rapid.queue.model.BrokerExchange;
 import com.google.code.rapid.queue.model.BrokerQueue;
 import com.google.code.rapid.queue.model.Message;
+import com.google.code.rapid.queue.util.Profiler;
 
 public class MessageBroker {
 	private static final Logger logger = LoggerFactory.getLogger(MessageBroker.class);
@@ -78,9 +79,21 @@ public class MessageBroker {
 	 */	
 	public Message receive(String queueName,int timeout) {
 		BrokerQueue queue = lookupQueue(queueName);
+		return receive(timeout, queue);
+	}
+
+	private Message receive(int timeout, BrokerQueue queue) {
 		try {
-			byte[] body = queue.getQueue().poll(timeout,TimeUnit.MILLISECONDS);
-			return new Message(body);
+			byte[] messageBody = queue.getQueue().poll(timeout,TimeUnit.MILLISECONDS);
+			if(messageBody == null) {
+				return null;
+			}
+			
+//			Profiler.enter("MessageBroker.Message.fromBytes");
+//			Message msg = Message.fromBytes(messageBody);
+//			Profiler.release();
+			
+			return new Message(messageBody);
 		} catch (InterruptedException e) {
 			return null;
 		}
@@ -103,18 +116,14 @@ public class MessageBroker {
 		BrokerQueue queue = lookupQueue(queueName);
 		List<Message> result = new ArrayList<Message>(batchSize);
 		
-		long totalCostTime = 0;
-		long nextWaittime = timeout;
+		int totalCostTime = 0;
+		int nextWaittime = timeout;
 		for(int i = 0; i < batchSize; i++) {
 			long start = System.currentTimeMillis();
 			
-			try {
-				byte[] body = queue.getQueue().poll(nextWaittime,TimeUnit.MILLISECONDS);
-				if(body != null) {
-					result.add(new Message(body));
-				}
-			} catch (InterruptedException e) {
-				break;
+			Message msg = receive(nextWaittime,queue);
+			if(msg != null) {
+				result.add(msg);
 			}
 			
 			totalCostTime += System.currentTimeMillis() - start;

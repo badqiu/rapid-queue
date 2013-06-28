@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.junit.Test;
@@ -25,11 +26,35 @@ public class KryoUtilTest extends Assert{
 	public void testSerDser() throws IOException {
 		KryoUserBean b = new KryoUserBean();
 		b.username = "badqiu";
-		b.password = "pwd";
+		b.password = RandomStringUtils.randomAlphabetic(4096);
 		
 		byte[] bytes = KryoUtil.toBytes(b, 1024);
 		FileUtils.writeByteArrayToFile(file, bytes);
+		
+		toBytesPerf(b);
+		fromBytesPerf(bytes);
 	}
+
+	private void toBytesPerf(KryoUserBean bean) {
+		long start = System.currentTimeMillis();
+		int count = 10000;
+		for(int i = 0; i < count; i++) {
+			byte[] bytes = KryoUtil.toBytes(bean, 4096 + 500);
+		}
+		long cost = System.currentTimeMillis() - start;
+		printTps("4096 byte dser KryoUtil.toBytesPerf", count, cost, 1);
+	}
+
+	private void fromBytesPerf(byte[] bytes) {
+		long start = System.currentTimeMillis();
+		int count = 100000;
+		for(int i = 0; i < count; i++) {
+			KryoUtil.fromBytes(bytes, KryoUserBean.class);
+		}
+		long cost = System.currentTimeMillis() - start;
+		printTps("4096 byte dser KryoUtil.fromBytes", count, cost, 1);
+	}
+	
 
 	@Test
 	public void testRead() throws IOException {

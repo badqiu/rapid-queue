@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>com.google.code.rapid-queue</groupId>
 			<artifactId>rapid-queue-core</artifactId>
-			<version>0.1.0</version>
+			<version>0.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.rapid-queue</groupId>
@@ -53,6 +53,12 @@
 		    <groupId>com.esotericsoftware.kryo</groupId>
 		    <artifactId>kryo</artifactId>
 		    <version>2.21</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>com.caucho</groupId>
+		    <artifactId>hessian</artifactId>
+		    <version>4.0.7</version>
 		</dependency>
 			
 		<dependency>

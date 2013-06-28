@@ -7,11 +7,11 @@
     default-autowire="byName" default-lazy-init="false">
 
 	<bean id="messageBrokerPool" class="com.google.code.rapid.queue.MessageBrokerPoolFactoryBean">
-		<property name="dataDir" value="/data/rapid-queue/"></property>
+		<property name="dataDir" value="${rq_dir_data}"></property>
 	</bean>
 	
 	<bean id="messageBrokerAutoRefresher" class="com.google.code.rapid.queue.MessageBrokerAutoRefresher">
-		<property name="dataDir" value="/data/rapid-queue/"></property>
+		<property name="dataDir" value="${rq_dir_data}"></property>
 	</bean>
 	
 	<bean class="com.google.code.rapid.queue.cron.job.MessageBrokerAutoRefresherJob">

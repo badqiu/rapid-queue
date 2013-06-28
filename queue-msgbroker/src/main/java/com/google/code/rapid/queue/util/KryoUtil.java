@@ -3,9 +3,6 @@ package com.google.code.rapid.queue.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.apache.commons.pool.BasePoolableObjectFactory;
-import org.apache.commons.pool.impl.GenericObjectPool;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -29,13 +26,16 @@ public class KryoUtil {
 //	};
 //	
 	static ThreadLocal<Kryo> threadLocal = new ThreadLocal<Kryo>();
-	
-	public static byte[] toBytes(Object obj,int bufSize) {
+	private static Kryo kryo = new Kryo();
+	{
+		kryo.setReferences(false);
+	}
+	public static synchronized  byte[] toBytes(Object obj,int bufSize) {
 		if(obj == null) return null;
 		
 		ByteArrayOutputStream bytesOutputStream = new ByteArrayOutputStream(bufSize);
 		Output output = new Output(bytesOutputStream);
-		Kryo kryo = borrowObject();
+//		Kryo kryo = borrowObject();
 		try {
 			kryo.writeObject(output, obj);
 		}finally {
@@ -45,9 +45,9 @@ public class KryoUtil {
 		return bytesOutputStream.toByteArray();
 	}
 
-	public static <T> T fromBytes(byte[] bytes,Class<T> clazz) {
+	public static synchronized <T> T fromBytes(byte[] bytes,Class<T> clazz) {
 		if(bytes == null) return null;
-		Kryo kryo = borrowObject();
+//		Kryo kryo = borrowObject();
 		try {
 			return kryo.readObject(new Input(new ByteArrayInputStream(bytes)), clazz);
 		}finally {
@@ -67,7 +67,9 @@ public class KryoUtil {
 		try {
 			Kryo kryo = threadLocal.get();
 			if(kryo == null) {
+				Profiler.enter("newKryo");
 				kryo = new Kryo();
+				Profiler.release();
 				threadLocal.set(kryo);
 			}
 			return kryo;

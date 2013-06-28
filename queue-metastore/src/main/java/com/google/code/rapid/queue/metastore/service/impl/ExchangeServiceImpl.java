@@ -8,6 +8,7 @@ package com.google.code.rapid.queue.metastore.service.impl;
 
 import static cn.org.rapid_framework.util.holder.BeanValidatorHolder.validateWithException;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -95,6 +96,8 @@ public class ExchangeServiceImpl implements ExchangeService {
 	 * 为创建时初始化相关默认值 
 	 **/
     public void initDefaultValuesForCreate(Exchange exchange) {
+    	exchange.setCreatedTime(new Date());
+    	exchange.setLastUpdatedTime(new Date());
     }
     
     /**

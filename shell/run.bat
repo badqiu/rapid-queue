@@ -4,7 +4,7 @@ setLocal EnableDelayedExpansion
 set RAPID_QUEUE_HOME=E:\svnroot\rapid-queue-git\queue-server\target\rapid-queue-server-0.1.0
 
 cd %RAPID_QUEUE_HOME%
-set CLASSPATH=.;config/
+set CLASSPATH=.;config/%DWENV%
 for  %%a in (lib/*.jar) do (
    set CLASSPATH=!CLASSPATH!;lib/%%a
 )

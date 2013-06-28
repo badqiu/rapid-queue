@@ -11,6 +11,7 @@ import static cn.org.rapid_framework.util.holder.BeanValidatorHolder.validateWit
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -120,6 +121,7 @@ public class UserServiceImpl implements UserService {
     }
 
 	@Override
+	@Cacheable("memory")
 	public void auth(String username, String password) {
 		User user = userDao.getById(username);
 		if(user == null) {

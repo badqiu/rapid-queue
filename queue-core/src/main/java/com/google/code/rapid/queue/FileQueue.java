@@ -75,7 +75,7 @@ public class FileQueue {
 		File fileDir = new File(dir);
 		if (fileDir.exists() == false && fileDir.isDirectory() == false) {
 			if (fileDir.mkdirs() == false) {
-				throw new IllegalArgumentException("create dir error,dir:"+dir);
+				throw new IllegalArgumentException("cannot create dir,dir:"+dir);
 			}
 		}
 		baseDir = fileDir.getAbsolutePath();
