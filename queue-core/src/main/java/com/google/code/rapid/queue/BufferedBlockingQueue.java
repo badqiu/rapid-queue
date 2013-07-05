@@ -53,10 +53,14 @@ public class BufferedBlockingQueue<E> extends AbstractQueue<E> implements Blocki
 	
 	@Override
 	public boolean offer(E e) {
-		if (buffer.size() >= bufferSize) {
+		if(target.isEmpty()){
+			if (buffer.size() >= bufferSize) {
+				return target.offer(e);
+			} else {
+				return buffer.offer(e);
+			}
+		}else {
 			return target.offer(e);
-		} else {
-			return buffer.offer(e);
 		}
 	}
 
@@ -109,9 +113,11 @@ public class BufferedBlockingQueue<E> extends AbstractQueue<E> implements Blocki
 
 	@Override
 	public E take() throws InterruptedException {
-		if (buffer.isEmpty()) {
+		if (buffer.isEmpty() && target.isEmpty()) {
+			return buffer.take();
+		} else if(!target.isEmpty()) {
 			return target.take();
-		} else {
+		}else {
 			return buffer.take();
 		}
 	}

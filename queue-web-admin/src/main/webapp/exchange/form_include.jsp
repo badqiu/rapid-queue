@@ -35,7 +35,7 @@
 	
 	<tr>	
 		<td class="tdLabel">
-			<span class="required">*</span>持久模式:memory,durable,haft_durable:
+			<span class="required">*</span>持久模式
 		</td>		
 		<td>
 		<form:radiobuttons path="durableType" id="durableType" cssClass="required " items="${DurableTypeEnum}" />
@@ -43,6 +43,7 @@
 		</td>
 	</tr>	
 	
+	<!-- 
 	<tr>	
 		<td class="tdLabel">
 			<span class="required">*</span>是否自动删除:
@@ -82,17 +83,6 @@
 		<font color='red'><form:errors path="size"/></font>
 		</td>
 	</tr>	
-	
-	<tr>	
-		<td class="tdLabel">
-			当使用半持久模式,放在内存中的元素大小:
-		</td>		
-		<td>
-		<form:input path="memorySize" id="memorySize" cssClass="validate-integer max-value-2147483647" maxlength="10" />
-		<font color='red'><form:errors path="memorySize"/></font>
-		</td>
-	</tr>	
-	
 	<tr>	
 		<td class="tdLabel">
 			交换机的大小:
@@ -115,6 +105,27 @@
 	
 	<tr>	
 		<td class="tdLabel">
+			最后更新时间:
+		</td>		
+		<td>
+		<input value='<fmt:formatDate value="${exchange.lastUpdatedTime}" pattern="yyyy-MM-dd"/>' onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" id="lastUpdatedTime" name="lastUpdatedTime"  maxlength="0" class="" />
+		<font color='red'><form:errors path="lastUpdatedTime"/></font>
+		</td>
+	</tr>
+	 -->
+	
+	<tr>	
+		<td class="tdLabel">
+			当使用半持久模式,放在内存中的元素大小:
+		</td>		
+		<td>
+		<form:input path="memorySize" id="memorySize" cssClass="validate-integer max-value-2147483647" maxlength="10" />
+		<font color='red'><form:errors path="memorySize"/></font>
+		</td>
+	</tr>	
+	
+	<tr>	
+		<td class="tdLabel">
 			操作人员:
 		</td>		
 		<td>
@@ -123,14 +134,6 @@
 		</td>
 	</tr>	
 	
-	<tr>	
-		<td class="tdLabel">
-			最后更新时间:
-		</td>		
-		<td>
-		<input value='<fmt:formatDate value="${exchange.lastUpdatedTime}" pattern="yyyy-MM-dd"/>' onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" id="lastUpdatedTime" name="lastUpdatedTime"  maxlength="0" class="" />
-		<font color='red'><form:errors path="lastUpdatedTime"/></font>
-		</td>
-	</tr>	
+	
 	
 		

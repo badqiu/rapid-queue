@@ -150,7 +150,10 @@ public class BrokerExchange implements InitializingBean{
 		Profiler.enter("BrokerExchange.router2QueueList");
 		for(BrokerBinding binding : bindQueueMap.values()) {
 			if(binding.matchRouterKey(routerKey)) {
-				binding.getQueue().getQueue().offer(msgBytes);
+				BlockingQueue<byte[]> queue = binding.getQueue().getQueue();
+//				int beforeSize = queue.size();
+				queue.offer(msgBytes);
+//				logger.info("##### after offer router2QueueList to queue:{} {}",binding.getQueue().getQueueName()," before size:"+beforeSize+" after size:"+queue.size());
 			}
 		}
 		Profiler.release();

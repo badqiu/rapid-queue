@@ -36,7 +36,7 @@ public class User  implements java.io.Serializable{
     /**
      * password       db_column: password 
      */ 	
-	@Length(max=30)
+	@Length(max=32)
 	private java.lang.String password;
 	
     /**

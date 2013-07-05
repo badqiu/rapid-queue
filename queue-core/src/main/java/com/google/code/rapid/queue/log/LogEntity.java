@@ -94,10 +94,10 @@ public class LogEntity {
 			log.info("file not exists,so create file"+file);
 			FileMappedByteBuffer fmbb = createLogEntityFile(file,fileLimitLength);
 			fmbb.close();
-			
 			init(openLogEntryFile(file,fileLimitLength));
-			fileRunner.addCreateFile(FileQueue.getLogEntityPath(baseDataPath,fileNumber + 1),fileLimitLength);
 		}
+		
+		fileRunner.addCreateFile(FileQueue.getLogEntityPath(baseDataPath,fileNumber + 1),fileLimitLength);
 		
 		if(mappedByteBuffer == null) {
 			throw new IllegalStateException("mappedByteBuffer must be not null");

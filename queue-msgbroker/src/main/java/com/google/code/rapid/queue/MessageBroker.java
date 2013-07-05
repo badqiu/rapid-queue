@@ -53,7 +53,6 @@ public class MessageBroker {
 		if(msg.getRouterKey().length()> 50) {
 			throw new IllegalArgumentException("'msg.routerKey' length must <= 50");
 		}
-		
 		BrokerExchange exchange = lookupExchange(msg.getExchange());
 		try {
 			exchange.offer(msg);
@@ -88,14 +87,9 @@ public class MessageBroker {
 			if(messageBody == null) {
 				return null;
 			}
-			
-//			Profiler.enter("MessageBroker.Message.fromBytes");
-//			Message msg = Message.fromBytes(messageBody);
-//			Profiler.release();
-			
 			return new Message(messageBody);
 		} catch (InterruptedException e) {
-			return null;
+			throw new RuntimeException("InterruptedException on receive msg:"+e,e);
 		}
 	}
 

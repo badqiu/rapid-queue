@@ -6,7 +6,6 @@
 
 package com.google.code.rapid.queue.metastore.model;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -59,14 +58,13 @@ public class Exchange  implements java.io.Serializable{
     /**
      * 是否自动删除       db_column: auto_delete 
      */ 	
-	@NotNull
-	private Boolean autoDelete;
+	private boolean autoDelete;
 	
     /**
      * 自动删除的时过期时长，单位毫秒       db_column: auto_delete_expires 
      */ 	
 	
-	private java.lang.Long autoDeleteExpires;
+	private long autoDeleteExpires;
 	
     /**
      * 类型: topic,fanout,direct       db_column: type 
@@ -78,19 +76,19 @@ public class Exchange  implements java.io.Serializable{
      * 当前交换机大小       db_column: size 
      */ 	
 	
-	private java.lang.Integer size;
+	private int size;
 	
     /**
      * 当使用半持久模式,放在内存中的元素大小       db_column: memory_size 
      */ 	
 	
-	private java.lang.Integer memorySize;
+	private int memorySize;
 	
     /**
      * 交换机的大小       db_column: max_size 
      */ 	
 	
-	private java.lang.Integer maxSize;
+	private int maxSize;
 	
     /**
      * 创建时间       db_column: created_time 
@@ -155,19 +153,19 @@ public class Exchange  implements java.io.Serializable{
 		this.durableType = value;
 	}
 	
-	public Boolean getAutoDelete() {
+	public boolean getAutoDelete() {
 		return this.autoDelete;
 	}
 	
-	public void setAutoDelete(Boolean value) {
+	public void setAutoDelete(boolean value) {
 		this.autoDelete = value;
 	}
 	
-	public java.lang.Long getAutoDeleteExpires() {
+	public long getAutoDeleteExpires() {
 		return this.autoDeleteExpires;
 	}
 	
-	public void setAutoDeleteExpires(java.lang.Long value) {
+	public void setAutoDeleteExpires(long value) {
 		this.autoDeleteExpires = value;
 	}
 	
@@ -179,27 +177,27 @@ public class Exchange  implements java.io.Serializable{
 		this.type = value;
 	}
 	
-	public java.lang.Integer getSize() {
+	public int getSize() {
 		return this.size;
 	}
 	
-	public void setSize(java.lang.Integer value) {
+	public void setSize(int value) {
 		this.size = value;
 	}
 	
-	public java.lang.Integer getMemorySize() {
+	public int getMemorySize() {
 		return this.memorySize;
 	}
 	
-	public void setMemorySize(java.lang.Integer value) {
+	public void setMemorySize(int value) {
 		this.memorySize = value;
 	}
 	
-	public java.lang.Integer getMaxSize() {
+	public int getMaxSize() {
 		return this.maxSize;
 	}
 	
-	public void setMaxSize(java.lang.Integer value) {
+	public void setMaxSize(int value) {
 		this.maxSize = value;
 	}
 	

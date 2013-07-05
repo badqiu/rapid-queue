@@ -23,6 +23,13 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 	
 	private SerDsHelper serDsHelper = new SerDsHelper();
 
+	public SimpleMessageBrokerServiceClient() {
+	}
+	
+	public SimpleMessageBrokerServiceClient(MessageBrokerServiceClient client) {
+		setClient(client);
+	}
+	
 	public void setClient(MessageBrokerServiceClient client) {
 		this.client = client;
 	}
@@ -56,6 +63,15 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 		}
 	}
 
+	public <T> T receivePayload(String queueName,Class<T> clazz) {
+		return receivePayload(queueName,-1,clazz);
+	}
+	
+	public <T> T receivePayload(String queueName,int timeout,Class<T> clazz) {
+		SimpleMessage<T> msg = receive(queueName,timeout,clazz);
+		return msg.getPayload();
+	}
+	
 	public <T> SimpleMessage<T> receive(String queueName,Class<T> clazz) {
 		return receive(queueName,-1,clazz);
 	}
@@ -67,6 +83,17 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 		} catch (MessageBrokerException e) {
 			throw new MessageBrokerRuntimeException(e);
 		}
+	}
+	
+	public <T> List<T> receiveBatchPayload(String queueName, int timeout,int batchSize,Class<T> clazz)  {
+		List<SimpleMessage<T>> list = receiveBatch(queueName,timeout,batchSize,clazz);
+		List<T> result = new ArrayList<T>(list.size());
+		for(SimpleMessage<T> msg : list) {
+			if(msg.getPayload() != null) {
+				result.add(msg.getPayload());
+			}
+		}
+		return result;
 	}
 	
 	public <T> List<SimpleMessage<T>> receiveBatch(String queueName, int timeout,int batchSize,Class<T> clazz)  {
@@ -94,6 +121,8 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 		
 		@SuppressWarnings("unchecked")
 		public static <T> SimpleMessage<T> toSimpleMessage(Message msg, Class<T> clazz) {
+			if(msg == null) return null;
+			
 			SimpleMessage<T> result = new SimpleMessage<T>(msg);
 			T payload = (T)fromBytes(msg.getBody());
 			result.setPayload(payload);
@@ -105,6 +134,7 @@ public class SimpleMessageBrokerServiceClient implements InitializingBean{
 			try {
 				ByteArrayOutputStream output = new ByteArrayOutputStream();
 				serializer.serialize(body,output);
+				output.flush();
 				return output.toByteArray();
 			} catch (IOException e) {
 				throw new RuntimeException("toBytes error",e);

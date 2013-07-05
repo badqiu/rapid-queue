@@ -64,7 +64,8 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 		try {
 			assertLogined();
 			MessageBroker mb = getRequiredMessageBroker(getVhost());
-			return MessageConvertUtil.toThriftMessage(mb.receive(queueName, timeout));
+			com.google.code.rapid.queue.model.Message receive = mb.receive(queueName, timeout);
+			return MessageConvertUtil.toThriftMessage(receive);
 		}catch(RuntimeException e) {
 			logger.error("error on receive(),queueName="+queueName+" timeout="+timeout,e);
 			throw new MessageBrokerException(e.getClass().getSimpleName(),e.getMessage());

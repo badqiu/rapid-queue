@@ -100,8 +100,10 @@ public class UserController extends BaseController{
 			userService.create(user);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
+			logger.info("ConstraintViolationException,"+e.getConstraintViolations(),e);
 			return  "/user/add";
 		}catch(MessageException e) {
+			logger.info("message error"+e,e);
 			Flash.current().error(e.getMessage());
 			return  "/user/add";
 		}

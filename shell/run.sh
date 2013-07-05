@@ -6,7 +6,7 @@ RAPID_QUEUE_HOME=../${dir}
 
 echo "RAPID_QUEUE_HOME=${RAPID_QUEUE_HOME}"
 
-pidfile=${RAPID_QUEUE_HOME}/pid
+pidfile=/tmp/rapid_pid
 cd ${RAPID_QUEUE_HOME} 
 
 CP=.:config/${DWENV}
@@ -16,12 +16,15 @@ do
 done
 
 
-#JVM_OPTS="-Xms300M -Xmx300M -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+HeapDumpOnOutOfMemoryError -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps "
-JVM_OPTS="-server -Xpausetarget=100ms -Xverbose:gcpause -Xverbose:gcreport -Xms2000m -Xmx6000m "
+JVM_OPTS="-Xms2500M -Xmx4000M -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+HeapDumpOnOutOfMemoryError -ve
+rbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps "
+#JVM_OPTS="-server -Xpausetarget=100ms -Xverbose:gcpause -Xverbose:gcreport -Xms2000m -Xmx6000m "
 
 retval=0
 # start the server
 start(){
+	sync
+
         printf 'Starting the server of FQueue\n'
         if [ -f "$pidfile" ] ; then
                 pid=`cat "$pidfile"`
@@ -50,7 +53,7 @@ stop(){
         rm -f "$pidfile";
         printf 'Done\n'
     fi
-    kill -TERM "$pid"
+    kill -9 "$pid"
     c=0
     while true ; do
       sleep 0.1
@@ -72,6 +75,8 @@ stop(){
     printf 'No process found\n'
     retval=1
   fi
+
+  sync
 }
 
 # dispatch the command

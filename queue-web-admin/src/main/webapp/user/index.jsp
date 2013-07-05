@@ -66,6 +66,7 @@
 				<th style="width:1px;"> </th>
 				
 				<!-- 排序时为th增加sortColumn即可,new SimpleTable('sortColumns')会为tableHeader自动增加排序功能; -->
+				<th sortColumn="username" >username</th>
 				<th sortColumn="password" >password</th>
 				<th sortColumn="remarks" >remarks</th>
 				<th sortColumn="email" >email</th>
@@ -81,6 +82,7 @@
 			  <tr class="${status.count % 2 == 0 ? 'odd' : 'even'}">
 				<td>${page.paginator.startRow + status.index}</td>
 				
+				<td><c:out value='${item.username}'/>&nbsp;</td>
 				<td><c:out value='${item.password}'/>&nbsp;</td>
 				<td><c:out value='${item.remarks}'/>&nbsp;</td>
 				<td><c:out value='${item.email}'/>&nbsp;</td>

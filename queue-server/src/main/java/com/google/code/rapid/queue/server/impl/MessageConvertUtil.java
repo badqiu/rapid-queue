@@ -32,7 +32,7 @@ public class MessageConvertUtil {
 	}
 	
 	public static Message toThriftMessage(com.google.code.rapid.queue.model.Message source) {
-		if(source == null) return null;
+		if(source == null) return new Message();
 		
 		Message result = new Message();
 		result.setBody(source.getBody());

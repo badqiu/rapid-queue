@@ -6,7 +6,6 @@
 
 package com.google.code.rapid.queue.metastore.model;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -59,44 +58,40 @@ public class Queue  implements java.io.Serializable{
     /**
      * 是否自动删除       db_column: auto_delete 
      */ 	
-	@NotNull
-	private Boolean autoDelete;
+	private boolean autoDelete;
 	
     /**
      * 自动删除的时过期时长，单位毫秒       db_column: auto_delete_expires 
      */ 	
 	
-	private java.lang.Long autoDeleteExpires;
+	private long autoDeleteExpires;
 	
     /**
      * 是否互斥，即该队列只能有一个客户端连接       db_column: exclusive 
      */ 	
-	@NotNull
-	private Boolean exclusive;
+	private boolean exclusive;
 	
     /**
      * 队列当前大小       db_column: size 
      */ 	
-	@NotNull 
-	private java.lang.Integer size;
+	private int size;
 	
     /**
      * 当使用半持久模式,放在内存中的元素大小       db_column: memory_size 
      */ 	
 	
-	private java.lang.Integer memorySize;
+	private int memorySize;
 	
     /**
      * 队列最大大小       db_column: max_size 
      */ 	
-	@NotNull 
-	private java.lang.Integer maxSize;
+	private int maxSize;
 	
     /**
      * time to live in queue,发送至这个队列的数据多久过期       db_column: ttl 
      */ 	
 	
-	private java.lang.Long ttl;
+	private long ttl;
 	
     /**
      * 创建时间       db_column: created_time 
@@ -161,59 +156,59 @@ public class Queue  implements java.io.Serializable{
 		this.durableType = value;
 	}
 	
-	public Boolean getAutoDelete() {
+	public boolean getAutoDelete() {
 		return this.autoDelete;
 	}
 	
-	public void setAutoDelete(Boolean value) {
+	public void setAutoDelete(boolean value) {
 		this.autoDelete = value;
 	}
 	
-	public java.lang.Long getAutoDeleteExpires() {
+	public long getAutoDeleteExpires() {
 		return this.autoDeleteExpires;
 	}
 	
-	public void setAutoDeleteExpires(java.lang.Long value) {
+	public void setAutoDeleteExpires(long value) {
 		this.autoDeleteExpires = value;
 	}
 	
-	public Boolean getExclusive() {
+	public boolean getExclusive() {
 		return this.exclusive;
 	}
 	
-	public void setExclusive(Boolean value) {
+	public void setExclusive(boolean value) {
 		this.exclusive = value;
 	}
 	
-	public java.lang.Integer getSize() {
+	public int getSize() {
 		return this.size;
 	}
 	
-	public void setSize(java.lang.Integer value) {
+	public void setSize(int value) {
 		this.size = value;
 	}
 	
-	public java.lang.Integer getMemorySize() {
+	public int getMemorySize() {
 		return this.memorySize;
 	}
 	
-	public void setMemorySize(java.lang.Integer value) {
+	public void setMemorySize(int value) {
 		this.memorySize = value;
 	}
 	
-	public java.lang.Integer getMaxSize() {
+	public int getMaxSize() {
 		return this.maxSize;
 	}
 	
-	public void setMaxSize(java.lang.Integer value) {
+	public void setMaxSize(int value) {
 		this.maxSize = value;
 	}
 	
-	public java.lang.Long getTtl() {
+	public long getTtl() {
 		return this.ttl;
 	}
 	
-	public void setTtl(java.lang.Long value) {
+	public void setTtl(long value) {
 		this.ttl = value;
 	}
 	

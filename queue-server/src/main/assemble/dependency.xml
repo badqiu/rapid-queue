@@ -1,23 +1,17 @@
 <assembly xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0http://maven.apache.org/xsd/assembly-1.0.0.xsd">
-	<id>package</id>
+	<id>dependency</id>
 	<formats>
-		<format>tar.gz</format>
+		<format>dir</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
-	<fileSets>
-		<fileSet>
-			<directory>../shell</directory>
-			<outputDirectory>shell</outputDirectory>
-		</fileSet>
-		<fileSet>
-			<directory>../config</directory>
-			<outputDirectory>config</outputDirectory>
-		</fileSet>
-	</fileSets>
 	<dependencySets>
 		<dependencySet>
 			<outputDirectory>lib</outputDirectory>
+			<scope>runtime</scope>
+		</dependencySet>
+		<dependencySet>
+			<outputDirectory>../</outputDirectory>
 			<scope>runtime</scope>
 		</dependencySet>
 	</dependencySets>

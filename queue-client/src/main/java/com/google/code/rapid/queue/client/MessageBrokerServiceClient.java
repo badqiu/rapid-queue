@@ -1,9 +1,8 @@
 package com.google.code.rapid.queue.client;
 
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool.BasePoolableObjectFactory;
@@ -18,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
+import com.google.code.rapid.queue.client.util.InflateCompressUtil;
 import com.google.code.rapid.queue.thrift.api.Constants;
 import com.google.code.rapid.queue.thrift.api.Message;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerException;
@@ -37,7 +38,15 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 	private String vhost;
 
 	private int clientPoolSize = 2;
+	private int connectionTimeout = 0;
 	private ObjectPool<MessageBrokerService.Client> clientPool;
+	
+	/**
+	 * 是否压缩及解压数据
+	 */
+	private boolean compress = false;
+	
+	private CompressHelper compressHelper = new CompressHelper();
 	
 	public String getHost() {
 		return host;
@@ -86,6 +95,22 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 	public void setClientPoolSize(int clientPoolSize) {
 		this.clientPoolSize = clientPoolSize;
 	}
+	
+	public int getConnectionTimeout() {
+		return connectionTimeout;
+	}
+
+	public void setConnectionTimeout(int connectionTimeout) {
+		this.connectionTimeout = connectionTimeout;
+	}
+
+	public boolean isCompress() {
+		return compress;
+	}
+
+	public void setCompress(boolean compress) {
+		this.compress = compress;
+	}
 
 	public Message receive(String queueName) throws MessageBrokerException {
 		return receive(queueName, -1);
@@ -95,13 +120,15 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 			throws MessageBrokerException {
 		Client client = borrowObject();
 		try {
-			return client.receive(queueName, timeout);
+			Message result = compressHelper.decompressIfNeed(client.receive(queueName, timeout));
+			returnObject(client);
+			return result;
 		} catch (TException e) {
 			invalidateObject(client);
-			throw new RuntimeException("error on receive() queueName:"
-					+ queueName + " timeout:" + timeout, e);
-		}finally {
-			returnObject(client);
+			throw new RuntimeException("error on receive() queueName:" + queueName + " timeout:" + timeout, e);
+		} catch(Exception e) {
+			invalidateObject(client);
+			throw new RuntimeException("error on receive() queueName:"+ queueName + " timeout:" + timeout, e);
 		}
 	}
 
@@ -109,40 +136,89 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 			int batchSize) throws MessageBrokerException {
 		Client client = borrowObject();
 		try {
-			return client.receiveBatch(queueName, timeout, batchSize);
+			List<Message> result = compressHelper.decompressIfNeed(client.receiveBatch(queueName, timeout, batchSize));
+			returnObject(client);
+			return result;
 		} catch (TException e) {
 			invalidateObject(client);
 			throw new RuntimeException("error on receiveBatch() queueName:"
 					+ queueName + " timeout:" + timeout + " batchSize:"
 					+ batchSize, e);
-		}finally {
-			returnObject(client);
+		} catch(Exception e) {
+			invalidateObject(client);
+			throw new RuntimeException("error on receiveBatch() queueName:"
+					+ queueName + " timeout:" + timeout + " batchSize:"
+					+ batchSize, e);
 		}
 	}
+
+
 
 	public void send(Message msg) throws MessageBrokerException {
 		Client client = borrowObject();
 		try {
-			client.send(msg);
+			client.send(compressHelper.compressIfNeed(msg));
+			returnObject(client);
 		} catch (TException e) {
 			invalidateObject(client);
 			throw new RuntimeException("error on send() exchange:"
 					+ msg.getExchange() + " routerKey:" + msg.getRouterKey(), e);
-		}finally {
-			returnObject(client);
+		} catch(Exception e) {
+			invalidateObject(client);
+			throw new RuntimeException("error on send() exchange:"
+					+ msg.getExchange() + " routerKey:" + msg.getRouterKey(), e);
 		}
 	}
+
+
 
 	public void sendBatch(List<Message> msgList) throws MessageBrokerException {
 		Client client = borrowObject();
 		try {
-			client.sendBatch(msgList);
+			client.sendBatch(compressHelper.compressIfNeed(msgList));
+			returnObject(client);
 		} catch (TException e) {
 			invalidateObject(client);
 			throw new RuntimeException("error on sendBatch(), msgList.size:"
 					+ msgList.size(), e);
-		}finally {
-			returnObject(client);
+		} catch(Exception e) {
+			invalidateObject(client);
+			throw new RuntimeException("error on sendBatch(), msgList.size:"
+					+ msgList.size(), e);
+		}
+	}
+	
+	private class CompressHelper {
+		private List<Message> compressIfNeed(List<Message> msgList) {
+			if(compress) {
+				for(Message msg : msgList) {
+					msg.setBody(InflateCompressUtil.compress(msg.getBody()));
+				}
+			}
+			return msgList;
+		}
+	
+		private Message compressIfNeed(Message msg) {
+			if(compress) {
+				msg.setBody(InflateCompressUtil.compress(msg.getBody()));
+			}
+			return msg;
+		}
+		
+		private List<Message> decompressIfNeed(List<Message> msgList) {
+			if(compress) {
+				for(Message msg : msgList) {
+					msg.setBody(InflateCompressUtil.decompress(msg.getBody()));
+				}
+			}
+			return msgList;
+		}
+		
+		private Message decompressIfNeed(Message msg) {
+			if(compress) {
+				msg.setBody(InflateCompressUtil.decompress(msg.getBody()));
+			}
+			return msg;
 		}
 	}
 	
@@ -205,7 +281,7 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 		if(port <= 0) throw new IllegalArgumentException("port > 0 must be true");
 		if(clientPoolSize <= 0) throw new IllegalArgumentException("clientPoolSize > 0 must be true");
 		
-		clientPool = new GenericObjectPool<MessageBrokerService.Client>(new ClientPoolableObjectFactory(),clientPoolSize,GenericObjectPool.DEFAULT_WHEN_EXHAUSTED_ACTION,GenericObjectPool.DEFAULT_MAX_WAIT,clientPoolSize);
+		clientPool = new GenericObjectPool<MessageBrokerService.Client>(new ClientPoolableObjectFactory(),clientPoolSize);
 		logger.info("init end,server="+host+":"+port+" clientPoolSize:"+clientPoolSize+" username:"+username);
 	}
 	
@@ -216,16 +292,19 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 	}
 	
 	private class ClientPoolableObjectFactory extends BasePoolableObjectFactory<MessageBrokerService.Client> {
-		final Map<Client,TTransport> clientTTransportMap = new ConcurrentHashMap<Client,TTransport> ();
+		final Map<Client,TTransport> clientTTransportMap = new Hashtable<MessageBrokerService.Client, TTransport>();
 		@Override
 		public MessageBrokerService.Client makeObject() throws Exception {
-			TTransport transport = new TSocket(host, port);
+			TTransport transport = new TSocket(host, port,connectionTimeout);
 			TProtocol protocol = new TBinaryProtocol(transport);
 			transport.open();
 			MessageBrokerService.Client client = new MessageBrokerService.Client(protocol);
 			login(client);
+			
+			Assert.isTrue(validateObject(client),"client ping() error");
+			
 			clientTTransportMap.put(client, transport);
-			logger.info("connected_to_server:"+host+":"+port+" by username:"+username+" vhost:"+vhost+" clientPool.numActive:"+clientPool.getNumActive()+" clientPool.numIdle:"+clientPool.getNumIdle()+" clientTTransportMap.size:"+clientTTransportMap.size());
+			logger.info("connected_to_server:"+host+":"+port+" by username:"+username+" vhost:"+vhost+" clientPool.numActive:"+clientPool.getNumActive()+" clientPool.numIdle:"+clientPool.getNumIdle()+" clientTTransportMap.size:"+clientTTransportMap.size()+" compress:"+compress);
 			return client;
 		}
 		
@@ -233,7 +312,7 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 		public void destroyObject(MessageBrokerService.Client obj) throws Exception {
 			TTransport transport = clientTTransportMap.remove(obj);
 			if(transport != null) {
-				logger.info("closed_transport, server:"+host+":"+port+" by username:"+username+" vhost:"+vhost+" clientPool.numActive:"+clientPool.getNumActive()+" clientPool.numIdle:"+clientPool.getNumIdle()+" clientTTransportMap.size:"+clientTTransportMap.size());
+				logger.info("destroyObject() closed_transport, server:"+host+":"+port+" by username:"+username+" vhost:"+vhost+" clientPool.numActive:"+clientPool.getNumActive()+" clientPool.numIdle:"+clientPool.getNumIdle()+" clientTTransportMap.size:"+clientTTransportMap.size());
 				transport.close();
 			}
 		}

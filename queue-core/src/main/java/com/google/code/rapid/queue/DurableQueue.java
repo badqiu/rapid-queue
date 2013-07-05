@@ -68,6 +68,8 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 
 	@Override
 	public boolean offer(byte[] item) {
+		if(item == null) throw new IllegalArgumentException("offer 'item' must be not null");
+		
 		try {
 			writeLock.lock();
 			fsQueue.add(item);
@@ -94,7 +96,8 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 	public byte[] poll() {
 		try {
 			writeLock.lock();
-			return fsQueue.poll();
+			byte[] result = fsQueue.poll();
+			return result;
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 			return null;

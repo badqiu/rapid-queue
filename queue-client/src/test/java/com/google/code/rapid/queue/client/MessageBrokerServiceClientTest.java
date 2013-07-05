@@ -7,14 +7,16 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.thrift.TException;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.code.rapid.queue.thrift.api.Message;
 
-public class MessageBrokerServiceClientTest {
+public class MessageBrokerServiceClientTest extends Assert {
 	
 	MessageBrokerServiceClient client = new MessageBrokerServiceClient();
+	SimpleMessageBrokerServiceClient simpleClient = new SimpleMessageBrokerServiceClient(client);
 	
 	Message msg = new Message();
 	@Before
@@ -23,6 +25,7 @@ public class MessageBrokerServiceClientTest {
 		client.setUsername("admin");
 		client.setPassword("admin");
 		client.setVhost("vhost");
+		client.setCompress(true);
 		client.afterPropertiesSet();
 		
 		msg.setExchange("ex_demo");
@@ -33,6 +36,19 @@ public class MessageBrokerServiceClientTest {
 	@After
 	public void tearDown() throws Exception {
 		client.destroy();
+	}
+	
+	@Test
+	public void testSimple() {
+		SimpleMessage<String> msg2 = new SimpleMessage<String>();
+		msg2.setPayload("100");
+		msg2.setExchange("ex_demo");
+		msg2.setRouterKey("yygame.ddt");
+		
+		simpleClient.send(msg2);
+		
+		SimpleMessage<String> fromMsg = simpleClient.receive("queue_demo", String.class);
+		assertEquals(fromMsg.getPayload(),"100");
 	}
 	
 	@Test

@@ -57,13 +57,26 @@ public class DurableBlockingQueue extends DurableQueue implements BlockingQueue<
 	public byte[] take() throws InterruptedException {
 		return poll(-1,null);
 	}
+	
+	@Override
+	public byte[] poll() {
+		try {
+			return poll(-1,null);
+		} catch (InterruptedException e) {
+			throw new IllegalStateException("error on poll",e);
+		}
+	}
 
 	@Override
 	public byte[] poll(long timeout, TimeUnit unit) throws InterruptedException {
 		byte[] b = super.poll();
-		if(b == null) {
+		while(b == null) {
 			await(timeout, unit);
 			b = super.poll();
+			
+			if(timeout > 0) {
+				return b;
+			}
 		}
 		return b;
 	}

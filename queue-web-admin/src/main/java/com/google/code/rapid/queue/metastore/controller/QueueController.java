@@ -103,11 +103,11 @@ public class QueueController extends BaseController{
 			queueService.create(queue);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
-			logger.info("validate error",e);
+			logger.info("ConstraintViolationException,"+e.getConstraintViolations(),e);
 			return  "/queue/add";
 		}catch(MessageException e) {
 			Flash.current().error(e.getMessage());
-			logger.info("message error",e);
+			logger.info("message error"+e,e);
 			return  "/queue/add";
 		}
 		Flash.current().success(CREATED_SUCCESS); //存放在Flash中的数据,在下一次http请求中仍然可以读取数据,error()用于显示错误消息

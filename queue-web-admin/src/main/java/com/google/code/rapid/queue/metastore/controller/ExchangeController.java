@@ -103,9 +103,11 @@ public class ExchangeController extends BaseController {
 			exchangeService.create(exchange);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
+			logger.info("ConstraintViolationException,"+e.getConstraintViolations(),e);
 			return  "/exchange/add";
 		}catch(MessageException e) {
 			Flash.current().error(e.getMessage());
+			logger.info("MessageException,"+e,e);
 			return  "/exchange/add";
 		}
 		Flash.current().success(CREATED_SUCCESS); //存放在Flash中的数据,在下一次http请求中仍然可以读取数据,error()用于显示错误消息

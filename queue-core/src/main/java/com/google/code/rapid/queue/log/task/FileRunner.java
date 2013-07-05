@@ -18,9 +18,11 @@ package com.google.code.rapid.queue.log.task;
 import java.io.File;
 import java.io.IOException;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +35,67 @@ import com.google.code.rapid.queue.util.FileMappedByteBuffer;
  * @author badqiu
  * @date 2012-5-18
  */
-public class FileRunner implements Runnable {
+public class FileRunner {
     private final Logger log = LoggerFactory.getLogger(FileRunner.class);
     // 删除队列
-    private final Queue<String> deleteQueue = new ConcurrentLinkedQueue<String>();
+    private final BlockingQueue<String> deleteQueue = new LinkedBlockingQueue<String>();
     // 新创建队列
-    private final Queue<FilePreCreateAttr> createQueue = new ConcurrentLinkedQueue<FilePreCreateAttr>();
+    private final BlockingQueue<FilePreCreateAttr> createQueue = new LinkedBlockingQueue<FilePreCreateAttr>();
     
-    private final Executor executor = Executors.newSingleThreadExecutor();
+    private final Executor executor = Executors.newFixedThreadPool(2);
     
     private static FileRunner instance;
     
     private FileRunner() {
-		executor.execute(this);
+		Runnable deleteFileTask = new Runnable() {
+			@Override
+			public void run() {
+				log.info("FileRunner delete file thread stoped");
+				try {
+					while (true) {
+						try {
+				        	String deleteFilePath = deleteQueue.take();
+				            
+				            if (deleteFilePath != null) {
+				                File delFile = new File(deleteFilePath);
+				                log.info("delete file:"+delFile);
+				                delFile.delete();
+				            }
+						} catch(InterruptedException e) {
+							log.warn("InterruptedException on FileRunner.delete thread",e);
+							return;
+			            }
+			        }
+				}finally {
+					log.info("FileRunner delete file thread stoped");
+				}
+			}
+		};
+		
+		Runnable preCreateFileTask = new Runnable() {
+			@Override
+			public void run() {
+				log.info("FileRunner pre_create file thread started");
+				try {
+					while (true) {
+			            FilePreCreateAttr createFileAttr = createQueue.poll();
+			            if (createFileAttr != null) {
+			                try {
+			                	String createFilePath = createFileAttr.path;
+			                    create(createFilePath,createFileAttr.fileLimitLength);
+			                } catch (IOException e) {
+			                    log.error("预创建数据文件失败,pre_create file fail", e);
+			                }
+			            }
+			        }
+				}finally {
+					log.info("FileRunner pre_create file thread stoped");
+				}
+			}
+		};
+		
+		executor.execute(deleteFileTask);
+		executor.execute(preCreateFileTask);
     }
     
     public static synchronized FileRunner getInstance() {
@@ -62,44 +112,7 @@ public class FileRunner implements Runnable {
     public void addCreateFile(String path,int fileLimitLength) {
         createQueue.add(new FilePreCreateAttr(path,fileLimitLength));
     }
-
     
-    
-    @Override
-    public void run() {
-    	log.info("FileRunner started");
-    	try {
-	        while (true) {
-	        	String deleteFilePath = deleteQueue.poll();
-	            
-	            if (deleteFilePath != null) {
-	                File delFile = new File(deleteFilePath);
-	                log.info("delete file:"+delFile);
-	                delFile.delete();
-	            }
-	
-	            FilePreCreateAttr createFileAttr = createQueue.poll();
-	            if (createFileAttr != null) {
-	                try {
-	                	String createFilePath = createFileAttr.path;
-	                    create(createFilePath,createFileAttr.fileLimitLength);
-	                } catch (IOException e) {
-	                    log.error("预创建数据文件失败", e);
-	                }
-	            }
-	            
-	            try {
-	                Thread.sleep(10);
-	            } catch (InterruptedException e) {
-	                log.error("InterruptedException,FileRunner exist," + e.getMessage(), e);
-	                return;
-	            }
-	        }
-    	}finally {
-    		log.info("FileRunner stoped");
-    	}
-    }
-
     private boolean create(String path,int fileLimitLength) throws IOException {
         File file = new File(path);
         if (file.exists() == false) {

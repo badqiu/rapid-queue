@@ -95,6 +95,7 @@ public class UserServiceImpl implements UserService {
 	 * 为创建时初始化相关默认值 
 	 **/
     public void initDefaultValuesForCreate(User user) {
+    	user.setPassword(getUserPasswordMd5(user.getUsername(),user.getPassword()));
     }
     
     /**

@@ -100,8 +100,10 @@ public class VhostController extends BaseController {
 			vhostService.create(vhost);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
+			logger.info("ConstraintViolationException,"+e.getConstraintViolations(),e);
 			return  "/vhost/add";
 		}catch(MessageException e) {
+			logger.info("message error"+e,e);
 			Flash.current().error(e.getMessage());
 			return  "/vhost/add";
 		}

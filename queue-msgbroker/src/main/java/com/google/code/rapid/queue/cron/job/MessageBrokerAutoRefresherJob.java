@@ -25,6 +25,7 @@ public class MessageBrokerAutoRefresherJob extends BaseCronJob implements Initia
 	
 	public MessageBrokerAutoRefresherJob() {
 		super("1/5 * * * * *");
+//		super("1/5 1 * * * *");
 	}
 
 	public void setMessageBrokerAutoRefresher(

@@ -102,6 +102,7 @@
 				<configuration>
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>
+						<descriptor>src/main/assemble/dependency.xml</descriptor>
 						<descriptor>src/main/assemble/package.xml</descriptor>
 					</descriptors>
 				</configuration>

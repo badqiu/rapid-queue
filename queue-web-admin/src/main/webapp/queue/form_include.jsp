@@ -35,7 +35,7 @@
 	
 	<tr>	
 		<td class="tdLabel">
-			<span class="required">*</span>持久模式:memory,durable,haft_durable:
+			<span class="required">*</span>持久模式
 		</td>		
 		<td>
 		<form:radiobuttons path="durableType" id="durableType" cssClass="required " items="${DurableTypeEnum}" />
@@ -43,6 +43,7 @@
 		</td>
 	</tr>	
 	
+	<!-- 
 	<tr>	
 		<td class="tdLabel">
 			<span class="required">*</span>是否自动删除:
@@ -74,16 +75,18 @@
 		<font color='red'><form:errors path="exclusive"/></font>
 		</td>
 	</tr>	
-	
+
 	<tr>	
 		<td class="tdLabel">
-			<span class="required">*</span>队列当前大小:
+			time to live in queue,发送至这个队列的数据多久过期:
 		</td>		
 		<td>
-		<form:input path="size" id="size" cssClass="required validate-integer max-value-2147483647" maxlength="10" />
-		<font color='red'><form:errors path="size"/></font>
+		<form:input path="ttl" id="ttl" cssClass="validate-integer " maxlength="19" />
+		<font color='red'><form:errors path="ttl"/></font>
 		</td>
-	</tr>	
+	</tr>		
+	 -->
+	
 	
 	<tr>	
 		<td class="tdLabel">
@@ -105,15 +108,7 @@
 		</td>
 	</tr>	
 	
-	<tr>	
-		<td class="tdLabel">
-			time to live in queue,发送至这个队列的数据多久过期:
-		</td>		
-		<td>
-		<form:input path="ttl" id="ttl" cssClass="validate-integer " maxlength="19" />
-		<font color='red'><form:errors path="ttl"/></font>
-		</td>
-	</tr>	
+
 	
 
 	
