@@ -30,6 +30,18 @@
 				<td class="tdLabel">mobile</td>	
 				<td><c:out value='${user.mobile}'/></td>
 			</tr>
+			<tr>	
+				<td class="tdLabel">allowWebadminLogin</td>	
+				<td><c:out value='${user.allowWebadminLogin}'/></td>
+			</tr>
+			<tr>	
+				<td class="tdLabel">exchangePermissionList</td>	
+				<td><c:out value='${user.exchangePermissionList}'/></td>
+			</tr>
+			<tr>	
+				<td class="tdLabel">queuePermissionList</td>	
+				<td><c:out value='${user.queuePermissionList}'/></td>
+			</tr>
 		</table>
 	</form:form>
 </rapid:override>

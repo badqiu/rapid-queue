@@ -20,10 +20,14 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author badqiu
  */
 public class MappedByteBufferUtil {
+	static Logger logger = LoggerFactory.getLogger(MappedByteBufferUtil.class);
     public static void clean(final Object buffer) {
         AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
@@ -33,7 +37,7 @@ public class MappedByteBufferUtil {
                     sun.misc.Cleaner cleaner = (sun.misc.Cleaner) cleanerMethod.invoke(buffer, new Object[0]);
                     cleaner.clean();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("cannot clean Buffer",e);
                 }
                 return null;
             }

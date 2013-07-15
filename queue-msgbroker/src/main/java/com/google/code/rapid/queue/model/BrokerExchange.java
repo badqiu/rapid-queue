@@ -16,8 +16,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.util.Assert;
 
-import com.google.code.rapid.queue.util.Profiler;
-
 /**
  * 消息队列交换机,实现  exchange => queue, exchange => exchange的消息传递
  * 
@@ -37,6 +35,11 @@ public class BrokerExchange implements InitializingBean{
 	private BlockingQueue<byte[]> exchangeQueue; //内部exchange的一个队列
 	
 	private Map<String,BrokerBinding> bindQueueMap = new HashMap<String,BrokerBinding>();
+	
+	/**
+	 * 是否激活
+	 */
+	private boolean enabled;
 	
 	private ExecutorService executor = Executors.newSingleThreadExecutor(new CustomizableThreadFactory("TopicExchangeComsumeThread"){
 		@Override
@@ -59,9 +62,7 @@ public class BrokerExchange implements InitializingBean{
 	boolean exchangeComsume() throws InterruptedException {
 		byte[] bytes = exchangeQueue.take();
 		if(bytes != null) {
-			Profiler.enter("BrokerExchange.exchangeComsume.Message.fromBytes");
 			Message msg = Message.fromBytes(bytes);
-			Profiler.release();
 			
 			logger.debug("exchangeComsume {} msg:{}",exchangeName,msg);
 			router2QueueList(msg.getRouterKey(),bytes);
@@ -110,10 +111,24 @@ public class BrokerExchange implements InitializingBean{
 	public void setMemorySize(int memorySize) {
 		this.memorySize = memorySize;
 	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	public void offer(Message msg) throws InterruptedException {
 		logger.debug("offer {} msg:{}",exchangeName,msg);
-		router2QueueList(msg.getRouterKey(), msg.getBody());
+		if(enabled) {
+			router2QueueList(msg.getRouterKey(), msg.getBody());
+		}
+//		else {
+//			throw new IllegalStateException("exchange not yet enabled,name:"+exchangeName);
+//		}
+		
 //		Profiler.enter("BrokerExchange.offer.Message.toBytes");
 //		byte[] bytes = Message.toBytes(msg);
 //		Profiler.release();
@@ -147,16 +162,12 @@ public class BrokerExchange implements InitializingBean{
 	}
 	
 	private void router2QueueList(String routerKey, byte[] msgBytes) {
-		Profiler.enter("BrokerExchange.router2QueueList");
 		for(BrokerBinding binding : bindQueueMap.values()) {
 			if(binding.matchRouterKey(routerKey)) {
-				BlockingQueue<byte[]> queue = binding.getQueue().getQueue();
-//				int beforeSize = queue.size();
-				queue.offer(msgBytes);
-//				logger.info("##### after offer router2QueueList to queue:{} {}",binding.getQueue().getQueueName()," before size:"+beforeSize+" after size:"+queue.size());
+				BrokerQueue queue = binding.getQueue();
+				queue.offer(msgBytes);					
 			}
 		}
-		Profiler.release();
 	}
 	
 	public void bindQueue(BrokerQueue queue,String routerKey) {
@@ -228,7 +239,7 @@ public class BrokerExchange implements InitializingBean{
 		return "TopicExchange [exchangeName=" + exchangeName + ", remarks="
 				+ remarks + ", durableType=" + durableType + ", autoDelete="
 				+ autoDelete + ", maxSize=" + maxSize + ", memorySize="
-				+ memorySize + "]";
+				+ memorySize + ", enabled=" + enabled + "]";
 	}
 
 	@Override

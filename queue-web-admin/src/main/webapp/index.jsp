@@ -43,9 +43,9 @@ $(document).ready(function() {
   <div id="header">
    <div id="logo"></div>
    <span id="main_title">
-		FPCMS管理后台
+		Rapid-Queue管理后台
    </span>
-   <div id="personal">当前用户：${ADMIN_LOGIN_USER} | 角色：管理员 | 系统启动时间：<fmt:formatDate value="${systemStartupTime}" pattern="yyyy-MM-dd HH:mm" /> | uptime：<fmt:formatNumber value="${uptime}" pattern="##.#"/>天 |<a href="${ctx}/admin/logout.do">退出</a></div>
+   <div id="personal">当前用户：${ADMIN_LOGIN_USER} | 角色：管理员 | 系统启动时间：<fmt:formatDate value="${systemStartupTime}" pattern="yyyy-MM-dd HH:mm" /> | uptime：<fmt:formatNumber value="${uptime}" pattern="##.#"/>天 |<a href="${ctx}/user/logout.do">退出</a></div>
   </div>
 
   <div id="nav">

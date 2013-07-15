@@ -32,7 +32,7 @@ public class QueueDaoImpl extends BaseSpringJdbcDao implements QueueDao{
 	
 	private RowMapper<Queue> entityRowMapper = new BeanPropertyRowMapper<Queue>(getEntityClass());
 	
-	static final private String COLUMNS = "queue_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,exclusive,size,memory_size,max_size,ttl,created_time,operator,last_updated_time";
+	static final private String COLUMNS = "queue_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,exclusive,size,memory_size,max_size,ttl,created_time,operator,last_updated_time,enabled";
 	static final private String SELECT_FROM = "select " + COLUMNS + " from rq_queue";
 	
 	@Override
@@ -52,9 +52,9 @@ public class QueueDaoImpl extends BaseSpringJdbcDao implements QueueDao{
 	public void insert(Queue entity) {
 		entity.setCreatedTime(new Date());
 		String sql = "insert into rq_queue " 
-			 + " (queue_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,exclusive,size,memory_size,max_size,ttl,created_time,operator,last_updated_time) " 
+			 + " (queue_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,exclusive,size,memory_size,max_size,ttl,created_time,operator,last_updated_time,enabled) " 
 			 + " values "
-			 + " (:queueName,:vhostName,:remarks,:durableType,:autoDelete,:autoDeleteExpires,:exclusive,:size,:memorySize,:maxSize,:ttl,:createdTime,:operator,:lastUpdatedTime)";
+			 + " (:queueName,:vhostName,:remarks,:durableType,:autoDelete,:autoDeleteExpires,:exclusive,:size,:memorySize,:maxSize,:ttl,:createdTime,:operator,:lastUpdatedTime,:enabled)";
 //		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
 		
 		//其它主键生成策略
@@ -67,7 +67,7 @@ public class QueueDaoImpl extends BaseSpringJdbcDao implements QueueDao{
 	public int update(Queue entity) {
 		entity.setLastUpdatedTime(new Date());
 		String sql = "update rq_queue set "
-					+ " remarks=:remarks,durable_type=:durableType,auto_delete=:autoDelete,auto_delete_expires=:autoDeleteExpires,exclusive=:exclusive,size=:size,memory_size=:memorySize,max_size=:maxSize,ttl=:ttl,created_time=:createdTime,operator=:operator,last_updated_time=:lastUpdatedTime "
+					+ " remarks=:remarks,durable_type=:durableType,auto_delete=:autoDelete,auto_delete_expires=:autoDeleteExpires,exclusive=:exclusive,size=:size,memory_size=:memorySize,max_size=:maxSize,ttl=:ttl,created_time=:createdTime,operator=:operator,last_updated_time=:lastUpdatedTime,enabled=:enabled "
 					+ " where  queue_name = :queueName and vhost_name = :vhostName ";
 		return getNamedParameterJdbcTemplate().update(sql, new BeanPropertySqlParameterSource(entity));
 	}

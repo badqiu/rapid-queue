@@ -91,6 +91,9 @@ public class QueueController extends BaseController{
 	/** 进入新增 */
 	@RequestMapping()
 	public String add(ModelMap model,Queue queue) throws Exception {
+		queue.setEnabled(true);
+		queue.setDurableType("DURABLE");
+		queue.setMaxSize(Integer.MAX_VALUE);
 		model.addAttribute("queue",queue);
 		return "/queue/add";
 	}

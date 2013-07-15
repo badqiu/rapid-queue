@@ -115,13 +115,22 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 		}
 	}
 	
-	@Override
-	public void clear() {
+//	@Override
+//	public void clear() {
+//		try {
+//			writeLock.lock();
+//			fsQueue.clear();
+//		} catch (IOException e) {
+//			throw new RuntimeException("error on clear",e);
+//		} finally {
+//			writeLock.unlock();
+//		}
+//	}
+	
+	public void delete() {
 		try {
 			writeLock.lock();
-			fsQueue.clear();
-		} catch (IOException e) {
-			throw new RuntimeException("error on clear",e);
+			fsQueue.delete();
 		} finally {
 			writeLock.unlock();
 		}

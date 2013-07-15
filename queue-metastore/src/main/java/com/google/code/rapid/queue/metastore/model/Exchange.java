@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -108,6 +109,7 @@ public class Exchange  implements java.io.Serializable{
 	
 	private java.util.Date lastUpdatedTime;
 	
+	private boolean enabled;
 	//columns END
 
 	public Exchange(){
@@ -126,7 +128,7 @@ public class Exchange  implements java.io.Serializable{
 	}
 	
 	public void setExchangeName(java.lang.String value) {
-		this.exchangeName = value;
+		this.exchangeName = StringUtils.trim(value);
 	}
 	
 	public java.lang.String getVhostName() {
@@ -134,7 +136,7 @@ public class Exchange  implements java.io.Serializable{
 	}
 	
 	public void setVhostName(java.lang.String value) {
-		this.vhostName = value;
+		this.vhostName = StringUtils.trim(value);
 	}
 	
 	public java.lang.String getRemarks() {
@@ -150,7 +152,7 @@ public class Exchange  implements java.io.Serializable{
 	}
 	
 	public void setDurableType(java.lang.String value) {
-		this.durableType = value;
+		this.durableType = StringUtils.trim(value);
 	}
 	
 	public boolean getAutoDelete() {
@@ -225,6 +227,13 @@ public class Exchange  implements java.io.Serializable{
 		this.lastUpdatedTime = value;
 	}
 	
+	public boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

@@ -67,10 +67,12 @@
 				
 				<!-- 排序时为th增加sortColumn即可,new SimpleTable('sortColumns')会为tableHeader自动增加排序功能; -->
 				<th sortColumn="username" >username</th>
-				<th sortColumn="password" >password</th>
 				<th sortColumn="remarks" >remarks</th>
-				<th sortColumn="email" >email</th>
-				<th sortColumn="mobile" >mobile</th>
+<!-- 				<th sortColumn="email" >email</th> -->
+<!-- 				<th sortColumn="mobile" >mobile</th> -->
+				<th sortColumn="allowWebadminLogin" >允许后台登录</th>
+				<th >队列权限</th>
+				<th >exchange权限</th>
 	
 				<th>操作</th>
 			  </tr>
@@ -83,10 +85,12 @@
 				<td>${page.paginator.startRow + status.index}</td>
 				
 				<td><c:out value='${item.username}'/>&nbsp;</td>
-				<td><c:out value='${item.password}'/>&nbsp;</td>
 				<td><c:out value='${item.remarks}'/>&nbsp;</td>
-				<td><c:out value='${item.email}'/>&nbsp;</td>
-				<td><c:out value='${item.mobile}'/>&nbsp;</td>
+<%-- 				<td><c:out value='${item.email}'/>&nbsp;</td> --%>
+<%-- 				<td><c:out value='${item.mobile}'/>&nbsp;</td> --%>
+				<td><c:out value='${item.allowWebadminLogin}'/>&nbsp;</td>
+				<td><c:out value='${item.queuePermissionList}'/>&nbsp;</td>
+				<td><c:out value='${item.exchangePermissionList}'/>&nbsp;</td>
 				<td>
 					<a href="${ctx}/user/show.do?username=${item.username}">查看</a>&nbsp;&nbsp;
 					<a href="${ctx}/user/edit.do?username=${item.username}">修改</a>&nbsp;&nbsp;

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,6 +36,11 @@ import com.google.code.rapid.queue.log.task.FileRunner;
  * @date 2010-8-13
  */
 public class FileQueue {
+	/**
+	 * 数据文件的扩展名
+	 */
+	public static final String LOG_ENTITY_FILE_EXTENSION = ".data";
+	
 	private static final Log log = LogFactory.getLog(FileQueue.class);
 	private static final String DB_NAME = LogEntity.MAGIC+".index";
 	private static final String FILE_SEPERATOR = System.getProperty("file.separator");
@@ -101,7 +107,7 @@ public class FileQueue {
 	}
 
 	public static String getLogEntityPath(String basePath,int index) {
-		return basePath + FILE_SEPERATOR + LOG_ENTITY_FILE_PREFIX + index + ".data";
+		return basePath + FILE_SEPERATOR + LOG_ENTITY_FILE_PREFIX + index + LOG_ENTITY_FILE_EXTENSION;
 	}
 	
 	/**
@@ -223,17 +229,23 @@ public class FileQueue {
 		logIndexDb.close();
 	}
 	
-	/**
-	 * 清空所有数据
-	 * @throws IOException
-	 */
-	public void clear() throws IOException {
-		logIndexDb.setQueueSize(0);
-		logIndexDb.putReaderIndex(logIndexDb.getWriterIndex());
-		logIndexDb.putReaderPosition(logIndexDb.getWriterPosition());
-	}
+//	/**
+//	 * 清空所有数据
+//	 * @throws IOException
+//	 */
+//	public void clear() throws IOException {
+//		logIndexDb.setQueueSize(0);
+//		int interval = logIndexDb.getWriterIndex() - logIndexDb.getReaderIndex();
+//		for(int i = 0 ; i < interval - 1; i++) {
+//			FileRunner.getInstance().addDeleteFile(getLogEntityPath(logIndexDb.getReaderIndex() + i));
+//		}
+//		
+//		logIndexDb.putReaderIndex(logIndexDb.getWriterIndex());
+//		logIndexDb.putReaderPosition(logIndexDb.getWriterPosition());
+//	}
 	
 	public void delete() {
+		close();
 		try {
 			FileUtils.deleteDirectory(new File(baseDir));
 		} catch (IOException e) {

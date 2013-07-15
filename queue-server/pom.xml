@@ -54,7 +54,13 @@
 			<version>4.8.1</version>
 			<scope>test</scope>
 		</dependency>
-			
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-all</artifactId>
+		    <version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+					
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -103,7 +109,7 @@
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>
 						<descriptor>src/main/assemble/dependency.xml</descriptor>
-						<descriptor>src/main/assemble/package.xml</descriptor>
+<!-- 						<descriptor>src/main/assemble/package.xml</descriptor> -->
 					</descriptors>
 				</configuration>
 				<executions>

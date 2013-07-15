@@ -1,7 +1,7 @@
 package com.google.code.rapid.queue.server;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 /**
  * Thrift上下文
  * 
@@ -10,13 +10,14 @@ import java.util.Map;
  */
 public class ThriftContext {
 	private static ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>();
+	public static final String SOCKET = "socket";
 	public static final String CLIENT_IP = "clientIp";
 	public static final String SERVER_CONTEXT = "serverContext";
 	
 	public static Map<String, Object> get() {
 		Map<String, Object> map = context.get();
 		if(map == null) {
-			map = new HashMap<String,Object>();
+			map = new ConcurrentHashMap<String,Object>();
 			context.set(map);
 		}
 		return map;

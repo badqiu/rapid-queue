@@ -1,6 +1,5 @@
 package com.google.code.rapid.queue.cron.job;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -11,7 +10,7 @@ import com.google.code.rapid.queue.MessageBrokerAutoRefresher;
 import com.google.code.rapid.queue.MessageBrokerPool;
 import com.google.code.rapid.queue.log.LogEntity;
 import com.google.code.rapid.queue.log.task.MappedByteBufferSyncExecutor;
-import com.google.code.rapid.queue.util.Profiler;
+import com.google.code.rapid.queue.util.RouterKeyUtil;
 
 public class MessageBrokerAutoRefresherJob extends BaseCronJob implements InitializingBean {
 	private static Logger logger = LoggerFactory.getLogger(MessageBrokerAutoRefresherJob.class);
@@ -35,7 +34,6 @@ public class MessageBrokerAutoRefresherJob extends BaseCronJob implements Initia
 	
 	@Override
 	protected void executeInternal() {
-		logger.info("--------- profiler ------------\n"+Profiler.dumpAllDur());
 		dumpJvm();
 		dumpMessageBrokerInfo();
 		
@@ -51,7 +49,7 @@ public class MessageBrokerAutoRefresherJob extends BaseCronJob implements Initia
 	}
 
 	private void dumpJvm() {
-		logger.info("thread.activeCount:"+Thread.activeCount()+" LogEntity.logEntityCache.size():"+LogEntity.logEntityCache.size()+" MappedByteBufferSyncExecutor.size:"+MappedByteBufferSyncExecutor.getInstance().size());;
+		logger.info("thread.activeCount:"+Thread.activeCount()+" LogEntity.logEntityCache.size():"+LogEntity.logEntityCache.size()+" MappedByteBufferSyncExecutor.size:"+MappedByteBufferSyncExecutor.getInstance().size()+" RouterKeyUtil.cache.size:"+RouterKeyUtil.cache.size());;
 	}
 
 	@Override

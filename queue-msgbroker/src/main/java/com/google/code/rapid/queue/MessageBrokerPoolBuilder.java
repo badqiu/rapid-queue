@@ -130,6 +130,7 @@ public class MessageBrokerPoolBuilder implements InitializingBean {
 		r.setQueueName(queue.getQueueName());
 		r.setRemarks(queue.getRemarks());
 		r.setAutoDelete(queue.getAutoDelete());
+		r.setEnabled(queue.getEnabled());
 		r.setDurableType(DurableTypeEnum.valueOf(queue.getDurableType()));
 		r.setQueue(newBlockQueue(r.getDurableType(),queue.getMemorySize(),queue.getMaxSize(),queue.getVhostName()+"/queue/"+queue.getQueueName()));
 		r.setMaxSize(queue.getMaxSize());
@@ -144,6 +145,7 @@ public class MessageBrokerPoolBuilder implements InitializingBean {
 		r.setDurableType(DurableTypeEnum.valueOf(exchange.getDurableType()));
 		r.setExchangeQueue(newBlockQueue(r.getDurableType(),exchange.getMemorySize(),exchange.getMaxSize(),exchange.getVhostName()+"/exchange/"+exchange.getExchangeName()));
 		r.setMaxSize(exchange.getMaxSize());
+		r.setEnabled(exchange.getEnabled());
 		
 		r.afterPropertiesSet();
 		return r;

@@ -13,4 +13,19 @@ public class ClientPerfBenchmarkTest extends junit.framework.Assert{
 		System.out.println("中国".getBytes().length);
 		assertTrue(b.test_perf_one_row());
 	}
+	
+	@Test
+	public void logic_receive() throws Exception {
+		assertTrue(b.logic_receive());
+		
+	}
+	
+	@Test
+	public void logic_send() throws Exception {
+		b.logic_send();
+		
+//		System.out.println("sleep");
+//		Thread.sleep(5000);
+	}
+	
 }

@@ -8,7 +8,7 @@
 			<span class="required">*</span>交换机名称:
 		</td>		
 		<td>
-		<form:input path="exchangeName" id="exchangeName" cssClass="required " maxlength="50" />
+		<form:input path="exchangeName" id="exchangeName" cssClass="required " maxlength="50" size="30" />
 		<font color='red'><form:errors path="exchangeName"/></font>
 		</td>
 	</tr>	
@@ -18,7 +18,7 @@
 			<span class="required">*</span>虚拟host:
 		</td>		
 		<td>
-		<form:input path="vhostName" id="vhostName" cssClass="required " maxlength="50" />
+		<form:input path="vhostName" id="vhostName" cssClass="required " maxlength="50" size="30" />
 		<font color='red'><form:errors path="vhostName"/></font>
 		</td>
 	</tr>	
@@ -28,7 +28,7 @@
 			备注:
 		</td>		
 		<td>
-		<form:input path="remarks" id="remarks" cssClass="" maxlength="200" />
+		<form:input path="remarks" id="remarks" cssClass="" maxlength="200" size="30" />
 		<font color='red'><form:errors path="remarks"/></font>
 		</td>
 	</tr>	
@@ -38,7 +38,7 @@
 			<span class="required">*</span>持久模式
 		</td>		
 		<td>
-		<form:radiobuttons path="durableType" id="durableType" cssClass="required " items="${DurableTypeEnum}" />
+		<form:radiobuttons path="durableType" id="durableType" cssClass="required " items="${DurableTypeEnum}" size="30" />
 		<font color='red'><form:errors path="durableType"/></font>
 		</td>
 	</tr>	
@@ -49,7 +49,7 @@
 			<span class="required">*</span>是否自动删除:
 		</td>		
 		<td>
-		<form:input path="autoDelete" id="autoDelete" cssClass="required validate-integer max-value-2147483647" maxlength="3" />
+		<form:input path="autoDelete" id="autoDelete" cssClass="required validate-integer max-value-2147483647" maxlength="3" size="30" />
 		<font color='red'><form:errors path="autoDelete"/></font>
 		</td>
 	</tr>	
@@ -59,7 +59,7 @@
 			自动删除的时过期时长，单位毫秒:
 		</td>		
 		<td>
-		<form:input path="autoDeleteExpires" id="autoDeleteExpires" cssClass="validate-integer " maxlength="19" />
+		<form:input path="autoDeleteExpires" id="autoDeleteExpires" cssClass="validate-integer " maxlength="19" size="30" />
 		<font color='red'><form:errors path="autoDeleteExpires"/></font>
 		</td>
 	</tr>	
@@ -69,7 +69,7 @@
 			类型: topic,fanout,direct:
 		</td>		
 		<td>
-		<form:input path="type" id="type" cssClass="" maxlength="30" />
+		<form:input path="type" id="type" cssClass="" maxlength="30" size="30" />
 		<font color='red'><form:errors path="type"/></font>
 		</td>
 	</tr>	
@@ -79,7 +79,7 @@
 			当前交换机大小:
 		</td>		
 		<td>
-		<form:input path="size" id="size" cssClass="validate-integer max-value-2147483647" maxlength="10" />
+		<form:input path="size" id="size" cssClass="validate-integer max-value-2147483647" maxlength="10" size="30" />
 		<font color='red'><form:errors path="size"/></font>
 		</td>
 	</tr>	
@@ -88,7 +88,7 @@
 			交换机的大小:
 		</td>		
 		<td>
-		<form:input path="maxSize" id="maxSize" cssClass="validate-integer max-value-2147483647" maxlength="10" />
+		<form:input path="maxSize" id="maxSize" cssClass="validate-integer max-value-2147483647" maxlength="10" size="30" />
 		<font color='red'><form:errors path="maxSize"/></font>
 		</td>
 	</tr>	
@@ -112,17 +112,6 @@
 		<font color='red'><form:errors path="lastUpdatedTime"/></font>
 		</td>
 	</tr>
-	 -->
-	
-	<tr>	
-		<td class="tdLabel">
-			当使用半持久模式,放在内存中的元素大小:
-		</td>		
-		<td>
-		<form:input path="memorySize" id="memorySize" cssClass="validate-integer max-value-2147483647" maxlength="10" />
-		<font color='red'><form:errors path="memorySize"/></font>
-		</td>
-	</tr>	
 	
 	<tr>	
 		<td class="tdLabel">
@@ -133,7 +122,29 @@
 		<font color='red'><form:errors path="operator"/></font>
 		</td>
 	</tr>	
+	 -->
 	
+	<tr>	
+		<td class="tdLabel">
+			半持久模式,内存元素大小:
+		</td>		
+		<td>
+		<form:input path="memorySize" id="memorySize" cssClass="validate-integer max-value-2147483647" maxlength="10" size="30" />
+		<font color='red'><form:errors path="memorySize"/></font>
+		</td>
+	</tr>	
+
+	<tr>	
+		<td class="tdLabel">
+			<span class="required">*</span>是否激活
+		</td>		
+		<td>
+		<form:radiobutton path="enabled" value="true"/>true
+		<form:radiobutton path="enabled" value="false"/>false
+		<font color='red'><form:errors path="enabled"/></font>
+		</td>
+	</tr>		
+		
 	
 	
 		

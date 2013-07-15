@@ -123,8 +123,8 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 			Message result = compressHelper.decompressIfNeed(client.receive(queueName, timeout));
 			returnObject(client);
 			return result;
-		} catch (TException e) {
-			invalidateObject(client);
+		} catch (MessageBrokerException e) {
+			returnObject(client);
 			throw new RuntimeException("error on receive() queueName:" + queueName + " timeout:" + timeout, e);
 		} catch(Exception e) {
 			invalidateObject(client);
@@ -139,8 +139,8 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 			List<Message> result = compressHelper.decompressIfNeed(client.receiveBatch(queueName, timeout, batchSize));
 			returnObject(client);
 			return result;
-		} catch (TException e) {
-			invalidateObject(client);
+		} catch (MessageBrokerException e) {
+			returnObject(client);
 			throw new RuntimeException("error on receiveBatch() queueName:"
 					+ queueName + " timeout:" + timeout + " batchSize:"
 					+ batchSize, e);
@@ -159,8 +159,8 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 		try {
 			client.send(compressHelper.compressIfNeed(msg));
 			returnObject(client);
-		} catch (TException e) {
-			invalidateObject(client);
+		} catch (MessageBrokerException e) {
+			returnObject(client);
 			throw new RuntimeException("error on send() exchange:"
 					+ msg.getExchange() + " routerKey:" + msg.getRouterKey(), e);
 		} catch(Exception e) {
@@ -177,8 +177,8 @@ public class MessageBrokerServiceClient implements Iface,InitializingBean,Dispos
 		try {
 			client.sendBatch(compressHelper.compressIfNeed(msgList));
 			returnObject(client);
-		} catch (TException e) {
-			invalidateObject(client);
+		} catch (MessageBrokerException e) {
+			returnObject(client);
 			throw new RuntimeException("error on sendBatch(), msgList.size:"
 					+ msgList.size(), e);
 		} catch(Exception e) {

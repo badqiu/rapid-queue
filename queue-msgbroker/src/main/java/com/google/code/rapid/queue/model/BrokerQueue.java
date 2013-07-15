@@ -3,7 +3,9 @@ package com.google.code.rapid.queue.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
+import com.google.code.rapid.queue.DurableQueue;
 import com.google.code.rapid.queue.util.RouterKeyUtil;
 
 /**
@@ -28,6 +30,11 @@ public class BrokerQueue {
 	private int maxSize;
 	private int memorySize;
 	
+	/**
+	 * 是否激活
+	 */
+	private boolean enabled;
+	
 	public List<String> getRouterKeyList() {
 		return routerKeyList;
 	}
@@ -40,10 +47,10 @@ public class BrokerQueue {
 		return RouterKeyUtil.matchRouterKey(routerKeyList, routerKeyValue);
 	}
 
-	public BlockingQueue<byte[]> getQueue() {
-		return queue;
-	}
-
+//	public BlockingQueue<byte[]> getQueue() {
+//		return queue;
+//	}
+	
 	public void setQueue(BlockingQueue<byte[]> queue) {
 		this.queue = queue;
 	}
@@ -96,19 +103,49 @@ public class BrokerQueue {
 		this.memorySize = memorySize;
 	}
 
-	public void truncate() {
+	public void clear() {
 		queue.clear();
 	}
 	
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	public void delete() {
-		throw new UnsupportedOperationException(); //FIXME delete()
+		if(queue instanceof DurableQueue) {
+			((DurableQueue)queue).delete();
+		}
 	}
 	
+	public int size() {
+		return queue.size();
+	}
+
+	public boolean offer(byte[] e) {
+		if(enabled) {
+			return queue.offer(e);
+		}else {
+			return false;
+		}
+	}
+
+	public byte[] poll(long timeout, TimeUnit unit) throws InterruptedException {
+		if(timeout > 0) {
+			return queue.poll(timeout, unit);
+		}else {
+			return queue.take();
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "BrokerQueue [queueName=" + queueName + ", remarks=" + remarks
 				+ ", durableType=" + durableType + ", autoDelete=" + autoDelete
-				+ ", maxSize=" + maxSize + ", memorySize=" + memorySize + "]";
+				+ ", maxSize=" + maxSize + ", memorySize=" + memorySize + ", enabled=" + enabled +  "]";
 	}
 
 	@Override

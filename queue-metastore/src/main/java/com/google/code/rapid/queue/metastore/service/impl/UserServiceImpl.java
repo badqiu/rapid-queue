@@ -123,15 +123,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Cacheable("memory")
-	public void auth(String username, String password) {
+	public User auth(String username, String password) {
 		User user = userDao.getById(username);
 		if(user == null) {
 			throw new IllegalArgumentException("username not exist,username:"+username);
 		}
 		String md5 = getUserPasswordMd5(username, password);
 		if(!user.getPassword().equals(md5)) {
-			throw new IllegalArgumentException("password error,username:"+username+" password:"+password);
+			throw new IllegalArgumentException("password error,username:"+username);
 		}
+		return user;
 	}
 
 	public static String getUserPasswordMd5(String username, String password) {

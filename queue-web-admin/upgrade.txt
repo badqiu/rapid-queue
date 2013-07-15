@@ -1,0 +1,11 @@
+
+
+
+1. 数据库更新
+
+ALTER TABLE rq_user ADD COLUMN exchange_permission_list  varchar(4000) NULL  COMMENT 'exchange权限列表' ;
+ALTER TABLE rq_user ADD COLUMN queue_permission_list  varchar(4000) NULL COMMENT 'queue权限列表' ;
+ALTER TABLE rq_user ADD COLUMN allow_webadmin_login  tinyint NOT NULL DEFAULT 0 COMMENT '是否允许web后台登录' ;
+
+update rq_user set allow_webadmin_login = 1 where username = 'admin';
+update rq_user set exchange_permission_list = '*' , queue_permission_list='*';

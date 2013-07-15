@@ -83,11 +83,13 @@ public class MessageBroker {
 
 	private Message receive(int timeout, BrokerQueue queue) {
 		try {
-			byte[] messageBody = queue.getQueue().poll(timeout,TimeUnit.MILLISECONDS);
+			byte[] messageBody = queue.poll(timeout,TimeUnit.MILLISECONDS);
 			if(messageBody == null) {
 				return null;
 			}
-			return new Message(messageBody);
+			Message msg = new Message(messageBody);
+			msg.setQueueName(queue.getQueueName());
+			return msg;
 		} catch (InterruptedException e) {
 			throw new RuntimeException("InterruptedException on receive msg:"+e,e);
 		}
@@ -164,9 +166,16 @@ public class MessageBroker {
 			logger.info("queueDelete() queueName:"+queueName);
 			queueUnbindAllExchange(queueName);
 			BrokerQueue queue = queueMap.remove(queueName);
-			queue.truncate();
+			queue.delete();
 		}
-	
+
+		public void queueClear(String queueName) {
+			logger.info("queueClear() queueName:"+queueName);
+			queueUnbindAllExchange(queueName);
+			BrokerQueue queue = queueMap.remove(queueName);
+			queue.clear();
+		}
+		
 		public void queueUnbindAllExchange(String queueName) {
 			for(String exchangeName : exchangeMap.keySet()) {
 				BrokerExchange exchange = lookupExchange(exchangeName);
@@ -252,7 +261,7 @@ public class MessageBroker {
 		public Map<String,Integer> listQueueSize() {
 			Map<String,Integer> map = new HashMap<String,Integer>();
 			for(BrokerQueue queue : queueMap.values()) {
-				int size = queue.getQueue().size();
+				int size = queue.size();
 				map.put(queue.getQueueName(), size);
 			}
 			return map;

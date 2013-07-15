@@ -1,6 +1,7 @@
 package com.google.code.rapid.queue.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.code.rapid.queue.util.RouterKeyUtil;
@@ -27,8 +28,11 @@ public class BrokerBinding {
 		this.queue = queue;
 	}
 
-	public boolean addRouterKey(String e) {
-		return routerKeyList.add(e);
+	public void addRouterKey(String e) {
+		String[] array = org.springframework.util.StringUtils.tokenizeToStringArray(e,"\n \t");
+		for(String str : array) {
+			routerKeyList.add(str);
+		}
 	}
 
 	public boolean removeRouterKey(String o) {
@@ -37,6 +41,10 @@ public class BrokerBinding {
 
 	public void clearRouterKey() {
 		routerKeyList.clear();
+	}
+	
+	public List<String> getRouterKeyList() {
+		return Collections.unmodifiableList(routerKeyList);
 	}
 
 	public boolean matchRouterKey(String routerKeyValue) {

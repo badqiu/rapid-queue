@@ -58,6 +58,7 @@
 				<th style="width:1px;"> </th>
 				
 				<!-- 排序时为th增加sortColumn即可,new SimpleTable('sortColumns')会为tableHeader自动增加排序功能; -->
+				<th sortColumn="vhostName" >vhost</th>
 				<th sortColumn="remarks" >备注</th>
 				<th sortColumn="host" >实际部署的主机</th>
 	
@@ -71,11 +72,13 @@
 			  <tr class="${status.count % 2 == 0 ? 'odd' : 'even'}">
 				<td>${page.paginator.startRow + status.index}</td>
 				
+				<td><c:out value='${item.vhostName}'/>&nbsp;</td>
 				<td><c:out value='${item.remarks}'/>&nbsp;</td>
 				<td><c:out value='${item.host}'/>&nbsp;</td>
 				<td>
 					<a href="${ctx}/exchange/index.do?vhostName=${item.vhostName}">管理exchange</a>&nbsp;&nbsp;
 					<a href="${ctx}/queue/index.do?vhostName=${item.vhostName}">管理queue</a>&nbsp;&nbsp;
+					<a href="${ctx}/binding/index.do?vhostName=${item.vhostName}">管理binding</a>&nbsp;&nbsp;
 					<a href="${ctx}/vhost/show.do?vhostName=${item.vhostName}">查看</a>&nbsp;&nbsp;
 					<a href="${ctx}/vhost/edit.do?vhostName=${item.vhostName}">修改</a>&nbsp;&nbsp;
 					<a href="${ctx}/vhost/delete.do?vhostName=${item.vhostName}" onclick="doRestDelete(this,'你确认删除?');return false;">删除</a>

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import cn.org.rapid_framework.page.Page;
 import cn.org.rapid_framework.web.scope.Flash;
 
+import com.google.code.rapid.queue.Constants;
 import com.google.code.rapid.queue.metastore.MessageException;
 import com.google.code.rapid.queue.metastore.model.User;
 import com.google.code.rapid.queue.metastore.query.UserQuery;
@@ -67,6 +68,28 @@ public class UserController extends BaseController{
 	 */
 	@ModelAttribute
 	public void init(ModelMap model) {
+	}
+	
+	@RequestMapping()
+	public String login(HttpServletRequest request,String username,String password) throws Exception {
+		try {
+			User user = userService.auth(username, password);
+			if(user.isAllowWebadminLogin()) {
+				request.getSession().setAttribute(Constants.ADMIN_LOGIN_USER, username);
+			}else {
+				throw new SecurityException("not allow login");
+			}
+		}catch(Exception e) {
+			Flash.current().error(""+e.getMessage());
+			return "/login";
+		}
+		return "redirect:/";
+	}
+	
+	@RequestMapping()
+	public String logout(HttpServletRequest request) throws Exception {
+		request.getSession().invalidate();
+		return "redirect:/";
 	}
 	
 	/** 列表 */

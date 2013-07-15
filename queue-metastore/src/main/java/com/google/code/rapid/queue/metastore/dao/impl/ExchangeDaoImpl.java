@@ -32,7 +32,7 @@ public class ExchangeDaoImpl extends BaseSpringJdbcDao implements ExchangeDao{
 	
 	private RowMapper<Exchange> entityRowMapper = new BeanPropertyRowMapper<Exchange>(getEntityClass());
 	
-	static final private String COLUMNS = "exchange_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,type,size,memory_size,max_size,created_time,operator,last_updated_time";
+	static final private String COLUMNS = "exchange_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,type,size,memory_size,max_size,created_time,operator,last_updated_time,enabled";
 	static final private String SELECT_FROM = "select " + COLUMNS + " from rq_exchange";
 	
 	@Override
@@ -52,9 +52,9 @@ public class ExchangeDaoImpl extends BaseSpringJdbcDao implements ExchangeDao{
 	public void insert(Exchange entity) {
 		entity.setCreatedTime(new Date());
 		String sql = "insert into rq_exchange " 
-			 + " (exchange_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,type,size,memory_size,max_size,created_time,operator,last_updated_time) " 
+			 + " (exchange_name,vhost_name,remarks,durable_type,auto_delete,auto_delete_expires,type,size,memory_size,max_size,created_time,operator,last_updated_time,enabled) " 
 			 + " values "
-			 + " (:exchangeName,:vhostName,:remarks,:durableType,:autoDelete,:autoDeleteExpires,:type,:size,:memorySize,:maxSize,:createdTime,:operator,:lastUpdatedTime)";
+			 + " (:exchangeName,:vhostName,:remarks,:durableType,:autoDelete,:autoDeleteExpires,:type,:size,:memorySize,:maxSize,:createdTime,:operator,:lastUpdatedTime,:enabled)";
 //		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
 		
 		//其它主键生成策略
@@ -67,7 +67,7 @@ public class ExchangeDaoImpl extends BaseSpringJdbcDao implements ExchangeDao{
 	public int update(Exchange entity) {
 		entity.setLastUpdatedTime(new Date());
 		String sql = "update rq_exchange set "
-					+ " remarks=:remarks,durable_type=:durableType,auto_delete=:autoDelete,auto_delete_expires=:autoDeleteExpires,type=:type,size=:size,memory_size=:memorySize,max_size=:maxSize,created_time=:createdTime,operator=:operator,last_updated_time=:lastUpdatedTime "
+					+ " remarks=:remarks,durable_type=:durableType,auto_delete=:autoDelete,auto_delete_expires=:autoDeleteExpires,type=:type,size=:size,memory_size=:memorySize,max_size=:maxSize,created_time=:createdTime,operator=:operator,last_updated_time=:lastUpdatedTime,enabled=:enabled "
 					+ " where  exchange_name = :exchangeName and vhost_name = :vhostName ";
 		return getNamedParameterJdbcTemplate().update(sql, new BeanPropertySqlParameterSource(entity));
 	}

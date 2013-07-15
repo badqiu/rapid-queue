@@ -15,6 +15,7 @@ import com.google.code.rapid.queue.client.SimpleMessage;
 import com.google.code.rapid.queue.client.SimpleMessageBrokerServiceClient;
 import com.google.code.rapid.queue.client.SimpleMessageBrokerServiceClient.SerDsHelper;
 import com.google.code.rapid.queue.thrift.api.Constants;
+import com.google.code.rapid.queue.thrift.api.Message;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerException;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerService;
 
@@ -238,6 +239,36 @@ public class ClientPerfBenchmark {
 
 	public static void main(String[] args) throws Exception {
 		new ClientPerfBenchmark().test_perf();
+	}
+
+	public int logic_send() throws MessageBrokerException {
+		int count = 100;
+		for(int i = 0; i < count; i++) {
+			SimpleMessage<String> msg = new SimpleMessage<String>();
+			msg.setPayload("100");
+//			msg.setBody("111".getBytes());
+			msg.setExchange("ex_demo");
+			msg.setRouterKey("*");
+			simpleClient.send(msg);
+		}
+		return count;
+	}
+	
+	public boolean logic_receive() throws MessageBrokerException {
+//		for(int i = 0; i < 100; i++) {
+//			SimpleMessage<String> msg = new SimpleMessage<String>();
+////			msg.setPayload("100");
+//			msg.setBody("111".getBytes());
+//			msg.setExchange("ex_memory");
+//			msg.setRouterKey("*");
+//			client.send(msg);
+//		}
+		
+		for(int i = 0; i < 10000; i++) {
+			SimpleMessage msg = simpleClient.receive("queue_demo",String.class);
+			System.out.println("receive "+msg.getPayload()+"= "+i);
+		}
+		return true;
 	}
 
 }

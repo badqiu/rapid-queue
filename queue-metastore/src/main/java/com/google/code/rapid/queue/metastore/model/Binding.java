@@ -9,7 +9,9 @@ package com.google.code.rapid.queue.metastore.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 
 /**
@@ -30,24 +32,28 @@ public class Binding  implements java.io.Serializable{
      * 队列名称       db_column: queue_name 
      */ 	
 	@Length(max=50)
+	@NotBlank
 	private java.lang.String queueName;
 	
     /**
      * 交换机名称       db_column: exchange_name 
      */ 	
 	@Length(max=50)
+	@NotBlank
 	private java.lang.String exchangeName;
 	
     /**
      * 虚拟host       db_column: vhost_name 
      */ 	
 	@Length(max=50)
+	@NotBlank
 	private java.lang.String vhostName;
 	
     /**
      * 交换机的router_key       db_column: router_key 
      */ 	
 	@Length(max=3000)
+	@NotBlank
 	private java.lang.String routerKey;
 	
     /**
@@ -76,7 +82,7 @@ public class Binding  implements java.io.Serializable{
 	}
 	
 	public void setQueueName(java.lang.String value) {
-		this.queueName = value;
+		this.queueName = StringUtils.trim(value);
 	}
 	
 	public java.lang.String getExchangeName() {
@@ -84,7 +90,7 @@ public class Binding  implements java.io.Serializable{
 	}
 	
 	public void setExchangeName(java.lang.String value) {
-		this.exchangeName = value;
+		this.exchangeName = StringUtils.trim(value);
 	}
 	
 	public java.lang.String getVhostName() {
@@ -92,7 +98,7 @@ public class Binding  implements java.io.Serializable{
 	}
 	
 	public void setVhostName(java.lang.String value) {
-		this.vhostName = value;
+		this.vhostName = StringUtils.trim(value);
 	}
 	
 	public java.lang.String getRouterKey() {

@@ -1,11 +1,11 @@
 1. 增加文件损坏的容错性
 # 2. 将 queue-core, queue-exchange, queue-server(考虑使用thrift),queue-web-admin 分离
-3. 通过  jdbc 实现对 queue,exchange等 的配置
-4. 增加多线性的性能测试
-5. 增加 显示queue status
+# 3. 通过  jdbc 实现对 queue,exchange等 的配置
+# 4. 增加多线性的性能测试
+# 5. 增加 显示queue status
 #6. 增加支持vhost功能
 7. 增加支持ack功能
-8. 支持Qos控制,channel.basic_qos(prefetch_count=1)
+# 8. 支持Qos控制,channel.basic_qos(prefetch_count=1)
 --9. 支持网络压缩传输,(gzip,compress,snappy)
 --10. 支持数据压缩存储,(gzip,compress,snappy)
 #11. 支持批量数据传输(发送及接收)
@@ -19,9 +19,11 @@
 # 19. 支持半持久模式，超过指定容量则进入持久存储
 20. 支持message ttl过期机制
 21. 提供便于测试的 rest接口,直接通过 url测试
-22. 支持消息正确处理完再滚动指针的方法,如 poll(ProcessCallback callback),在callback正确执行完成后，再移动指针
-23. 避免随机写，变为顺序写磁盘
-24. Producer端压缩消息，Consumer端解压消息
+# 22. 支持消息正确处理完再滚动指针的方法,如 poll(ProcessCallback callback),在callback正确执行完成后，再移动指针
+# 23. 避免随机写，变为顺序写磁盘
+# 24. Producer端压缩消息，Consumer端解压消息
+25. 通过 NetworkFowardExchange 将消息进行主从转发,并且要支持exchange <==> exchange的消息转换才行
+26. 增加打印slow log
 
 25     Broker的Buffer满了怎么办？
 Broker的Buffer通常指的是Broker中一个队列的内存Buffer大小，这类Buffer通常大小有限，如果Buffer满了以后怎么办？

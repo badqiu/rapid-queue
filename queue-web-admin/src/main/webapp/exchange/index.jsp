@@ -41,7 +41,7 @@
 					<td>
 						<input value="${query.remarks}" id="remarks" name="remarks" maxlength="200"  class=""/>
 					</td>
-					<td class="tdLabel">持久模式:memory,durable,haft_durable</td>		
+					<td class="tdLabel">持久模式</td>		
 					<td>
 						<input value="${query.durableType}" id="durableType" name="durableType" maxlength="30"  class=""/>
 					</td>
@@ -55,7 +55,7 @@
 					</td>
 				</tr>	
 				<tr>	
-					<td class="tdLabel">类型: topic,fanout,direct</td>		
+					<td class="tdLabel">类型</td>		
 					<td>
 						<input value="${query.type}" id="type" name="type" maxlength="30"  class=""/>
 					</td>
@@ -63,7 +63,7 @@
 					<td>
 						<input value="${query.size}" id="size" name="size" maxlength="10"  class="validate-integer max-value-2147483647"/>
 					</td>
-					<td class="tdLabel">当使用半持久模式,放在内存中的元素大小</td>		
+					<td class="tdLabel">半持久模式:内存元素大小</td>		
 					<td>
 						<input value="${query.memorySize}" id="memorySize" name="memorySize" maxlength="10"  class="validate-integer max-value-2147483647"/>
 					</td>
@@ -110,19 +110,22 @@
 				<th style="width:1px;"> </th>
 				
 				<!-- 排序时为th增加sortColumn即可,new SimpleTable('sortColumns')会为tableHeader自动增加排序功能; -->
-				<th sortColumn="exchange_name" >交换机名称</th>
 				<th sortColumn="vhost_name" >虚拟host</th>
+				<th sortColumn="exchange_name" >交换机名称</th>
 				<th sortColumn="remarks" >备注</th>
-				<th sortColumn="durable_type" >持久模式:memory,durable,haft_durable</th>
+				<th sortColumn="durable_type" >持久模式</th>
+				<th sortColumn="size" >当前交换机大小</th>
+				<th sortColumn="memory_size" >半持久模式:内存元素大小</th>
+				<th sortColumn="max_size" >交换机最大大小</th>
+				<th sortColumn="enabled" >是否激活</th>
+				<!-- 
 				<th sortColumn="auto_delete" >是否自动删除</th>
 				<th sortColumn="auto_delete_expires" >自动删除的时过期时长，单位毫秒</th>
 				<th sortColumn="type" >类型: topic,fanout,direct</th>
-				<th sortColumn="size" >当前交换机大小</th>
-				<th sortColumn="memory_size" >当使用半持久模式,放在内存中的元素大小</th>
-				<th sortColumn="max_size" >交换机的大小</th>
 				<th sortColumn="created_time" >创建时间</th>
 				<th sortColumn="operator" >操作人员</th>
 				<th sortColumn="last_updated_time" >最后更新时间</th>
+				 -->
 	
 				<th>操作</th>
 			  </tr>
@@ -134,19 +137,23 @@
 			  <tr class="${status.count % 2 == 0 ? 'odd' : 'even'}">
 				<td>${page.paginator.startRow + status.index}</td>
 				
-				<td><c:out value='${item.exchangeName}'/>&nbsp;</td>
 				<td><c:out value='${item.vhostName}'/>&nbsp;</td>
+				<td><c:out value='${item.exchangeName}'/>&nbsp;</td>
 				<td><c:out value='${item.remarks}'/>&nbsp;</td>
 				<td><c:out value='${item.durableType}'/>&nbsp;</td>
-				<td><c:out value='${item.autoDelete}'/>&nbsp;</td>
-				<td><c:out value='${item.autoDeleteExpires}'/>&nbsp;</td>
-				<td><c:out value='${item.type}'/>&nbsp;</td>
 				<td><c:out value='${item.size}'/>&nbsp;</td>
 				<td><c:out value='${item.memorySize}'/>&nbsp;</td>
 				<td><c:out value='${item.maxSize}'/>&nbsp;</td>
+				<td><c:out value='${item.enabled}'/>&nbsp;</td>
+
+				<!-- 
+				<td><c:out value='${item.autoDelete}'/>&nbsp;</td>
+				<td><c:out value='${item.autoDeleteExpires}'/>&nbsp;</td>
+				<td><c:out value='${item.type}'/>&nbsp;</td>
 				<td><fmt:formatDate value='${item.createdTime}' pattern='yyyy-MM-dd'/>&nbsp;</td>
 				<td><c:out value='${item.operator}'/>&nbsp;</td>
 				<td><fmt:formatDate value='${item.lastUpdatedTime}' pattern='yyyy-MM-dd'/>&nbsp;</td>
+				 -->				
 				<td>
 					<a href="${ctx}/binding/index.do?exchangeName=${item.exchangeName}&vhostName=${item.vhostName}">管理binding</a>&nbsp;&nbsp;
 					<a href="${ctx}/exchange/show.do?exchangeName=${item.exchangeName}&vhostName=${item.vhostName}">查看</a>&nbsp;&nbsp;

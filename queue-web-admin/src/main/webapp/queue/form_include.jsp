@@ -8,7 +8,7 @@
 			<span class="required">*</span>队列名称:
 		</td>		
 		<td>
-		<form:input path="queueName" id="queueName" cssClass="required " maxlength="50" />
+		<form:input path="queueName" id="queueName" cssClass="required " maxlength="50" size="30" />
 		<font color='red'><form:errors path="queueName"/></font>
 		</td>
 	</tr>	
@@ -18,7 +18,7 @@
 			<span class="required">*</span>虚拟host:
 		</td>		
 		<td>
-		<form:input path="vhostName" id="vhostName" cssClass="required " maxlength="50" />
+		<form:input path="vhostName" id="vhostName" cssClass="required " maxlength="50" size="30" />
 		<font color='red'><form:errors path="vhostName"/></font>
 		</td>
 	</tr>	
@@ -28,7 +28,7 @@
 			备注:
 		</td>		
 		<td>
-		<form:input path="remarks" id="remarks" cssClass="" maxlength="200" />
+		<form:input path="remarks" id="remarks" cssClass="" maxlength="200" size="30" />
 		<font color='red'><form:errors path="remarks"/></font>
 		</td>
 	</tr>	
@@ -90,10 +90,10 @@
 	
 	<tr>	
 		<td class="tdLabel">
-			当使用半持久模式,放在内存中的元素大小:
+			半持久模式,内存元素大小:
 		</td>		
 		<td>
-		<form:input path="memorySize" id="memorySize" cssClass="validate-integer max-value-2147483647" maxlength="10" />
+		<form:input path="memorySize" id="memorySize" cssClass="validate-integer max-value-2147483647" maxlength="10" size="30" />
 		<font color='red'><form:errors path="memorySize"/></font>
 		</td>
 	</tr>	
@@ -103,13 +103,22 @@
 			<span class="required">*</span>队列最大大小:
 		</td>		
 		<td>
-		<form:input path="maxSize" id="maxSize" cssClass="required validate-integer max-value-2147483647" maxlength="10" />
+		<form:input path="maxSize" id="maxSize" cssClass="required validate-integer max-value-2147483647" maxlength="10" size="30" />
 		<font color='red'><form:errors path="maxSize"/></font>
 		</td>
 	</tr>	
 	
 
-	
+	<tr>	
+		<td class="tdLabel">
+			<span class="required">*</span>是否激活
+		</td>		
+		<td>
+		<form:radiobutton path="enabled" value="true"/>true
+		<form:radiobutton path="enabled" value="false"/>false
+		<font color='red'><form:errors path="enabled"/></font>
+		</td>
+	</tr>		
 
 	
 		

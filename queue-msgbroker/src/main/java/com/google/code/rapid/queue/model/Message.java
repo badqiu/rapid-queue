@@ -16,6 +16,9 @@ public class Message implements Serializable{
 	
 	private MessageProperties messageProperties; // 消息附加属性
 	
+	private String queueName; //message当前所在的队列名称
+	
+	
 	public Message() {
 	}
 
@@ -63,6 +66,14 @@ public class Message implements Serializable{
 		this.messageProperties = messageProperties;
 	}
 	
+	public String getQueueName() {
+		return queueName;
+	}
+
+	public void setQueueName(String queueName) {
+		this.queueName = queueName;
+	}
+
 	public byte[] toBytes() {
 		return JavaSerUtil.toBytes(this, body.length + 500);
 	}

@@ -15,6 +15,10 @@
 	
 		<table class="formTable">
 			<tr>	
+				<td class="tdLabel">vhost</td>	
+				<td><c:out value='${vhost.vhostName}'/></td>
+			</tr>
+			<tr>	
 				<td class="tdLabel">备注</td>	
 				<td><c:out value='${vhost.remarks}'/></td>
 			</tr>

@@ -44,7 +44,7 @@ public class Server {
 	public void startServer() throws TTransportException {
 		JVMUtil.lockFileForOnlyProcess("rapid-queue-port-"+port);
 		
-		MessageBrokerService.Iface iface = SpringContext.getBean(MessageBrokerService.Iface.class);
+		MessageBrokerService.Iface iface = SpringContext.getBean("messageBrokerService",MessageBrokerService.Iface.class);
 		TServerTransport serverTransport = new TServerSocket(port);
 
 		MessageBrokerService.Processor processor = new Processor(iface);
@@ -66,7 +66,7 @@ public class Server {
 	public void startNoBlockServer() throws TTransportException {
 		JVMUtil.lockFileForOnlyProcess("rapid-queue-port-"+port);
 		
-		MessageBrokerService.Iface iface = SpringContext.getBean(MessageBrokerService.Iface.class);
+		MessageBrokerService.Iface iface = SpringContext.getBean("messageBrokerService",MessageBrokerService.Iface.class);
 		TNonblockingServerTransport serverTransport = new TNonblockingServerSocket(port);
 
 		MessageBrokerService.Processor processor = new Processor(iface);

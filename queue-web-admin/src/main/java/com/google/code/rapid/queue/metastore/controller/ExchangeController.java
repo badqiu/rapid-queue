@@ -91,6 +91,9 @@ public class ExchangeController extends BaseController {
 	/** 进入新增 */
 	@RequestMapping()
 	public String add(ModelMap model,Exchange exchange) throws Exception {
+		exchange.setEnabled(true);
+		exchange.setMaxSize(Integer.MAX_VALUE);
+		exchange.setDurableType("DURABLE");
 		model.addAttribute("exchange",exchange);
 		return "/exchange/add";
 	}

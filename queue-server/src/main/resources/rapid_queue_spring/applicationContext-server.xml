@@ -6,8 +6,14 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
     default-autowire="byName" default-lazy-init="false">
 
-	<bean id="messageBrokerService" class="com.google.code.rapid.queue.server.impl.MessageBrokerServiceImpl">
+	<bean id="messageBrokerServiceImpl" class="com.google.code.rapid.queue.server.impl.MessageBrokerServiceImpl">
 		<property name="messageBrokerPool" ref="messageBrokerPool"></property>
+	</bean>
+	
+	<bean id="messageBrokerService" class="com.google.code.rapid.queue.server.impl.MessageBrokerServiceSecurityProxy">
+		<constructor-arg>
+			<ref local="messageBrokerServiceImpl"/>
+		</constructor-arg>
 	</bean>
 	
 </beans>

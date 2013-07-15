@@ -6,6 +6,11 @@
 
 package com.google.code.rapid.queue.metastore.model;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -56,6 +61,21 @@ public class User  implements java.io.Serializable{
      */ 	
 	@Length(max=20)
 	private java.lang.String mobile;
+	
+	/**
+	 * 拥有的队列权限
+	 */
+	private String queuePermissionList;
+	
+	/**
+	 * 拥有的exchange权限
+	 */
+	private String exchangePermissionList;
+	
+	/**
+	 * 允许后台登录
+	 */
+	private boolean allowWebadminLogin;
 	
 	//columns END
 
@@ -108,6 +128,29 @@ public class User  implements java.io.Serializable{
 		this.mobile = value;
 	}
 	
+	public String getQueuePermissionList() {
+		return queuePermissionList;
+	}
+
+	public void setQueuePermissionList(String queuePermissionList) {
+		this.queuePermissionList = queuePermissionList;
+	}
+
+	public String getExchangePermissionList() {
+		return exchangePermissionList;
+	}
+
+	public void setExchangePermissionList(String exchangePermissionList) {
+		this.exchangePermissionList = exchangePermissionList;
+	}
+
+	public boolean isAllowWebadminLogin() {
+		return allowWebadminLogin;
+	}
+
+	public void setAllowWebadminLogin(boolean allowWebadminLogin) {
+		this.allowWebadminLogin = allowWebadminLogin;
+	}
 
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
@@ -126,6 +169,45 @@ public class User  implements java.io.Serializable{
 		return new EqualsBuilder()
 			.append(getUsername(),other.getUsername())
 			.isEquals();
+	}
+
+	public boolean hasExchangePermission(String exchange) {
+		if(getExchangePermissionSet().contains("*")) {
+			return true;
+		}
+		return getExchangePermissionSet().contains(exchange);
+	}
+
+	Set<String> exchangePermissionSet = null;
+	private Set<String> getExchangePermissionSet() {
+		if(exchangePermissionSet == null) {
+			exchangePermissionSet = newPermissionSet(exchangePermissionList);
+		}
+		return exchangePermissionSet;
+	}
+
+	public boolean hasQueuePermission(String queueName) {
+		if(getQueuePermissionSet().contains("*")) {
+			return true;
+		}
+		return getQueuePermissionSet().contains(queueName);
+	}
+	
+	Set<String> queuePermissionSet = null;
+	private Set<String> getQueuePermissionSet() {
+		if(queuePermissionSet == null) {
+			queuePermissionSet = newPermissionSet(queuePermissionList);
+		}
+		return queuePermissionSet;
+	}
+	
+	private static Set<String> newPermissionSet(String permissionList) {
+		if(StringUtils.isBlank(permissionList)) {
+			return new HashSet<String>();
+		}
+		Set<String> set = new HashSet<String>();
+		set.addAll(Arrays.asList(StringUtils.split(permissionList, "\r\t\n ")));
+		return set;
 	}
 }
 

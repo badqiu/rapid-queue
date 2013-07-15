@@ -31,7 +31,7 @@ public class UserDaoImpl extends BaseSpringJdbcDao implements UserDao{
 	
 	private RowMapper<User> entityRowMapper = new BeanPropertyRowMapper<User>(getEntityClass());
 	
-	static final private String COLUMNS = "username,password,remarks,email,mobile";
+	static final private String COLUMNS = "username,password,remarks,email,mobile,allow_webadmin_login,queue_permission_list,exchange_permission_list";
 	static final private String SELECT_FROM = "select " + COLUMNS + " from rq_user";
 	
 	@Override
@@ -50,9 +50,9 @@ public class UserDaoImpl extends BaseSpringJdbcDao implements UserDao{
 	
 	public void insert(User entity) {
 		String sql = "insert into rq_user " 
-			 + " (username,password,remarks,email,mobile) " 
+			 + " (username,password,remarks,email,mobile,allow_webadmin_login,queue_permission_list,exchange_permission_list) " 
 			 + " values "
-			 + " (:username,:password,:remarks,:email,:mobile)";
+			 + " (:username,:password,:remarks,:email,:mobile,:allowWebadminLogin,:queuePermissionList,:exchangePermissionList)";
 //		insertWithGeneratedKey(entity,sql); //for sqlserver:identity and mysql:auto_increment
 		
 		//其它主键生成策略
@@ -64,7 +64,7 @@ public class UserDaoImpl extends BaseSpringJdbcDao implements UserDao{
 	
 	public int update(User entity) {
 		String sql = "update rq_user set "
-					+ " password=:password,remarks=:remarks,email=:email,mobile=:mobile "
+					+ " password=:password,remarks=:remarks,email=:email,mobile=:mobile,allow_webadmin_login=:allowWebadminLogin,queue_permission_list=:queuePermissionList,exchange_permission_list=:exchangePermissionList "
 					+ " where  username = :username ";
 		return getNamedParameterJdbcTemplate().update(sql, new BeanPropertySqlParameterSource(entity));
 	}
