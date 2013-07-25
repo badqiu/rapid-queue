@@ -103,7 +103,7 @@ public class MessageBrokerServiceImpl implements Iface,InitializingBean{
 		}
 	}
 	
-	private String getVhost() {
+	public static String getVhost() {
 		return (String)ThriftContext.getServerContext().get(VHOST_KEY);
 	}
 	

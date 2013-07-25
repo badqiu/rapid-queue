@@ -135,9 +135,11 @@ public class QueueController extends BaseController{
 			queueService.update(queue);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
+			logger.info("ConstraintViolationException,"+e.getConstraintViolations(),e);
 			return  "/queue/edit";
 		}catch(MessageException e) {
 			Flash.current().error(e.getMessage());
+			logger.info("MessageException:"+e,e);
 			return  "/queue/edit";
 		}
 		Flash.current().success(UPDATE_SUCCESS);

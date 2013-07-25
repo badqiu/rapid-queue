@@ -117,7 +117,7 @@ public class MessageBrokerPoolBuilder implements InitializingBean {
 		List<Exchange> exchangeList = exchangeService.findByVhostName(vhost.getVhostName());
 		for(Exchange exchange : exchangeList) {
 			try {
-				BrokerExchange topicExchange = newTopicExchange(exchange);
+				BrokerExchange topicExchange = newBrokerExchange(exchange);
 				mb.getManager().exchangeAdd(topicExchange);
 			}catch(Exception e) {
 				logger.error("error on create exchcnage:"+exchange,e);
@@ -137,7 +137,7 @@ public class MessageBrokerPoolBuilder implements InitializingBean {
 		return r;
 	}
 	
-	public BrokerExchange newTopicExchange(Exchange exchange) throws Exception {
+	public BrokerExchange newBrokerExchange(Exchange exchange) throws Exception {
 		BrokerExchange r = new BrokerExchange();
 		r.setExchangeName(exchange.getExchangeName());
 		r.setRemarks(exchange.getRemarks());

@@ -170,17 +170,14 @@ public class BrokerExchange implements InitializingBean{
 		}
 	}
 	
-	public void bindQueue(BrokerQueue queue,String routerKey) {
-		if(bindQueueMap.containsKey(queue.getQueueName())) {
-			throw new IllegalArgumentException("already bind queue:"+queue.getQueueName()+" on exchange:"+exchangeName);
-		}
+	public boolean bindQueue(BrokerQueue queue,String routerKey) {
 		BrokerBinding binding = bindQueueMap.get(queue.getQueueName());
 		if(binding == null) {
 			binding = new BrokerBinding(queue);
 			bindQueueMap.put(queue.getQueueName(),binding);
 		}
 		
-		binding.addRouterKey(routerKey);
+		return binding.updateRouterKey(routerKey);
 	}
 
 	public void unbindQueue(String queueName) {
@@ -252,6 +249,7 @@ public class BrokerExchange implements InitializingBean{
 
 
 	public void destroy() throws InterruptedException {
+		logger.info("destroy_exchange:"+exchangeName);
 		executor.shutdown();
 		executor.awaitTermination(10, TimeUnit.SECONDS);
 		//exchangeQueue.clear(); //FIXME 增加exchange queue的 destroy

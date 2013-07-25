@@ -1,8 +1,10 @@
 package com.google.code.rapid.queue.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.code.rapid.queue.util.RouterKeyUtil;
 
@@ -11,9 +13,11 @@ public class BrokerBinding {
 	/**
 	 * 交换机的router_key db_column: router_key
 	 */
-	private List<String> routerKeyList = new ArrayList<String>();
+	private Set<String> routerKeyList = new HashSet<String>();
 
 	private BrokerQueue queue;
+	
+	private String routerKey;
 
 	public BrokerBinding(BrokerQueue queue) {
 		super();
@@ -28,12 +32,26 @@ public class BrokerBinding {
 		this.queue = queue;
 	}
 
-	public void addRouterKey(String e) {
-		String[] array = org.springframework.util.StringUtils.tokenizeToStringArray(e,"\n \t");
-		for(String str : array) {
-			routerKeyList.add(str);
+	public synchronized boolean updateRouterKey(String e) {
+		if(!StringUtils.equals(routerKey, e)) {
+			String[] array = org.springframework.util.StringUtils.tokenizeToStringArray(e,"\n \t");
+			Set<String> tempRouterKeyList = new HashSet<String>();
+			for(String str : array) {
+				tempRouterKeyList.add(str);
+			}
+			routerKeyList = tempRouterKeyList;
+			this.routerKey = e;
+			return true;
 		}
+		return false;
 	}
+	
+//	public void addRouterKey(String e) {
+//		String[] array = org.springframework.util.StringUtils.tokenizeToStringArray(e,"\n \t");
+//		for(String str : array) {
+//			routerKeyList.add(str);
+//		}
+//	}
 
 	public boolean removeRouterKey(String o) {
 		return routerKeyList.remove(o);
@@ -43,8 +61,8 @@ public class BrokerBinding {
 		routerKeyList.clear();
 	}
 	
-	public List<String> getRouterKeyList() {
-		return Collections.unmodifiableList(routerKeyList);
+	public Set<String> getRouterKeyList() {
+		return Collections.unmodifiableSet(routerKeyList);
 	}
 
 	public boolean matchRouterKey(String routerKeyValue) {

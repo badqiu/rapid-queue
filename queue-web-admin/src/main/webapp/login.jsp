@@ -17,36 +17,34 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <body>
 <%@ include file="/commons/messages.jsp" %>
 
-<h1>登陆页面</h1>
+<div style="margin: 0 auto; width:960px;">
+<h1>RapidQueue登陆页面</h1>
 <form action="${ctx}/user/login.do" method="post" >
-	<table height="100%" width="100%" >
-	<tr valign="middle">
-		<td>
-			<table align="center">
-				<tr>	
-					<th>用户名&nbsp;</th>	
-					<td>
-					<input name="username" class="required"/>
-					</td>
-				</tr>
-				
-				<tr>	
-					<th>密码&nbsp;</th>	
-					<td>
-					<input type="password" name="password" class="required"/>
-					</td>
-				</tr>
-				
-				<tr>
-					<td colspan="2" align="center">
-						<input type="submit" value="登陆" />
-					</td>
-				</tr>		
-			</table>
-		</td>
-	</tr>
+	<table align="center">
+		<tr>	
+			<th>用户名&nbsp;</th>	
+			<td>
+			<input name="username" class="required"/>
+			</td>
+		</tr>
+		
+		<tr>	
+			<th>密码&nbsp;</th>	
+			<td>
+			<input type="password" name="password" class="required"/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td colspan="2" align="center">
+				<input type="submit" value="登陆" />
+			</td>
+		</tr>		
 	</table>
 </form>
+<br />
+<font color="red"><b>不登录</b></font>,查看:<a href="/vhost/index.do"><b>rapid-queue只读状态</b></a>
+</div>
 
 <script>
 	new Validation(document.forms[0],{onSubmit:true});

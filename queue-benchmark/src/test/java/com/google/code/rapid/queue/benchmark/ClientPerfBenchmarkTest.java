@@ -11,7 +11,7 @@ public class ClientPerfBenchmarkTest extends junit.framework.Assert{
 	public void test() throws Exception {
 		System.out.println(RandomStringUtils.randomAlphabetic(100).getBytes().length);
 		System.out.println("中国".getBytes().length);
-		assertTrue(b.test_perf_one_row());
+		b.test_perf_one_row();
 	}
 	
 	@Test

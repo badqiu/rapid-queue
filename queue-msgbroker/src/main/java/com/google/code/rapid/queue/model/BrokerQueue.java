@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.code.rapid.queue.DurableQueue;
 import com.google.code.rapid.queue.util.RouterKeyUtil;
 
@@ -18,6 +21,7 @@ import com.google.code.rapid.queue.util.RouterKeyUtil;
  *
  */
 public class BrokerQueue {
+	private static Logger logger = LoggerFactory.getLogger(BrokerQueue.class);
 	
 	private List<String> routerKeyList = new ArrayList<String>();
 	private BlockingQueue<byte[]> queue;
@@ -117,6 +121,7 @@ public class BrokerQueue {
 
 	public void delete() {
 		if(queue instanceof DurableQueue) {
+			logger.info("delete DurableQueue:"+queue);
 			((DurableQueue)queue).delete();
 		}
 	}
@@ -172,6 +177,11 @@ public class BrokerQueue {
 		} else if (!queueName.equals(other.queueName))
 			return false;
 		return true;
+	}
+
+	public void destroy() {
+		logger.info("destroy_queue:"+queueName);
+		delete();
 	}
 	
 }

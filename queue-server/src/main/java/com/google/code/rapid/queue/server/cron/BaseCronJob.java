@@ -1,4 +1,4 @@
-package com.google.code.rapid.queue.cron.job;
+package com.google.code.rapid.queue.server.cron;
 
 import java.util.Date;
 

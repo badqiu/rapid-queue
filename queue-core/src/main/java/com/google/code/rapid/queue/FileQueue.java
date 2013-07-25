@@ -266,7 +266,7 @@ public class FileQueue {
 	}
 
 	public String toString() {
-		return "LogIndex:"+logIndexDb+" Reader:"+readerHandle+" Writer:"+writerHandle;
+		return "QueueBaseDir:"+baseDir+" LogIndex:"+logIndexDb+" Reader:"+readerHandle+" Writer:"+writerHandle;
 	}
 	
 }

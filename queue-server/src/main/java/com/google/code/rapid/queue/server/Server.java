@@ -1,15 +1,16 @@
 package com.google.code.rapid.queue.server;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
+import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TBinaryProtocol.Factory;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.TThreadPoolServer.Args;
-import org.apache.thrift.server.TThreadedSelectorServer;
-import org.apache.thrift.transport.TNonblockingServerSocket;
-import org.apache.thrift.transport.TNonblockingServerTransport;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransportException;
@@ -27,6 +28,7 @@ public class Server {
 	private static Logger logger = LoggerFactory.getLogger(Server.class);
 	
 	private int port = Constants.DEFAULT_SERVER_PORT;
+	private int managePort = Constants.DEFAULT_MANAGE_SERVER_PORT;
 	
 	public Server() {
 		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
@@ -41,14 +43,27 @@ public class Server {
 		this.port = port;
 	}
 
-	public void startServer() throws TTransportException {
+	public void startServer() throws TTransportException, UnknownHostException {
 		JVMUtil.lockFileForOnlyProcess("rapid-queue-port-"+port);
 		
-		MessageBrokerService.Iface iface = SpringContext.getBean("messageBrokerService",MessageBrokerService.Iface.class);
+		final MessageBrokerService.Iface messageBrokerService = SpringContext.getBean("messageBrokerService",MessageBrokerService.Iface.class);
 		TServerTransport serverTransport = new TServerSocket(port);
+		
+		Thread t = new Thread("MsgBrokerManageServer"){
+			public void run() {
+				try {
+					startProcessor(new Processor(messageBrokerService), new TServerSocket(new InetSocketAddress(InetAddress.getLocalHost(),managePort)));
+				}catch(Exception e) {
+					logger.error("error on start messageBrokerManagerService",e);
+				}
+			}
+		};
+		t.start();
+		
+		startProcessor(new Processor(messageBrokerService), serverTransport);
+	}
 
-		MessageBrokerService.Processor processor = new Processor(iface);
-
+	private void startProcessor(TProcessor processor,TServerTransport serverTransport) {
 		Factory portFactory = new TBinaryProtocol.Factory(true, true);
 
 		Args args = new Args(serverTransport);
@@ -59,32 +74,11 @@ public class Server {
 		
 		TServer server = new TThreadPoolServer(args); // 有多种server可选择
 		server.setServerEventHandler(new TServerEventHandlerImpl());
-		logger.info("start MessageBrokerService thrift server on port:"+port);
+		logger.info("start processor:"+processor+" thrift server");
 		server.serve();
 	}
 
-	public void startNoBlockServer() throws TTransportException {
-		JVMUtil.lockFileForOnlyProcess("rapid-queue-port-"+port);
-		
-		MessageBrokerService.Iface iface = SpringContext.getBean("messageBrokerService",MessageBrokerService.Iface.class);
-		TNonblockingServerTransport serverTransport = new TNonblockingServerSocket(port);
-
-		MessageBrokerService.Processor processor = new Processor(iface);
-
-		Factory portFactory = new TBinaryProtocol.Factory(true, true);
-
-		TThreadedSelectorServer.Args args = new TThreadedSelectorServer.Args(serverTransport);
-		args.workerThreads(2000);
-		args.processor(processor);
-		args.protocolFactory(portFactory);
-		
-		TServer server = new TThreadedSelectorServer(args); // 有多种server可选择
-		server.setServerEventHandler(new TServerEventHandlerImpl());
-		logger.info("start MessageBrokerService thrift server on port:"+port);
-		server.serve();
-	}
-	
-	public static void main(String[] args) throws TTransportException {
+	public static void main(String[] args) throws TTransportException, UnknownHostException {
 		Server server = new Server();
 //		server.startNoBlockServer();
 		server.startServer();

@@ -78,15 +78,20 @@ public class FileRunner {
 				log.info("FileRunner pre_create file thread started");
 				try {
 					while (true) {
-			            FilePreCreateAttr createFileAttr = createQueue.poll();
-			            if (createFileAttr != null) {
-			                try {
-			                	String createFilePath = createFileAttr.path;
-			                    create(createFilePath,createFileAttr.fileLimitLength);
-			                } catch (IOException e) {
-			                    log.error("预创建数据文件失败,pre_create file fail", e);
-			                }
-			            }
+						try {
+							FilePreCreateAttr createFileAttr = createQueue.take();
+				            if (createFileAttr != null) {
+				                try {
+				                	String createFilePath = createFileAttr.path;
+				                    create(createFilePath,createFileAttr.fileLimitLength);
+				                } catch (IOException e) {
+				                    log.error("预创建数据文件失败,pre_create file fail", e);
+				                }
+				            }
+						}catch(InterruptedException e) {
+							log.warn("InterruptedException on preCreateFileTask",e);
+							return;
+						}
 			        }
 				}finally {
 					log.info("FileRunner pre_create file thread stoped");

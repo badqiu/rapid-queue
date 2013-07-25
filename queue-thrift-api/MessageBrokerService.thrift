@@ -72,3 +72,43 @@ service MessageBrokerService {
 	string ping() throws (1:MessageBrokerException e),			
 }
 
+/**
+ * MessageBroker管理接口
+ */
+service MessageBrokerManagerService {
+	void queueAdd(1:string queueName),
+	
+	void queueDelete(1:string queueName),
+
+	void queueClear(1:string queueName),
+	
+	void queueUnbindAllExchange(1:string queueName),
+	
+	void queueBind(1:string exchangeName,2:string queueName,3:string routerKey),
+
+	void queueUnbindByRouterKey(1:string exchangeName,2:string queueName,3:string routerKey),
+
+	void queueUnbind(1:string exchangeName,2:string queueName),
+	
+	void exchangeAdd(1:string exchange),
+	
+	void exchangeDelete(1:string exchangeName),
+	
+	void selectVhost(1:string vhostName),
+	/**
+	 * 返回所有binding
+	 * 
+	 * @return Map<exchangeName,List<queueName>>
+	 */
+	/*
+	Map<string,List<string>> getAllBinding(),
+	
+	Set<string> getQueueNames(),
+
+	Set<string> getExchangeNames(),
+	
+	Map<string,Integer> listExchangeSize(),
+
+	Map<string,Integer> listQueueSize()
+	*/
+}

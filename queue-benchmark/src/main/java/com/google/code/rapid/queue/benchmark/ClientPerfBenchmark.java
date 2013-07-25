@@ -15,7 +15,6 @@ import com.google.code.rapid.queue.client.SimpleMessage;
 import com.google.code.rapid.queue.client.SimpleMessageBrokerServiceClient;
 import com.google.code.rapid.queue.client.SimpleMessageBrokerServiceClient.SerDsHelper;
 import com.google.code.rapid.queue.thrift.api.Constants;
-import com.google.code.rapid.queue.thrift.api.Message;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerException;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerService;
 
@@ -64,12 +63,19 @@ public class ClientPerfBenchmark {
 		msg.setRouterKey("yygame.ddt");
 	}
 
-	public boolean test_perf_one_row() throws Exception {
-		msg.setPayload("100");
-		simpleClient.send(msg);
-		Thread.sleep(100);
-		return "100".equals(simpleClient.receive("queue_demo", 100,
-				String.class).getPayload());
+	public void test_perf_one_row() throws Exception {
+		for(int i = 0; i < 10000; i++) {
+			msg.setPayload("100");
+			msg.setExchange("ex_demo");
+			try {
+				simpleClient.send(msg);
+				Thread.sleep(100);
+				boolean result = "100".equals(simpleClient.receive("queue_demo", 100,
+						String.class).getPayload());
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void test_perf() throws Exception {

@@ -17,7 +17,7 @@
 			password:
 		</td>		
 		<td>
-		<form:input path="password" id="password" cssClass="" maxlength="30" size="30" readonly="true" />
+		<form:input path="password" id="password" cssClass="" maxlength="30" size="30" />
 		<font color='red'><form:errors path="password"/></font>
 		</td>
 	</tr>	

@@ -16,18 +16,29 @@ public class MessageBrokerPool {
 	}
 	
 	public MessageBroker getMessageBroker(String vhost) {
-		MessageBroker mb = map.get(vhost);
+		return map.get(vhost);
+	}
+
+	public MessageBroker getRequiredMessageBroker(String vhost) {
+		MessageBroker mb = getMessageBroker(vhost);
 		if(mb == null) {
 			throw new IllegalArgumentException("not found vhost:"+vhost);
 		}
 		return mb;
 	}
-
+	
 	public void putMessageBroker(MessageBroker mb) {
 		Assert.hasText(mb.getVhostName());
 		map.put(mb.getVhostName(), mb);
 	}
 
+	public MessageBroker removeMessageBroker(String vhostName) {
+		Assert.hasText(vhostName);
+		MessageBroker mb = map.remove(vhostName);
+		mb.destroy();
+		return mb;
+	}
+	
 	public Collection<MessageBroker> getAll() {
 		return map.values();
 	}

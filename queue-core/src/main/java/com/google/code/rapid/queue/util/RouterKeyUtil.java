@@ -1,7 +1,6 @@
 package com.google.code.rapid.queue.util;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +41,7 @@ public class RouterKeyUtil {
 		return routerKeyValue.matches(regex);
 	}
 	
-	public static boolean matchRouterKey(List<String> routerKeyList,String routerKeyValue) {
+	public static boolean matchRouterKey(Collection<String> routerKeyList,String routerKeyValue) {
 		if(routerKeyList == null || routerKeyList.isEmpty()) {
 			return false;
 		}

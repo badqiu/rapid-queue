@@ -10,6 +10,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.google.code.rapid.queue.Constants;
+
 import cn.org.rapid_framework.page.Page;
 import cn.org.rapid_framework.util.ValidationErrorsUtils;
 import cn.org.rapid_framework.util.page.PageQuery;
@@ -36,6 +38,6 @@ public class BaseController {
 	}
 
 	protected String getLoginUser() {
-		return "demo_login_user";
+		return (String)getRequest().getSession().getAttribute(Constants.ADMIN_LOGIN_USER);
 	}
 }

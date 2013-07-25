@@ -133,9 +133,11 @@ public class ExchangeController extends BaseController {
 			exchangeService.update(exchange);
 		}catch(ConstraintViolationException e) {
 			convert(e, errors);
+			logger.info("ConstraintViolationException,"+e.getConstraintViolations(),e);
 			return  "/exchange/edit";
 		}catch(MessageException e) {
 			Flash.current().error(e.getMessage());
+			logger.info("MessageException,"+e,e);
 			return  "/exchange/edit";
 		}
 		Flash.current().success(UPDATE_SUCCESS);

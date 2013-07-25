@@ -128,4 +128,15 @@ public class QueueServiceImpl implements QueueService {
 		return queueDao.findByVhostName(vhostName);
 	}
 
+	@Override
+	public boolean updateQueueSize(String queueName, String vhostName,int newSize) {
+		Queue q = getById(queueName, vhostName);
+		if(q != null && q.getSize() != newSize) {
+			q.setSize(newSize);
+			update(q);
+			return true;
+		}
+		return false;
+	}
+
 }

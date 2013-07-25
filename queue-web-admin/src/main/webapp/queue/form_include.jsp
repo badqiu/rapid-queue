@@ -2,7 +2,13 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/commons/taglibs.jsp" %>
 
-
+	<form:hidden path="autoDelete"/>
+	<form:hidden path="autoDeleteExpires"/>
+	<form:hidden path="exclusive"/>
+	<form:hidden path="ttl"/>
+	<form:hidden path="createdTime"/>
+	<form:hidden path="lastUpdatedTime"/>
+	
 	<tr>	
 		<td class="tdLabel">
 			<span class="required">*</span>队列名称:

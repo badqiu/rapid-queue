@@ -1,5 +1,6 @@
 package com.google.code.rapid.queue;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;

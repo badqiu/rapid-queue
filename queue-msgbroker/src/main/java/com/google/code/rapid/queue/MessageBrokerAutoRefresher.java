@@ -1,6 +1,7 @@
 package com.google.code.rapid.queue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,16 +41,38 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 		refreshMessageBroker(messageBrokerPool);
 	}
 
-	public void refreshMessageBroker(MessageBrokerPool pool) {
+	public void refreshMessageBroker(final MessageBrokerPool pool) {
 		List<Vhost> list = vhostService.findAll();
+		Set<String> names = new HashSet<String>(list.size());
 		for(Vhost vhost : list) {
-			MessageBroker mb = pool.getMessageBroker(vhost.getVhostName());
-			if(mb == null) {
-				mb = buildMessageBroker(vhost);
+			names.add(vhost.getVhostName());
+		}
+		
+		HashSet<String> holdedNames = new HashSet<String>();
+		Collection<MessageBroker> brokers = pool.getAll();
+		for(MessageBroker mb : brokers) {
+			holdedNames.add(mb.getVhostName());
+		};
+		
+		refreshBy("vhost_refresh",new AutoRefersher() {
+			@Override
+			public void update(String name) throws Exception {
+				MessageBroker mb = pool.getMessageBroker(name);
+				refreshMessageBroker(mb);
+			}
+			
+			@Override
+			public void delete(String name) throws Exception {
+				pool.removeMessageBroker(name);
+			}
+			
+			@Override
+			public void create(String name) throws Exception {
+				Vhost vhost = vhostService.getById(name);
+				MessageBroker mb = buildMessageBroker(vhost);
 				pool.putMessageBroker(mb);
 			}
-			refreshMessageBroker(mb);
-		}
+		},names,holdedNames);
 	}
 	
 	private void refreshMessageBroker(MessageBroker mb) {
@@ -78,6 +101,9 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 		refreshBy("refreshBindings",new AutoRefersher() {
 			@Override
 			public void update(String name) {
+				QueueExchangeBinding b = QueueExchangeBinding.fromString(name);
+				Binding binding = bindingService.getById(b.queueName, b.exchangeName, mb.getVhostName());
+				mb.getManager().queueBind(b.exchangeName, b.queueName, binding.getRouterKey());
 			}
 			
 			@Override
@@ -129,6 +155,8 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 		refreshBy("refreshQueues",new AutoRefersher() {
 			@Override
 			public void update(String name) {
+				Queue queue = queueService.getById(name, mb.getVhostName());
+				mb.getManager().queueEnabled(name, queue.getEnabled());
 			}
 			
 			@Override
@@ -152,6 +180,8 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 		refreshBy("refreshExchanges",new AutoRefersher() {
 			@Override
 			public void update(String name) {
+				Exchange ex = exchangeService.getById(name, mb.getVhostName());
+				mb.getManager().exchangeEnabled(name, ex.getEnabled());
 			}
 			
 			@Override
@@ -162,7 +192,7 @@ public class MessageBrokerAutoRefresher extends MessageBrokerPoolBuilder impleme
 			@Override
 			public void create(String name) throws Exception {
 				Exchange ex = exchangeService.getById(name, mb.getVhostName());
-				BrokerExchange te = newTopicExchange(ex);
+				BrokerExchange te = newBrokerExchange(ex);
 				mb.getManager().exchangeAdd(te);
 			}
 		},new HashSet(names),new HashSet(holdedNames));

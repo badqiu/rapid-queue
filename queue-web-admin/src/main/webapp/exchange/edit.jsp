@@ -6,6 +6,7 @@
 </rapid:override>
 
 <rapid:override name="content">
+	<h1 style="color: red">请注意:除了激活状态，其它修改需要重启server</h1>
 	<form:form method="put" action="${ctx}/exchange/update.do" modelAttribute="exchange">
 		<input id="submitButton" name="submitButton" type="submit" value="提交" />
 		<input type="button" value="返回列表" onclick="window.location='${ctx}/exchange/index.do'"/>

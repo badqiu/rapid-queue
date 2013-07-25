@@ -2,7 +2,15 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/commons/taglibs.jsp" %>
 
-
+	<form:hidden path="autoDelete"/>
+	<form:hidden path="autoDeleteExpires"/>
+	<form:hidden path="type"/>
+	<form:hidden path="size"/>
+	<form:hidden path="maxSize"/>
+	<form:hidden path="createdTime"/>
+	<form:hidden path="lastUpdatedTime"/>
+	<form:hidden path="operator"/>
+	
 	<tr>	
 		<td class="tdLabel">
 			<span class="required">*</span>交换机名称:

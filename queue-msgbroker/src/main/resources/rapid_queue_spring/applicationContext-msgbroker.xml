@@ -14,7 +14,4 @@
 		<property name="dataDir" value="${rq_dir_data}"></property>
 	</bean>
 	
-	<bean class="com.google.code.rapid.queue.cron.job.MessageBrokerAutoRefresherJob">
-	</bean>
-	
 </beans>

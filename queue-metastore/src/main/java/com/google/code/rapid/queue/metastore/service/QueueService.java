@@ -34,6 +34,9 @@ public interface QueueService {
 	 **/	
     public Queue update(Queue queue);
     
+    
+    public boolean updateQueueSize(String queueName, String vhostName,int newSize);
+    
 	/** 
 	 * 删除Queue
 	 **/

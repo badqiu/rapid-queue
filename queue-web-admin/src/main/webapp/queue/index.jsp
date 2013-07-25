@@ -115,6 +115,7 @@
 				<th sortColumn="remarks" >备注</th>
 				<th sortColumn="durable_type" >持久模式</th>
 				<th sortColumn="memory_size" >半持久模式:内存元素大小</th>
+				<th sortColumn="maxSize" >队列最大大小</th>
 				<th sortColumn="size" >队列当前大小</th>
 				<th sortColumn="enabled" >是否激活</th>
 				<!-- 
@@ -145,6 +146,7 @@
 				<td><c:out value='${item.durableType}'/>&nbsp;</td>
 				<td><c:out value='${item.memorySize}'/>&nbsp;</td>
 				<td><c:out value='${item.maxSize}'/>&nbsp;</td>
+				<td><c:out value='${item.size}'/>&nbsp;</td>
 				<td><c:out value='${item.enabled}'/>&nbsp;</td>
 				
 				<!-- 

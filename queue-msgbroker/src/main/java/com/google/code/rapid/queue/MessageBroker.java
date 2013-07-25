@@ -31,6 +31,15 @@ public class MessageBroker {
 	
 	private String vhostName;
 	
+	private boolean stop = false;
+	
+	public MessageBroker() {
+	}
+	
+	public MessageBroker(String vhostName) {
+		this.vhostName = vhostName;
+	}
+
 	public String getVhostName() {
 		return vhostName;
 	}
@@ -95,6 +104,11 @@ public class MessageBroker {
 		}
 	}
 
+	public void destroy() {
+		getManager().destroy();
+		stop = true;
+	}
+	
 	/**
 	 * 批量接收消息
 	 * @param queue 队列名称
@@ -162,17 +176,42 @@ public class MessageBroker {
 			queueMap.put(queue.getQueueName(),queue);
 		}
 		
+		public void destroy() {
+			for(BrokerExchange ex : exchangeMap.values()) {
+				try {
+					ex.destroy();
+				}catch(Exception e) {
+					logger.error("error on destroy BrokerExchange:"+ex,e);
+				}
+			}
+			
+			for(BrokerQueue queue : queueMap.values()) {
+				try {
+					queue.destroy();
+				}catch(Exception e) {
+					logger.error("error on destroy BrokerQueue:"+queue,e);
+				}
+			}
+		}
+
 		public void queueDelete(String queueName) {
 			logger.info("queueDelete() queueName:"+queueName);
 			queueUnbindAllExchange(queueName);
 			BrokerQueue queue = queueMap.remove(queueName);
 			queue.delete();
 		}
+		
+		public void queueEnabled(String queueName,boolean enabled) {
+			BrokerQueue queue = lookupQueue(queueName);
+			if(queue.isEnabled() != enabled) {
+				logger.info("queueEnabled() queueName:"+queueName+" enabled:"+enabled);
+				queue.setEnabled(enabled);
+			}
+		}
 
 		public void queueClear(String queueName) {
 			logger.info("queueClear() queueName:"+queueName);
-			queueUnbindAllExchange(queueName);
-			BrokerQueue queue = queueMap.remove(queueName);
+			BrokerQueue queue = queueMap.get(queueName);
 			queue.clear();
 		}
 		
@@ -184,10 +223,11 @@ public class MessageBroker {
 		}
 		
 		public void queueBind(String exchangeName,String queueName,String routerKey) {
-			logger.info("queueBind(),exchangeName:"+exchangeName+" queueName:"+queueName+" routerKey:"+routerKey);
 			BrokerExchange exchange = lookupExchange(exchangeName);
 			BrokerQueue queue = lookupQueue(queueName);
-			exchange.bindQueue(queue,routerKey);
+			if(exchange.bindQueue(queue,routerKey)) {
+				logger.info("queueBind(),exchangeName:"+exchangeName+" queueName:"+queueName+" routerKey:"+routerKey);
+			}
 		}
 	
 		public void queueUnbind(String exchangeName,String queueName,String routerKey) {
@@ -208,6 +248,14 @@ public class MessageBroker {
 			
 			logger.info("exchangeAdd(),exchange:"+exchange);
 			exchangeMap.put(exchange.getExchangeName(),exchange);
+		}
+		
+		public void exchangeEnabled(String exchangeName,boolean enabled) {
+			BrokerExchange exchange = lookupExchange(exchangeName);
+			if(exchange.isEnabled() != enabled) {
+				exchange.setEnabled(enabled);
+				logger.info("exchangeEnabled() exchangeName:"+exchangeName+" enabled:"+enabled);
+			}
 		}
 		
 		public void exchangeDelete(String exchangeName) {

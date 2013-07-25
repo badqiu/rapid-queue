@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.google.code.rapid-queue</groupId>
 	<artifactId>rapid-queue-core</artifactId>
-	<version>0.1.3</version>
+	<version>0.1.4</version>
 	<packaging>jar</packaging>
 	<name>rapid-queue-core</name>
 	<url>http://code.google.com/p/rapid-queue/</url>
