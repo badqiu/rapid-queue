@@ -18,7 +18,7 @@ public class ThriftContext {
 		Map<String, Object> map = context.get();
 		if(map == null) {
 			map = new ConcurrentHashMap<String,Object>();
-			context.set(map);
+			set(map);
 		}
 		return map;
 	}

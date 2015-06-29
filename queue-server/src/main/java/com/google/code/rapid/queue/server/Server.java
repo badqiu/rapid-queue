@@ -17,8 +17,6 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cn.org.rapid_framework.util.JVMUtil;
-
 import com.google.code.rapid.queue.server.util.SpringContext;
 import com.google.code.rapid.queue.thrift.api.Constants;
 import com.google.code.rapid.queue.thrift.api.MessageBrokerService;

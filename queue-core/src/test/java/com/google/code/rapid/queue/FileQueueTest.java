@@ -21,6 +21,7 @@ import java.util.Queue;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -133,21 +134,18 @@ public class FileQueueTest extends TestCase {
     }
 
     public void testPerformance() {
-        StringBuffer sBuffer = new StringBuffer(1024);
-        for (int i = 0; i < 1024; i++) {
-            sBuffer.append("a");
-        }
-        String string = sBuffer.toString();
-        System.out.println("Test write 1000000 times 1K data to queue");
+
+        String string = RandomStringUtils.randomAlphabetic(1024);
+		long cost = testWritePerf(string);
+        testReadPref();
+       
+    }
+
+	private void testReadPref() {
+		System.out.println("Test read 1000000 times 1K data from queue");
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 1000000; i++) {
-            byte[] b = (string + i).getBytes();
-            queue.offer(b);
-        }
-        System.out.println("spend time:" + (System.currentTimeMillis() - start) + "ms");
-        System.out.println("Test read 1000000 times 1K data from queue");
-        start = System.currentTimeMillis();
-        for (int i = 0; i < 1000000; i++) {
+        int count = 1000000;
+		for (int i = 0; i < count; i++) {
 
             byte[] b = queue.poll();
             if (b == null) {
@@ -157,8 +155,22 @@ public class FileQueueTest extends TestCase {
             }
         }
         assertEquals(0, queue.size());
-        System.out.println("spend:" + (System.currentTimeMillis() - start) + "ms");
-    }
+        long cost = System.currentTimeMillis() - start;
+        System.out.println("spend:" + cost + "ms" +" tps:"+(count * 1000 / cost));
+	}
+
+	private long testWritePerf(String string) {
+		System.out.println("Test write 1000000 times 1K data to queue");
+        long start = System.currentTimeMillis();
+        int count = 1000000;
+		for (int i = 0; i < count; i++) {
+            byte[] b = (string + i).getBytes();
+            queue.offer(b);
+        }
+        long cost = System.currentTimeMillis() - start;
+		System.out.println("spend time:" + cost + "ms" +" tps:"+(count * 1000 / cost));
+		return cost;
+	}
 
     int count = 400000;
     public void testPerformance2() {

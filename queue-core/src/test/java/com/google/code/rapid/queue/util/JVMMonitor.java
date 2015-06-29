@@ -118,22 +118,22 @@ public class JVMMonitor {
      * 
      * @return
      */
-    public static double getSystemLoad() {
-        if (!(bean instanceof com.sun.management.OperatingSystemMXBean))
-            return 0L;
-        return ((com.sun.management.OperatingSystemMXBean) bean).getSystemLoadAverage();
-    }
+//    public static double getSystemLoad() {
+//        if (!(bean instanceof com.sun.management.OperatingSystemMXBean))
+//            return 0L;
+//        return ((com.sun.management.OperatingSystemMXBean) bean).getSystemLoadAverage();
+//    }
 
     /**
      * 获取CPU个数
      * 
      * @return
      */
-    public static int getAvailableProcessors() {
-        if (!(bean instanceof com.sun.management.OperatingSystemMXBean))
-            return 0;
-        return ((com.sun.management.OperatingSystemMXBean) bean).getAvailableProcessors();
-    }
+//    public static int getAvailableProcessors() {
+//        if (!(bean instanceof com.sun.management.OperatingSystemMXBean))
+//            return 0;
+//        return ((com.sun.management.OperatingSystemMXBean) bean).getAvailableProcessors();
+//    }
 
     /**
      * 返回文件描述符数
@@ -388,7 +388,8 @@ public class JVMMonitor {
 
     public static String getMonitorStats(String item) {
         if ("load".equals(item)) {
-            return "load:" + JVMMonitor.getSystemLoad();
+//            return "load:" + JVMMonitor.getSystemLoad();
+        	return "-1";
         } else if ("allThreadsCount".equals(item)) {
             return "allThreadsCount:" + JVMMonitor.getAllThreadsCount();
         } else if ("peakThreadCount".equals(item)) {

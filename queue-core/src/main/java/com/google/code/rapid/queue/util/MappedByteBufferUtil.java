@@ -34,8 +34,8 @@ public class MappedByteBufferUtil {
                 try {
                     Method cleanerMethod = buffer.getClass().getMethod("cleaner", new Class[0]);
                     cleanerMethod.setAccessible(true);
-                    sun.misc.Cleaner cleaner = (sun.misc.Cleaner) cleanerMethod.invoke(buffer, new Object[0]);
-                    cleaner.clean();
+//                    sun.misc.Cleaner cleaner = (sun.misc.Cleaner) cleanerMethod.invoke(buffer, new Object[0]);
+//                    cleaner.clean();
                 } catch (Exception e) {
                     logger.error("cannot clean Buffer",e);
                 }

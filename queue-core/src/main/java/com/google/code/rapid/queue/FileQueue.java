@@ -229,21 +229,6 @@ public class FileQueue {
 		logIndexDb.close();
 	}
 	
-//	/**
-//	 * 清空所有数据
-//	 * @throws IOException
-//	 */
-//	public void clear() throws IOException {
-//		logIndexDb.setQueueSize(0);
-//		int interval = logIndexDb.getWriterIndex() - logIndexDb.getReaderIndex();
-//		for(int i = 0 ; i < interval - 1; i++) {
-//			FileRunner.getInstance().addDeleteFile(getLogEntityPath(logIndexDb.getReaderIndex() + i));
-//		}
-//		
-//		logIndexDb.putReaderIndex(logIndexDb.getWriterIndex());
-//		logIndexDb.putReaderPosition(logIndexDb.getWriterPosition());
-//	}
-	
 	public void delete() {
 		close();
 		try {

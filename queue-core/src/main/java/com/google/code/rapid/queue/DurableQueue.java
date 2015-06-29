@@ -75,7 +75,7 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 			fsQueue.add(item);
 			return true;
 		} catch (IOException e) {
-			log.error(e.getMessage(), e);
+			log.error("offer error,"+e.getMessage(), e);
 			return false;
 		} finally {
 			writeLock.unlock();
@@ -87,7 +87,7 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 		try {
 			return fsQueue.peek();
 		} catch (IOException e) {
-			log.error(e.getMessage(), e);
+			log.error("peek error " + e, e);
 			return null;
 		}
 	}
@@ -99,7 +99,7 @@ public class DurableQueue extends AbstractQueue<byte[]> implements Queue<byte[]>
 			byte[] result = fsQueue.poll();
 			return result;
 		} catch (IOException e) {
-			log.error(e.getMessage(), e);
+			log.error("poll error "+e.getMessage(), e);
 			return null;
 		} finally {
 			writeLock.unlock();
