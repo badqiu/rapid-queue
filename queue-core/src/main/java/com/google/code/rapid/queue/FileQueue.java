@@ -119,8 +119,21 @@ public class FileQueue {
 	 * @return
 	 * @throws IOException
 	 */
-	private LogEntity createLogEntity(String baseDataPath,String filePath, LogIndex db, int fileNumber) throws IOException {
-		return LogEntity.newInstance(baseDataPath,filePath, db, fileNumber, this.fileLimitLength);
+	private LogEntity createLogEntity(String baseDataPath,String filePath, LogIndex db, int fileNumber)  {
+		int errorCreateCount = 0;
+		while(true) {
+			try {
+				return LogEntity.newInstance(baseDataPath,filePath, db, fileNumber, this.fileLimitLength);
+			}catch(Exception e) {
+				errorCreateCount++;
+				log.error("createLogEntity() error,errorCreateCount:" + errorCreateCount + " msg:"+e.getMessage(),e);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/**
