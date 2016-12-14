@@ -43,20 +43,20 @@ public class DurableQueueTest extends Assert{
 			};
 			pollT.start();
 		}
-		Thread.sleep(100);
+		Thread.sleep(10000);
 		
-		for(int i = 0; i < 1000; i++) {
-			Thread.sleep(1000 * 10);
-			
-			System.out.println(i + " ----------------restart Queue----------------------- ");
-			System.out.println(" queue: " + queue);
-			System.out.println(" -------------------------------------------------------- ");
-			
-			DurableQueue tmpQueue = new DurableQueue("target/test_db/durable_test");
-			DurableQueue orgiQueue = queue;
-			queue = tmpQueue;
-			orgiQueue.close();
-		}
+//		for(int i = 0; i < 1000; i++) {
+//			Thread.sleep(1000 * 10);
+//			
+//			System.out.println(i + " ----------------restart Queue----------------------- ");
+//			System.out.println(" queue: " + queue);
+//			System.out.println(" -------------------------------------------------------- ");
+//			
+//			DurableQueue tmpQueue = new DurableQueue("target/test_db/durable_test");
+//			DurableQueue orgiQueue = queue;
+//			queue = tmpQueue;
+//			orgiQueue.close();
+//		}
 		
 	}
 	
